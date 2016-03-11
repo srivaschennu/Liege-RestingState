@@ -81,7 +81,7 @@ for f = 1:size(matrix,1)
             allden{iter,1}(thresh) = density_und(weicoh);
             
             for i = 1:param.heuristic
-                [Ci, allQ{iter,1}(thresh,i)] = modularity_louvain_und(weicoh);
+                [Ci, allQ{iter,1}(thresh,i)] = community_louvain(weicoh);
                 
                 allCi{iter,1}(thresh,i,:) = Ci;
                 
@@ -107,7 +107,7 @@ for f = 1:size(matrix,1)
             allden{iter,2}(thresh) = density_und(bincoh);
             
             for i = 1:param.heuristic
-                [Ci, allQ{iter,2}(thresh,i)] = modularity_louvain_und(bincoh);
+                [Ci, allQ{iter,2}(thresh,i)] = community_louvain(bincoh);
                 
                 allCi{iter,2}(thresh,i,:) = Ci;
                 

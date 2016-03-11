@@ -2,7 +2,7 @@ function trialcount = checktrials(basename,settrials)
 
 loadpaths
 
-filesuffix = '';
+filesuffix = '_csd';
 
 EEG = pop_loadset('filepath',filepath,'filename',[basename filesuffix '.set'],'loadmode','info');
 

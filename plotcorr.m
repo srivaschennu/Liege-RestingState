@@ -33,7 +33,7 @@ posp(allcorr < 0) = 1;
 stats.alpha = 0.05;
 stats.N = size(allcoh,3);
 stats.size = 'extent';
-stats.thresh = min(poscorr(1,posp(1,:)<0.001));
+stats.thresh = min(poscorr(1,posp(1,:)<0.05));
 stats.test_stat = poscorr;
 
 [~,n_nets,netmask,netpval] = evalc('NBSstats(stats)');

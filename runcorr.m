@@ -16,6 +16,8 @@ randstr = RandStream('mt19937ar','Seed',0);
 subjlist = eval(listname);
 
 crs = cell2mat(subjlist(:,11));
+patwithcrs = ~isnan(crs);
+crs = crs(patwithcrs);
 
 load(sprintf('%s/%s/alldata_%s_%s.mat',filepath,conntype,listname,conntype));
 
@@ -36,7 +38,7 @@ for n = 1:nperm+1
         fprintf('Starting');
         randcrs = crs;
     end
-    [allcorr(n,:), allp(n,:)] = corr(randcrs,squeeze(allcoh(:,bandidx,ind_upper)),'type','spearman');
+    [allcorr(n,:), allp(n,:)] = corr(randcrs,squeeze(allcoh(patwithcrs,bandidx,ind_upper)),'type','spearman');
 end
 fprintf('\n');
 

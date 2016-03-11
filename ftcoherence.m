@@ -2,7 +2,7 @@ function ftcoherence(basename)
 
 loadpaths
 
-savefile = [filepath 'ftdwpli/' basename 'ftdwplifdr.mat'];
+savefile = [filepath 'ftdwpli/' basename 'ftdwpli.mat'];
 
 % if exist(savefile,'file')
 %     fprintf('%s exists. Skipping.\n',savefile);

@@ -10,12 +10,13 @@ param = finputcheck(varargin, {
     'ylim', 'real', [], []; ...
     'xtick', 'real', [], []; ...
     'ytick', 'real', [], []; ...
+    'legend', 'string', {'on','off'}, 'off'; ...
     'legendlocation', 'string', [], 'Best'; ...
     'noplot', 'string', {'on','off'}, 'off'; ...
     });
 
 fontname = 'Helvetica';
-fontsize = 28;
+fontsize = 18;
 
 loadpaths
 loadsubj
@@ -144,10 +145,9 @@ end
 
 testdata = mean(testdata,2);
 
+clear plotdata
 for g = 1:length(groups)
-    plotdata = testdata(groupvar == groups(g));
-    groupmean(g,:) = nanmean(plotdata);
-    groupste(g,:) = nanstd(plotdata)/sqrt(length(plotdata));
+    plotdata{g} = testdata(groupvar == groups(g));
 end
 
 %% plot mean graph
@@ -159,20 +159,22 @@ if strcmp(param.noplot,'off')
     set(gcf,'Position',figpos);
     
     hold all
-    
-    for g = 1:length(groups)
-        errorbar(g,groupmean(g),groupste(g),'o','MarkerSize',15,'Color',colorlist(g,:),...
-            'MarkerFaceColor',facecolorlist(g,:),'LineWidth',1);
-    end
+    [~,lg_h] = violin(plotdata,'edgecolor',colorlist(1:length(groups),:),'facecolor',facecolorlist(1:length(groups),:),'facealpha',1,'mc',[]);
     set(gca,'XLim',[0.5 length(groups)+0.5],'XTick',1:length(groups),...
-        'XTickLabel',groupnames','FontName',fontname,'FontSize',fontsize);
+        'XTickLabel',groupnames','FontName',fontname,'FontSize',fontsize);    
     ylabel(param.ylabel,'FontName',fontname,'FontSize',fontsize);
+    if ~isempty(param.ylim)
+        set(gca,'YLim',param.ylim);
+    end
     if ~isempty(param.ytick)
         set(gca,'YTick',param.ytick);
     end
     set(gcf,'Color','white');
     if ~isempty(param.ylim)
         ylim(param.ylim);
+    end
+    if strcmp(param.legend,'off')
+        legend('hide');
     end
     box off
     export_fig(gcf,sprintf('figures/%s_avg_%s_%s_%s.eps',conntype,measure,bands{bandidx},param.group));
@@ -188,7 +190,7 @@ rocpet.accu = sum(petdiag == groupvar) * 100/length(groupvar);
 rocpet.ppv  = 100 * sum((petdiag == 1) & (groupvar == 1)) ./ (sum((petdiag == 1) & (groupvar == 1)) + sum((petdiag == 1) & (groupvar == 0)));
 rocpet.npv  = 100 * sum((petdiag == 0) & (groupvar == 0)) ./ (sum((petdiag == 0) & (groupvar == 0)) + sum((petdiag == 0) & (groupvar == 1)));
 
-fprintf('\nPET: AUC %.4f, Sens. %.1f%%, Spec. %.1f%%, Accu %.1f%%, PPV %.1f%%, NPV %.1f%%.\n', ...
+fprintf('\nPET: AUC %.2f, Sens. %.1f%%, Spec. %.1f%%, Accu %.1f%%, PPV %.1f%%, NPV %.1f%%.\n', ...
     rocpet.auc, rocpet.sens, rocpet.spec, rocpet.accu, rocpet.ppv, rocpet.npv);
 
 [roc.x,roc.y,roc.t,roc.auc] = perfcurve(groupvar(groupvar == 0 | groupvar == 1),testdata(groupvar == 0 | groupvar == 1),1);
@@ -202,7 +204,7 @@ roc.accu = sum(testdiag == groupvar) * 100/length(groupvar);
 roc.ppv  = 100 * sum((testdiag == 1) & (groupvar == 1)) ./ (sum((testdiag == 1) & (groupvar == 1)) + sum((testdiag == 1) & (groupvar == 0)));
 roc.npv  = 100 * sum((testdiag == 0) & (groupvar == 0)) ./ (sum((testdiag == 0) & (groupvar == 0)) + sum((testdiag == 0) & (groupvar == 1)));
 
-fprintf('%s %s: AUC %.4f, Sens. %.1f%%, Spec. %.1f%%, Accu %.1f%%, PPV %.1f%% NPV %.1f%%.\n', ...
+fprintf('%s %s: AUC %.2f, Sens. %.1f%%, Spec. %.1f%%, Accu %.1f%%, PPV %.1f%% NPV %.1f%%.\n', ...
     bands{bandidx}, measure, roc.auc, roc.sens, roc.spec, roc.accu, roc.ppv, roc.npv);
 
 %% plot roc analysis
