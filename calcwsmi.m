@@ -19,7 +19,7 @@ loadpaths
 %%%
 %%% wsmi: idem to smi but weighted
 
-EEG = pop_loadset('filepath',filepath,'filename',[basename '_csd.set'],'loadmode','info');
+EEG = pop_loadset('filepath',filepath,'filename',[basename '_csd.set']);
 chanlocs = EEG.chanlocs;
 
 EEG.data = reshape(reshape(EEG.data,EEG.nbchan,EEG.pnts*EEG.trials),EEG.nbchan,EEG.pnts/5,EEG.trials*5);

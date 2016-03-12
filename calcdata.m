@@ -24,7 +24,7 @@ for s = 1:size(subjlist,1)
         error('Channel names do not match!');
     end
     matrix = matrix(:,sortidx,sortidx);
-    bootmat = bootmat(:,sortidx,sortidx,:);
+%     bootmat = bootmat(:,sortidx,sortidx,:);
     
     if s == 1
         freqbins = specinfo.freqs;
@@ -32,16 +32,16 @@ for s = 1:size(subjlist,1)
         bandpower = zeros(size(subjlist,1),size(matrix,1),length(chanlocs));
         bandpeak = zeros(size(subjlist,1),size(matrix,1));
         allcoh = zeros(length(subjlist),size(matrix,1),length(chanlocs),length(chanlocs));
-        allbootcoh = zeros(length(subjlist),size(matrix,1),length(chanlocs),length(chanlocs));
+%         allbootcoh = zeros(length(subjlist),size(matrix,1),length(chanlocs),length(chanlocs));
     end
     
     matrix(isnan(matrix)) = 0;
     matrix = abs(matrix);
     allcoh(s,:,:,:) = matrix;
     
-    bootmat(isnan(bootmat)) = 0;
-    bootmat = abs(bootmat);
-    allbootcoh(s,:,:,:) = mean(bootmat,4);
+%     bootmat(isnan(bootmat)) = 0;
+%     bootmat = abs(bootmat);
+%     allbootcoh(s,:,:,:) = mean(bootmat,4);
     
     spectra(s,:,:) = specinfo.spectra;
     for f = 1:size(specinfo.freqlist,1)
@@ -65,4 +65,4 @@ for s = 1:size(subjlist,1)
     end
     grp(s,1) = subjlist{s,3};
 end
-save(sprintf('%s/%s/alldata_%s_%s.mat',filepath,conntype,listname,conntype), 'grp', 'spectra', 'freqbins', 'bandpower', 'bandpeak', 'allcoh', 'allbootcoh','subjlist');
+save(sprintf('%s/%s/alldata_%s_%s.mat',filepath,conntype,listname,conntype), 'grp', 'spectra', 'freqbins', 'bandpower', 'bandpeak', 'allcoh', 'subjlist'); %'allbootcoh',
