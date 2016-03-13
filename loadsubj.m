@@ -59,65 +59,65 @@ patlist = {
     '48'		0		1		1		NaN		1		38		0		293		3		6
     '50'		1		1		1		0		0		55		1		NaN		3		17
     '51'		NaN		1		1		0		0		7		1		1476	NaN		16
-%     '52'		1		2		1		NaN		1		57		1		1398	NaN		16 %noisy
-%     '53'		0		1		1		NaN		1		19		1		426		NaN		11
-%     '54'		3		3		1		NaN		0		52		1		143		NaN		NaN
-%     '56'		1		1		1		NaN		1		18		0		118		NaN		13
-%     '57'		1		1		1		NaN		1		39		0		1437	NaN		11
-%     '58'		1		2		1		NaN		1		34		0		375		NaN		23
-%     '59'		1		1		1		NaN		0		61		0		858		NaN		17
-%     '60'		0		0		0		NaN		0		40		0		815		NaN		6 %noisy
-%     '61'		0		2		1		NaN		1		37		1		6177	NaN		23 % very noisy
-%     '62'		1		1		NaN		NaN		0		22		1		1211	NaN		10
-%     '63'		NaN		2		1		NaN		1		32		1		845		NaN		23 %very noisy
-%     '64'		NaN		2		0		NaN		0		37		1		263		NaN		23
-%     '65'		NaN		2		NaN		NaN		0		14		1		185		NaN		19 %very noisy
-%     '67'		1		0		1		NaN		0		26		0		112		NaN		6
-%     '68'		1		1		1		NaN		0		35		1		4154	NaN		12
-%     '69'		1		2		1		NaN		0		60		1		406		NaN		23 %noisy
-%     '71'		0		0		0		NaN		0		62		1		672		NaN		5
-%     '72'		NaN		1		1		1		0		67		0		1464	NaN		11
-%     '73'		1		1		1		NaN		1		32		0		657		NaN		15
-%     '74'		3		3		1		0		1		54		0		2122	NaN		17
-%     '75'		0		0		0		NaN		0		23		1		456		NaN		9
-%     '76'		1		1		1		NaN		0		42		0		220		NaN		8
-%     '77'		1		0		0		NaN		0		35		0		398		NaN		8
-%     '78'		NaN		2		NaN		NaN		0		63		0		168		NaN		15
-%     '79'		0		1		0		0		1		32		1		655		NaN		13
-%     '80'		1		1		1		NaN		0		72		1		3062	NaN		12
-%     '81'		1		1		1		NaN		1		24		1		528		NaN		13
-%     '82'		1		1		1		NaN		1		19		0		1304	NaN		9
-%     '83'		0		0		1		NaN		1		21		1		257		NaN		7
-%     '84'		NaN		1		1		NaN		1		30		1		402		NaN		9
-%     '85'		NaN		2		1		1		1		28		1		2423	NaN		21
-%     '86'		1		1		1		NaN		1		32		1		1009	NaN		8
-%     '87'		1		3		1		NaN		1		41		1		7387	NaN		20
-%     '88'		1		1		1		NaN		1		59		0		709		NaN		14
-%     '89'		0		0		0		NaN		0		51		0		347		NaN		7
-%     '90'		0		1		1		NaN		1		45		1		4778	NaN		11 %noisy
-%     '91'		1		1		1		0		1		25		1		1283	NaN		12
-%     '92'		0		1		1		NaN		0		21		1		508		NaN		7 %very noisy
-%     '93'		NaN		3		1		NaN		0		28		0		2130	NaN		NaN
-%     '94'		2		1		1		NaN		0		37		0		544		NaN		13
-%     '95'		0		1		1		NaN		0		45		1		138		NaN		11
-%     '96'		0		0		0		NaN		1		32		0		5378	NaN		9
-%     '97'		1		2		1		NaN		1		42		1		1186	NaN		21
-%     '98'		1		1		1		NaN		1		25		0		737		NaN		10 %very noisy
-%     '99'		1		1		1		NaN		1		59		1		1989	NaN		15
-%     '101'		0		1		1		NaN		0		24		0		333		NaN		11
-%     '102'		NaN		0		0		NaN		1		43		0		40		NaN		5
-%     '103'		0		0		NaN		NaN		0		56		1		170		NaN		7
-%     '104'		0		1		NaN		NaN		1		55		0		669		NaN		8
-%     '105'		1		1		1		0		0		39		1		252		NaN		18
-%     '106'		1		1		1		NaN		0		41		0		264		NaN		10
-%     '107'		1		1		1		NaN		0		54		0		252		NaN		16 %noisy
-%     '108'		1		1		1		NaN		0		54		1		387		NaN		12 %noisy
-%     '110'		0		1		1		NaN		1		38		1		541		NaN		16
-%     '111'		0		1		1		1		0		43		0		98		NaN		8
-%     '112'		0		1		1		0		1		22		1		423		NaN		12
-%     '113'		1		1		1		NaN		1		32		0		4681	NaN		16
-%     '114'		NaN		0		NaN		NaN		0		49		0		359		NaN		7
-%     '115'		3		2		1		NaN		0		33		0		308		NaN		22
+    '52'		1		2		1		NaN		1		57		1		1398	NaN		16 %noisy
+    '53'		0		1		1		NaN		1		19		1		426		NaN		11
+    '54'		3		3		1		NaN		0		52		1		143		NaN		NaN
+    '56'		1		1		1		NaN		1		18		0		118		NaN		13
+    '57'		1		1		1		NaN		1		39		0		1437	NaN		11
+    '58'		1		2		1		NaN		1		34		0		375		NaN		23
+    '59'		1		1		1		NaN		0		61		0		858		NaN		17
+    '60'		0		0		0		NaN		0		40		0		815		NaN		6 %noisy
+    '61'		0		2		1		NaN		1		37		1		6177	NaN		23 % very noisy
+    '62'		1		1		NaN		NaN		0		22		1		1211	NaN		10
+    '63'		NaN		2		1		NaN		1		32		1		845		NaN		23 %very noisy
+    '64'		NaN		2		0		NaN		0		37		1		263		NaN		23
+    '65'		NaN		2		NaN		NaN		0		14		1		185		NaN		19 %very noisy
+    '67'		1		0		1		NaN		0		26		0		112		NaN		6
+    '68'		1		1		1		NaN		0		35		1		4154	NaN		12
+    '69'		1		2		1		NaN		0		60		1		406		NaN		23 %noisy
+    '71'		0		0		0		NaN		0		62		1		672		NaN		5
+    '72'		NaN		1		1		1		0		67		0		1464	NaN		11
+    '73'		1		1		1		NaN		1		32		0		657		NaN		15
+    '74'		3		3		1		0		1		54		0		2122	NaN		17
+    '75'		0		0		0		NaN		0		23		1		456		NaN		9
+    '76'		1		1		1		NaN		0		42		0		220		NaN		8
+    '77'		1		0		0		NaN		0		35		0		398		NaN		8
+    '78'		NaN		2		NaN		NaN		0		63		0		168		NaN		15
+    '79'		0		1		0		0		1		32		1		655		NaN		13
+    '80'		1		1		1		NaN		0		72		1		3062	NaN		12
+    '81'		1		1		1		NaN		1		24		1		528		NaN		13
+    '82'		1		1		1		NaN		1		19		0		1304	NaN		9
+    '83'		0		0		1		NaN		1		21		1		257		NaN		7
+    '84'		NaN		1		1		NaN		1		30		1		402		NaN		9
+    '85'		NaN		2		1		1		1		28		1		2423	NaN		21
+    '86'		1		1		1		NaN		1		32		1		1009	NaN		8
+    '87'		1		3		1		NaN		1		41		1		7387	NaN		20
+    '88'		1		1		1		NaN		1		59		0		709		NaN		14
+    '89'		0		0		0		NaN		0		51		0		347		NaN		7
+    '90'		0		1		1		NaN		1		45		1		4778	NaN		11 %noisy
+    '91'		1		1		1		0		1		25		1		1283	NaN		12
+    '92'		0		1		1		NaN		0		21		1		508		NaN		7 %very noisy
+    '93'		NaN		3		1		NaN		0		28		0		2130	NaN		NaN
+    '94'		2		1		1		NaN		0		37		0		544		NaN		13
+    '95'		0		1		1		NaN		0		45		1		138		NaN		11
+    '96'		0		0		0		NaN		1		32		0		5378	NaN		9
+    '97'		1		2		1		NaN		1		42		1		1186	NaN		21
+    '98'		1		1		1		NaN		1		25		0		737		NaN		10 %very noisy
+    '99'		1		1		1		NaN		1		59		1		1989	NaN		15
+    '101'		0		1		1		NaN		0		24		0		333		NaN		11
+    '102'		NaN		0		0		NaN		1		43		0		40		NaN		5
+    '103'		0		0		NaN		NaN		0		56		1		170		NaN		7
+    '104'		0		1		NaN		NaN		1		55		0		669		NaN		8
+    '105'		1		1		1		0		0		39		1		252		NaN		18
+    '106'		1		1		1		NaN		0		41		0		264		NaN		10
+    '107'		1		1		1		NaN		0		54		0		252		NaN		16 %noisy
+    '108'		1		1		1		NaN		0		54		1		387		NaN		12 %noisy
+    '110'		0		1		1		NaN		1		38		1		541		NaN		16
+    '111'		0		1		1		1		0		43		0		98		NaN		8
+    '112'		0		1		1		0		1		22		1		423		NaN		12
+    '113'		1		1		1		NaN		1		32		0		4681	NaN		16
+    '114'		NaN		0		NaN		NaN		0		49		0		359		NaN		7
+    '115'		3		2		1		NaN		0		33		0		308		NaN		22
 
 % '22' %skipped - data error
 % '28' %noisy
