@@ -25,7 +25,6 @@ nedges = ((size(allcoh,3)*size(allcoh,4)) - size(allcoh,3)) / 2;
 
 allcorr = zeros(nperm+1,nedges);
 allp = zeros(nperm+1,nedges);
-% corrp = zeros(size(allcoh,3),size(allcoh,4));
 ind_upper = find(triu(ones(size(allcoh,3),size(allcoh,4)),1))';
 
 for n = 1:nperm+1

@@ -33,7 +33,7 @@ posp(allcorr < 0) = 1;
 stats.alpha = 0.05;
 stats.N = size(allcoh,3);
 stats.size = 'extent';
-stats.thresh = min(poscorr(1,posp(1,:)<0.05));
+stats.thresh = min(poscorr(1,posp(1,:)<stats.alpha));
 stats.test_stat = poscorr;
 
 [~,n_nets,netmask,netpval] = evalc('NBSstats(stats)');
@@ -45,19 +45,19 @@ meancorr = mean(corrmat(logical(netmask{1})));
 corrp = zeros(size(allcoh,3),size(allcoh,4));
 corrp(ind_upper) = posp(1,:);
 corrp = triu(corrp,1)+triu(corrp,1)';
-corrmat(corrp>=0.05) = 0;
+corrmat(corrp>=stats.alpha) = 0;
 
-% %% plot 3d graph
-% plotgraph3d(corrmat,sortedlocs,'sortedlocs.spl','plotqt',0);%,'vscale',[0 0.12]);
-%
-% set(gcf,'Name',sprintf('group %s: %s band',listname,bands{bandidx}));
-% camva(8);
-% camtarget([-9.7975  -28.8277   41.8981]);
-% campos([-1.7547    1.7161    1.4666]*1000);
-% camzoom(1.2);
-% set(gcf,'InvertHardCopy','off');
-% print(gcf,sprintf('figures/crscorr3d_%s_%s.tif',listname,bands{bandidx}),'-dtiff','-r200');
-% close(gcf);
+%% plot 3d graph
+plotgraph3d(corrmat,sortedlocs,'sortedlocs.spl','plotqt',0,'vscale',[0 0.12]);
+
+set(gcf,'Name',sprintf('group %s: %s band',listname,bands{bandidx}));
+camva(8);
+camtarget([-9.7975  -28.8277   41.8981]);
+campos([-1.7547    1.7161    1.4666]*1000);
+camzoom(1.2);
+set(gcf,'InvertHardCopy','off');
+print(gcf,sprintf('figures/crscorr3d_%s_%s.tif',listname,bands{bandidx}),'-dtiff','-r200');
+close(gcf);
 
 
 %% correlate with CRS-R
