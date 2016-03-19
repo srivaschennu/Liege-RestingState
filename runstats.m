@@ -14,29 +14,29 @@ bands = {
 for bandidx = 1:length(bands)
     [dataout(:,bandidx),grpout] = plotmeasure(listname,conntype,measure,bandidx,varargin{:});
 
-    [pvals(bandidx),~,stat] = ranksum(dataout(grpout == 0,bandidx),dataout(grpout == 1,bandidx));
-    n0 = sum(grpout == 0); n1 = sum(grpout == 1);
-    stat.U = (n0*n1)+(n0*(n0+1))/2-stat.ranksum;
-    stat.U = min(stat.U,(n0*n1) - stat.U);
-    stat.auc = stat.U/(n0*n1);
-    if stat.auc < 0.5
-        stat.auc = 1-stat.auc;
-    end
-    stats(bandidx) = stat;
+%     [pvals(bandidx),~,stat] = ranksum(dataout(grpout == 0,bandidx),dataout(grpout == 1,bandidx));
+%     n0 = sum(grpout == 0); n1 = sum(grpout == 1);
+%     stat.U = (n0*n1)+(n0*(n0+1))/2-stat.ranksum;
+%     stat.U = min(stat.U,(n0*n1) - stat.U);
+%     stat.auc = stat.U/(n0*n1);
+%     if stat.auc < 0.5
+%         stat.auc = 1-stat.auc;
+%     end
+%     stats(bandidx) = stat;
     
 %     [~,pvals(bandidx),~,stats(bandidx)] = ttest2(dataout(grpout == 0,bandidx),dataout(grpout == 1,bandidx),[],[],'unequal');
 end
 fprintf('\n');
 
 % corr_pvals = bonf_holm(pvals);
-[~,pval_mask] = fdr(pvals,0.05);
-corr_pvals = pvals;
-corr_pvals(~pval_mask) = 1;
+% [~,pval_mask] = fdr(pvals,0.05);
+% corr_pvals = pvals;
+% corr_pvals(~pval_mask) = 1;
 
-for bandidx = 1:length(bands)
+% for bandidx = 1:length(bands)
 %     fprintf('%s band: t(%.1f) = %5.2f, p = %.4f.\n',bands{bandidx},stats(bandidx).df,stats(bandidx).tstat,corr_pvals(bandidx));
-    fprintf('%s band: AUC = %.2f, U = %d, p = %.4f.\n',bands{bandidx},stats(bandidx).auc,stats(bandidx).U,corr_pvals(bandidx));
-end
+%     fprintf('%s band: AUC = %.2f, U = %d, p = %.4f.\n',bands{bandidx},stats(bandidx).auc,stats(bandidx).U,corr_pvals(bandidx));
+% end
 
 % nonnanidx = ~isnan(grpout);
 % grouplist = cell(size(grpout));
