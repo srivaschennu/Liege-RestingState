@@ -14,7 +14,7 @@ param = finputcheck(varargin, {
 load sortedlocs
 chandist = chandist / max(chandist(:));
 
-tvals = 0.5:-0.025:0.1;
+tvals = 1:-0.025:0.1;
 
 if strcmp(param.randomise,'on')
     savename = sprintf('%s/%s/%s%srandgraph.mat',filepath,conntype,basename,conntype);

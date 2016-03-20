@@ -30,6 +30,7 @@ for s = 1:size(subjlist,1)
         freqbins = specinfo.freqs;
         spectra = zeros(size(subjlist,1),length(chanlocs),length(specinfo.freqs));
         bandpower = zeros(size(subjlist,1),size(matrix,1),length(chanlocs));
+        specent = zeros(size(subjlist,1),length(chanlocs));
         bandpeak = zeros(size(subjlist,1),size(matrix,1));
         allcoh = zeros(length(subjlist),size(matrix,1),length(chanlocs),length(chanlocs));
 %         allbootcoh = zeros(length(subjlist),size(matrix,1),length(chanlocs),length(chanlocs));
@@ -62,7 +63,8 @@ for s = 1:size(subjlist,1)
     
     for c = 1:size(bandpower,3)
         bandpower(s,:,c) = bandpower(s,:,c)./sum(bandpower(s,:,c));
+        specent(s,c) = -sum(bandpower(s,:,c) .* log(bandpower(s,:,c)));
     end
     grp(s,1) = subjlist{s,3};
 end
-save(sprintf('%s/%s/alldata_%s_%s.mat',filepath,conntype,listname,conntype), 'grp', 'spectra', 'freqbins', 'bandpower', 'bandpeak', 'allcoh', 'subjlist'); %'allbootcoh',
+save(sprintf('%s/%s/alldata_%s_%s.mat',filepath,conntype,listname,conntype), 'grp', 'spectra', 'freqbins', 'bandpower', 'specent', 'bandpeak', 'allcoh', 'subjlist'); %'allbootcoh',
