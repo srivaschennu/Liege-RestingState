@@ -76,7 +76,7 @@ elseif strcmpi(measure,'mean')
 elseif strcmpi(measure,'refdiag')
     testdata = refdiag;
 else
-    trange = [0.5 0.1];
+    trange = [0.8 0.1];
     load(sprintf('%s%s//graphdata_%s_%s.mat',filepath,conntype,listname,conntype),'graph','tvals');
     trange = (tvals <= trange(1) & tvals >= trange(2));
     plottvals = tvals(trange);
@@ -125,7 +125,7 @@ groups = unique(groupvar(~isnan(groupvar)));
 if strcmp(param.noplot,'off')
     for g = 1:length(groups)
         plotdata = testdata(groupvar == groups(g),:);
-        plotdata(isinf(plotdata)) = NaN;
+%         plotdata(isinf(plotdata)) = NaN;
         groupmean(g,:) = nanmean(plotdata);
         groupste(g,:) = nanstd(plotdata)/sqrt(length(plotdata));
     end
@@ -167,9 +167,10 @@ for g = 1:size(grouppairs,1)
     petconfmat = petconfmat*100 ./ repmat(sum(petconfmat,2),1,2);
 
     if strcmp(param.noplot,'off')
-        fprintf('PET: %s vs %s AUC = %.2f, J = %.2f.\n',...
+        fprintf('PET: %s vs %s AUC = %.2f, J = %.2f, accu = %d%%.\n',...
             param.groupnames{grouppairs(g,1)+1},param.groupnames{grouppairs(g,2)+1},...
-            petauc(g),(petconfmat(2,2) + petconfmat(1,1))/100 - 1);
+            petauc(g),(petconfmat(2,2) + petconfmat(1,1))/100 - 1,...
+            round(sum(thisgroupvar(~isnan(thispetdiag))==thispetdiag(~isnan(thispetdiag)))*100/length(thisgroupvar(~isnan(thispetdiag)))));
     end
     
     if strcmp(param.noplot,'off')
@@ -216,8 +217,9 @@ end
 if strcmp(param.noplot,'off')
     clear plotdata
     for g = 1:length(groups)
-        data2plot = testdata(groupvar == groups(g),:);
-        plotdata{g} = mean(data2plot(isfinite(data2plot)),2);
+%         data2plot = testdata(groupvar == groups(g),:);
+        plotdata{g} = mean(testdata(groupvar == groups(g),:),2);
+%         plotdata{g} = mean(data2plot(isfinite(data2plot)),2);
     end
     
     %% plot mean graph
@@ -277,7 +279,7 @@ if strcmp(param.noplot,'off')
         end
         xlabel('AUC','FontName',fontname,'FontSize',fontsize);
         xlimits = xlim;
-        set(gca,'XTick',xlimits(1):0.05:xlimits(2),'YDir','reverse');
+        set(gca,'XTick',xlimits(1):0.1:xlimits(2),'YDir','reverse');
     end
     set(gca,'FontName',fontname,'FontSize',fontsize);
     

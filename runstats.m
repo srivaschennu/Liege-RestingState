@@ -1,32 +1,73 @@
-function runstats(listname,conntype,measure,varargin)
+function runstats(listname,varargin)
+
+
+param = finputcheck(varargin, {
+    'group', 'string', [], 'crsdiag'; ...
+    'groupnames', 'cell', {}, {'UWS','MCS','EMCS','LIS'}; ...
+    'xlabel', 'string', [], 'EEG diagnosis'; ...
+    'ylabel', 'string', [], 'CRS-R diagnosis'; ...
+    'alpha', 'real', [], 0.05; ...
+    });
 
 loadsubj
-subjlist = eval(listname);
 
 bands = {
     'delta'
     'theta'
     'alpha'
-%     'beta'
-%     'gamma'
     };
 
-for bandidx = 1:length(bands)
-    [dataout(:,bandidx),grpout] = plotmeasure(listname,conntype,measure,bandidx,varargin{:});
+featlist = {
+    'ftdwpli','power',1
+    'ftdwpli','power',2
+    'ftdwpli','power',3
+    'ftdwpli','median',1
+    'ftdwpli','median',2
+    'ftdwpli','median',3
+    'ftdwpli','clustering',1
+    'ftdwpli','clustering',2
+    'ftdwpli','clustering',3
+    'ftdwpli','characteristic path length',1
+    'ftdwpli','characteristic path length',2
+    'ftdwpli','characteristic path length',3
+    'ftdwpli','modularity',1
+    'ftdwpli','modularity',2
+    'ftdwpli','modularity',3
+    'ftdwpli','participation coefficient',1
+    'ftdwpli','participation coefficient',2
+    'ftdwpli','participation coefficient',3
+    'ftdwpli','centrality',1
+    'ftdwpli','centrality',2
+    'ftdwpli','centrality',3
+    'ftdwpli','modular span',1
+    'ftdwpli','modular span',2
+    'ftdwpli','modular span',3
+    };
 
-%     [pvals(bandidx),~,stat] = ranksum(dataout(grpout == 0,bandidx),dataout(grpout == 1,bandidx));
-%     n0 = sum(grpout == 0); n1 = sum(grpout == 1);
-%     stat.U = (n0*n1)+(n0*(n0+1))/2-stat.ranksum;
-%     stat.U = min(stat.U,(n0*n1) - stat.U);
-%     stat.auc = stat.U/(n0*n1);
-%     if stat.auc < 0.5
-%         stat.auc = 1-stat.auc;
-%     end
-%     stats(bandidx) = stat;
-    
-%     [~,pvals(bandidx),~,stats(bandidx)] = ttest2(dataout(grpout == 0,bandidx),dataout(grpout == 1,bandidx),[],[],'unequal');
+features = [];
+allpvec = [];
+featnames = cell(1,size(featlist,1));
+for f = 1:size(featlist,1)
+    [allfeat{f},groupvar,allauc{f},~,allpval{f}] = plotmeasure(listname,featlist{f,:},'noplot','on',varargin{:});
+    p_thresh = fdr(allpval{f}(:),param.alpha);
+    allpval{f}(allpval{f}>p_thresh) = 1;
 end
+
+groups = unique(groupvar(~isnan(groupvar)));
+grouppairs = nchoosek(groups,2);
+
 fprintf('\n');
+
+for f = 1:size(featlist,1)
+    for g = 1:size(grouppairs,1)
+        [~,maxaucidx] = max(allauc{f}(g,:));
+        if allpval{f}(g,maxaucidx) < param.alpha
+            fprintf('%s band %s: %s vs %s AUC = %.2f, p = %.4f.\n', featlist{f,2},bands{featlist{f,3}},...
+                param.groupnames{grouppairs(g,1)+1},param.groupnames{grouppairs(g,2)+1},...
+                allauc{f}(g,maxaucidx),allpval{f}(g,maxaucidx));
+        end
+    end
+end
 
 % corr_pvals = bonf_holm(pvals);
 % [~,pval_mask] = fdr(pvals,0.05);
