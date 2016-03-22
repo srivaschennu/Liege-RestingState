@@ -53,9 +53,8 @@ grouppairs = nchoosek(groups,2);
 fontname = 'Helvetica';
 fontsize = 24;
 
-clsyfyrparams = {'KFold',4,'Standardize',true,'KernelFunction','RBF'};
+clsyfyrparams = {'KFold',4,'Standardize',true,'KernelFunction','RBF','KernelScale','auto'};
 Cvals = 10.^(-5:5);
-Kvals = unique(sort(cat(2,5.^(-5:5),2.^(-5:5))));
 
 for g = 1:size(grouppairs,1)
     thisfeat = features(groupvar == grouppairs(g,1) | groupvar == grouppairs(g,2),:);
@@ -64,32 +63,28 @@ for g = 1:size(grouppairs,1)
     thisgroupvar = thisgroupvar-1;
     
     for c = 1:length(Cvals)
-        for k = 1:length(Kvals)
-            rng('default');
-            svmmodel = fitcsvm(thisfeat,thisgroupvar,clsyfyrparams{:},'BoxConstraint',Cvals(c),'KernelScale',Kvals(k));
-            
-            [~,postProb] = kfoldPredict(fitSVMPosterior(svmmodel));
-            [x,y,t] = perfcurve(thisgroupvar,postProb(:,2),1);
-            [~,bestthresh] = max(y + (1-x) - 1);
-            predLabels = double(postProb(:,2) > t(bestthresh));
-            [~,chi2(c,k)] = crosstab(thisgroupvar,predLabels);
-        end
+        rng('default');
+        svmmodel = fitcsvm(thisfeat,thisgroupvar,clsyfyrparams{:},'BoxConstraint',Cvals(c));
+        
+        [~,postProb] = kfoldPredict(fitSVMPosterior(svmmodel));
+        [x,y,t,~] = perfcurve(thisgroupvar,postProb(:,2),1);
+        [~,bestthresh] = max(y + (1-x) - 1);
+        predLabels = double(postProb(:,2) > t(bestthresh));
+        [~,chi2(c)] = crosstab(thisgroupvar,predLabels);
     end
     
     [~,maxidx] = max(chi2(:));
-    [bestC,bestK] = ind2sub(size(chi2),maxidx);
-    
     rng('default');
-    svmmodel = fitcsvm(thisfeat,thisgroupvar,clsyfyrparams{:},'BoxConstraint',Cvals(bestC),'KernelScale',Kvals(bestK));
+    svmmodel = fitcsvm(thisfeat,thisgroupvar,clsyfyrparams{:},'BoxConstraint',Cvals(maxidx));
     [~,postProb] = kfoldPredict(fitSVMPosterior(svmmodel));
-    [x,y,t,clsAUC] = perfcurve(thisgroupvar,postProb(:,2),1);
+    [x,y,t,~] = perfcurve(thisgroupvar,postProb(:,2),1);
     [~,bestthresh] = min(sqrt((0-x).^2 + (1-y).^2));
     predLabels = double(postProb(:,2) > t(bestthresh));
     [~,chi2,chi2_p] = crosstab(thisgroupvar,predLabels);
     
-    fprintf('%s vs %s: Chi2 = %.2f, AUC = %.2f, p = %.5f, accu = %d%%.\n',...
+    fprintf('%s vs %s: Chi2 = %.2f, p = %.5f, accu = %d%%.\n',...
         param.groupnames{grouppairs(g,1)+1},param.groupnames{grouppairs(g,2)+1},...
-        chi2,clsAUC,chi2_p,round(sum(thisgroupvar==predLabels)*100/length(thisgroupvar)));
+        chi2,chi2_p,round(sum(thisgroupvar==predLabels)*100/length(thisgroupvar)));
     
     %     %% plot confusion matrix
     %     confmat = confusionmat(thisgroupvar,predLabels);
