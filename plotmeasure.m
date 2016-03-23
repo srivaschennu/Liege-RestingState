@@ -125,7 +125,6 @@ groups = unique(groupvar(~isnan(groupvar)));
 if strcmp(param.noplot,'off')
     for g = 1:length(groups)
         plotdata = testdata(groupvar == groups(g),:);
-%         plotdata(isinf(plotdata)) = NaN;
         groupmean(g,:) = nanmean(plotdata);
         groupste(g,:) = nanstd(plotdata)/sqrt(length(plotdata));
     end
@@ -146,7 +145,7 @@ if strcmp(param.noplot,'off')
             set(gca,'YLim',param.ylim);
         end
         legend(groupnames,'Location',param.legendlocation);
-        export_fig(gcf,sprintf('figures/%s_%s_%s_%s.eps',conntype,measure,bands{bandidx},param.group));
+        export_fig(gcf,sprintf('figures/%s_%s_%s_%s.eps',conntype,measure,bands{bandidx},param.group),'-r200');
         close(gcf);
     end
 end
@@ -173,15 +172,15 @@ for g = 1:size(grouppairs,1)
             round(sum(thisgroupvar(~isnan(thispetdiag))==thispetdiag(~isnan(thispetdiag)))*100/length(thisgroupvar(~isnan(thispetdiag)))));
     end
     
-    if strcmp(param.noplot,'off')
-        %% plot confusion matrix
-        plotconfusion(petconfmat,{param.groupnames{grouppairs(g,1)+1},param.groupnames{grouppairs(g,2)+1}});
-        set(gca,'FontName',fontname,'FontSize',fontsize);
-        xlabel('PET diagnosis','FontName',fontname,'FontSize',fontsize);
-        ylabel('CRS-R diagnosis','FontName',fontname,'FontSize',fontsize);
-        export_fig(gcf,sprintf('figures/%s_vs_%s_pet_cm.tiff',param.groupnames{grouppairs(g,1)+1},param.groupnames{grouppairs(g,2)+1}));
-        close(gcf);
-    end
+%     if strcmp(param.noplot,'off')
+%         %% plot confusion matrix
+%         plotconfusion(petconfmat,{param.groupnames{grouppairs(g,1)+1},param.groupnames{grouppairs(g,2)+1}});
+%         set(gca,'FontName',fontname,'FontSize',fontsize);
+%         xlabel('PET diagnosis','FontName',fontname,'FontSize',fontsize);
+%         ylabel('CRS-R diagnosis','FontName',fontname,'FontSize',fontsize);
+%         export_fig(gcf,sprintf('figures/%s_vs_%s_pet_cm.tiff',param.groupnames{grouppairs(g,1)+1},param.groupnames{grouppairs(g,2)+1}));
+%         close(gcf);
+%     end
     
     for d = 1:size(thistestdata,2)
         [x,y,t,auc(g,d)] = perfcurve(thisgroupvar, thistestdata(:,d),1);
@@ -201,14 +200,12 @@ for g = 1:size(grouppairs,1)
         fprintf('%s: %s vs %s AUC = %.2f, J = %.2f, p = %.4f.\n',measure,...
             param.groupnames{grouppairs(g,1)+1},param.groupnames{grouppairs(g,2)+1},...
             auc(g,maxaucidx),(thisconfmat(2,2) + thisconfmat(1,1))/100 - 1, pval(g,maxaucidx));
-        if strcmp(param.noplot,'off')
-            plotconfusion(squeeze(confmat(g,maxaucidx,:,:)),{param.groupnames{grouppairs(g,1)+1},param.groupnames{grouppairs(g,2)+1}});
-            set(gca,'FontName',fontname,'FontSize',fontsize);
-            xlabel('EEG diagnosis','FontName',fontname,'FontSize',fontsize);
-            ylabel('CRS-R diagnosis','FontName',fontname,'FontSize',fontsize);
-            export_fig(gcf,sprintf('figures/%s_vs_%s_%s_cm.tiff',param.groupnames{grouppairs(g,1)+1},param.groupnames{grouppairs(g,2)+1},measure));
-            close(gcf);
-        end
+%         plotconfusion(squeeze(confmat(g,maxaucidx,:,:)),{param.groupnames{grouppairs(g,1)+1},param.groupnames{grouppairs(g,2)+1}});
+%         set(gca,'FontName',fontname,'FontSize',fontsize);
+%         xlabel('EEG diagnosis','FontName',fontname,'FontSize',fontsize);
+%         ylabel('CRS-R diagnosis','FontName',fontname,'FontSize',fontsize);
+%         export_fig(gcf,sprintf('figures/%s_vs_%s_%s_cm.tiff',param.groupnames{grouppairs(g,1)+1},param.groupnames{grouppairs(g,2)+1},measure));
+%         close(gcf);
     end
 end
 
@@ -217,9 +214,7 @@ end
 if strcmp(param.noplot,'off')
     clear plotdata
     for g = 1:length(groups)
-%         data2plot = testdata(groupvar == groups(g),:);
         plotdata{g} = mean(testdata(groupvar == groups(g),:),2);
-%         plotdata{g} = mean(data2plot(isfinite(data2plot)),2);
     end
     
     %% plot mean graph
@@ -248,7 +243,7 @@ if strcmp(param.noplot,'off')
         legend('hide');
     end
     box off
-    export_fig(gcf,sprintf('figures/%s_avg_%s_%s_%s.eps',conntype,measure,bands{bandidx},param.group));
+    export_fig(gcf,sprintf('figures/%s_avg_%s_%s_%s.tiff',conntype,measure,bands{bandidx},param.group),'-r200');
     close(gcf);
     
     %% plot auc
@@ -283,7 +278,7 @@ if strcmp(param.noplot,'off')
     end
     set(gca,'FontName',fontname,'FontSize',fontsize);
     
-    export_fig(gcf,sprintf('figures/%s_auc_%s_%s_%s.eps',conntype,measure,bands{bandidx},param.group));
+    export_fig(gcf,sprintf('figures/%s_auc_%s_%s_%s.tiff',conntype,measure,bands{bandidx},param.group),'-r200');
     close(gcf);
     
 end

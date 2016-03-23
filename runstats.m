@@ -36,9 +36,6 @@ featlist = {
     'ftdwpli','participation coefficient',1
     'ftdwpli','participation coefficient',2
     'ftdwpli','participation coefficient',3
-    'ftdwpli','centrality',1
-    'ftdwpli','centrality',2
-    'ftdwpli','centrality',3
     'ftdwpli','modular span',1
     'ftdwpli','modular span',2
     'ftdwpli','modular span',3
