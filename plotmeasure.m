@@ -1,10 +1,11 @@
-function [scores,group,auc,stats,pval,confmat,petconfmat] = plotmeasure(listname,conntype,measure,bandidx,varargin)
+function [scores,group,stats,pet] = plotmeasure(listname,conntype,measure,bandidx,varargin)
 
 param = finputcheck(varargin, {
     'group', 'string', [], 'crsdiag'; ...
     'groupnames', 'cell', {}, {'UWS','MCS','EMCS','LIS'}; ...
     'changroup', 'string', [], 'all'; ...
     'changroup2', 'string', [], 'all'; ...
+    'xlabel', 'string', [], measure; ...
     'ylabel', 'string', [], measure; ...
     'xlim', 'real', [], []; ...
     'ylim', 'real', [], []; ...
@@ -16,7 +17,7 @@ param = finputcheck(varargin, {
     });
 
 fontname = 'Helvetica';
-fontsize = 18;
+fontsize = 24;
 
 loadpaths
 loadsubj
@@ -60,13 +61,13 @@ groupnames = param.groupnames;
 weiorbin = 3;
 
 if strcmpi(measure,'power')
-%     load(sprintf('%s/%s/alldata_%s_%s.mat',filepath,conntype,listname,conntype));
+    %     load(sprintf('%s/%s/alldata_%s_%s.mat',filepath,conntype,listname,conntype));
     load(sprintf('%s/%s/alldata_%s_%s.mat',filepath,conntype,listname,conntype),'bandpower');
     testdata = mean(bandpower(:,bandidx,ismember({sortedlocs.labels},eval(param.changroup))),3) * 100;
 elseif strcmpi(measure,'specent')
-%     load(sprintf('%s/%s/alldata_%s_%s.mat',filepath,conntype,listname,conntype));
+    %     load(sprintf('%s/%s/alldata_%s_%s.mat',filepath,conntype,listname,conntype));
     load(sprintf('%s/%s/alldata_%s_%s.mat',filepath,conntype,listname,conntype),'specent');
-    testdata = mean(specent(:,ismember({sortedlocs.labels},eval(param.changroup))),2);    
+    testdata = mean(specent(:,ismember({sortedlocs.labels},eval(param.changroup))),2);
 elseif strcmpi(measure,'median')
     load(sprintf('%s/%s/alldata_%s_%s.mat',filepath,conntype,listname,conntype),'allcoh');
     testdata = median(median(allcoh(:,bandidx,ismember({sortedlocs.labels},eval(param.changroup)),ismember({sortedlocs.labels},eval(param.changroup2))),4),3);
@@ -161,51 +162,55 @@ for g = 1:size(grouppairs,1)
     thispetdiag = petdiag(groupvar == grouppairs(g,1) | groupvar == grouppairs(g,2));
     thistestdata = testdata(groupvar == grouppairs(g,1) | groupvar == grouppairs(g,2),:);
     
-    [~,~,~,petauc(g)] = perfcurve(thisgroupvar(~isnan(thispetdiag)),thispetdiag(~isnan(thispetdiag)),1);
-    petconfmat = confusionmat(thisgroupvar(~isnan(thispetdiag)),thispetdiag(~isnan(thispetdiag)));
-    petconfmat = petconfmat*100 ./ repmat(sum(petconfmat,2),1,2);
-
-    if strcmp(param.noplot,'off')
-        fprintf('PET: %s vs %s AUC = %.2f, J = %.2f, accu = %d%%.\n',...
-            param.groupnames{grouppairs(g,1)+1},param.groupnames{grouppairs(g,2)+1},...
-            petauc(g),(petconfmat(2,2) + petconfmat(1,1))/100 - 1,...
-            round(sum(thisgroupvar(~isnan(thispetdiag))==thispetdiag(~isnan(thispetdiag)))*100/length(thisgroupvar(~isnan(thispetdiag)))));
-    end
+    pet(g).confmat = confusionmat(thisgroupvar(~isnan(thispetdiag)),thispetdiag(~isnan(thispetdiag)));
+    pet(g).confmat = pet(g).confmat*100 ./ repmat(sum(pet(g).confmat,2),1,2);
+    [~,pet(g).chi2,pet(g).chi2pval] = crosstab(thisgroupvar(~isnan(thispetdiag)),thispetdiag(~isnan(thispetdiag)));
     
-%     if strcmp(param.noplot,'off')
-%         %% plot confusion matrix
-%         plotconfusion(petconfmat,{param.groupnames{grouppairs(g,1)+1},param.groupnames{grouppairs(g,2)+1}});
-%         set(gca,'FontName',fontname,'FontSize',fontsize);
-%         xlabel('PET diagnosis','FontName',fontname,'FontSize',fontsize);
-%         ylabel('CRS-R diagnosis','FontName',fontname,'FontSize',fontsize);
-%         export_fig(gcf,sprintf('figures/%s_vs_%s_pet_cm.tiff',param.groupnames{grouppairs(g,1)+1},param.groupnames{grouppairs(g,2)+1}));
-%         close(gcf);
-%     end
+    if strcmp(param.noplot,'off')
+        fprintf('\nPET: %s vs %s Chi2 = %.2f, Chi2 p = %.4f, accu = %d%%.\n',...
+            param.groupnames{grouppairs(g,1)+1},param.groupnames{grouppairs(g,2)+1},...
+            pet(g).chi2,pet(g).chi2pval,...
+            round(sum(thisgroupvar(~isnan(thispetdiag))==thispetdiag(~isnan(thispetdiag)))*100/length(thisgroupvar(~isnan(thispetdiag)))));
+        
+                %% plot confusion matrix
+                plotconfusion(pet(g).confmat,{param.groupnames{grouppairs(g,1)+1},param.groupnames{grouppairs(g,2)+1}});
+                set(gca,'FontName',fontname,'FontSize',fontsize);
+                xlabel(param.xlabel,'FontName',fontname,'FontSize',fontsize);
+                ylabel(param.ylabel,'FontName',fontname,'FontSize',fontsize);
+                export_fig(gcf,sprintf('figures/PET_%s_vs_%s_cm.tiff',param.groupnames{grouppairs(g,1)+1},param.groupnames{grouppairs(g,2)+1}));
+                close(gcf);
+    end
     
     for d = 1:size(thistestdata,2)
         [x,y,t,auc(g,d)] = perfcurve(thisgroupvar, thistestdata(:,d),1);
-        [~,bestthresh] = max(y + (1-x) - 1);
+        [~,bestthresh] = max(abs(y + (1-x) - 1));
         %         [~,bestthresh] = min(sqrt((0-x).^2 + (1-y).^2));
         thisconfmat = confusionmat(thisgroupvar,double(thistestdata(:,d) > t(bestthresh)));
         thisconfmat = thisconfmat*100 ./ repmat(sum(thisconfmat,2),1,2);
         confmat(g,d,:,:) = thisconfmat;
         [pval(g,d),~,stat] = ranksum(thistestdata(thisgroupvar == 0,d),thistestdata(thisgroupvar == 1,d));
         n0 = sum(thisgroupvar == 0); n1 = sum(thisgroupvar == 1);
-        stats(g,d) = (n0*n1)+(n0*(n0+1))/2-stat.ranksum;
-        stats(g,d) = min(stats(g,d),(n0*n1) - stats(g,d));
+        U(g,d) = (n0*n1)+(n0*(n0+1))/2-stat.ranksum;
+        U(g,d) = min(U(g,d),(n0*n1) - U(g,d));
     end
     
+    [~,maxaucidx] = max(auc(g,:));
+    stats(g).U = U(g,maxaucidx);
+    stats(g).auc = auc(g,maxaucidx);
+    stats(g).pval = pval(g,maxaucidx);
+    stats(g).confmat = squeeze(confmat(g,maxaucidx,:,:));
+    stats(g).maxaucidx = maxaucidx;
+    
     if strcmp(param.noplot,'off')
-        [~,maxaucidx] = max(auc(g,:));
-        fprintf('%s: %s vs %s AUC = %.2f, J = %.2f, p = %.4f.\n',measure,...
+        fprintf('%s %s: %s vs %s AUC = %.2f, J = %.2f, p = %.4f.\n',measure,bands{bandidx},...
             param.groupnames{grouppairs(g,1)+1},param.groupnames{grouppairs(g,2)+1},...
             auc(g,maxaucidx),(thisconfmat(2,2) + thisconfmat(1,1))/100 - 1, pval(g,maxaucidx));
-%         plotconfusion(squeeze(confmat(g,maxaucidx,:,:)),{param.groupnames{grouppairs(g,1)+1},param.groupnames{grouppairs(g,2)+1}});
-%         set(gca,'FontName',fontname,'FontSize',fontsize);
-%         xlabel('EEG diagnosis','FontName',fontname,'FontSize',fontsize);
-%         ylabel('CRS-R diagnosis','FontName',fontname,'FontSize',fontsize);
-%         export_fig(gcf,sprintf('figures/%s_vs_%s_%s_cm.tiff',param.groupnames{grouppairs(g,1)+1},param.groupnames{grouppairs(g,2)+1},measure));
-%         close(gcf);
+        %         plotconfusion(squeeze(confmat(g,maxaucidx,:,:)),{param.groupnames{grouppairs(g,1)+1},param.groupnames{grouppairs(g,2)+1}});
+        %         set(gca,'FontName',fontname,'FontSize',fontsize);
+        %         xlabel('EEG diagnosis','FontName',fontname,'FontSize',fontsize);
+        %         ylabel('CRS-R diagnosis','FontName',fontname,'FontSize',fontsize);
+        %         export_fig(gcf,sprintf('figures/%s_vs_%s_%s_cm.tiff',param.groupnames{grouppairs(g,1)+1},param.groupnames{grouppairs(g,2)+1},measure));
+        %         close(gcf);
     end
 end
 
@@ -282,8 +287,6 @@ if strcmp(param.noplot,'off')
     close(gcf);
     
 end
-
-
 
 % %% correlate with days since onset
 % [rho,pval] = corr(testdata(~isnan(daysonset)),daysonset(~isnan(daysonset)),'type','Spearman');

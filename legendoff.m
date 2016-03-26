@@ -1,4 +1,4 @@
-function legendoff(h)
+function h = legendoff(h)
 
 hAnnotation = get(h,'Annotation');
 hLegendEntry = get(hAnnotation','LegendInformation');

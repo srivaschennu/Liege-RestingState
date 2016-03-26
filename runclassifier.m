@@ -2,12 +2,10 @@ function runclassifier(listname,varargin)
 
 param = finputcheck(varargin, {
     'group', 'string', [], 'crsdiag'; ...
-    'groupnames', 'cell', {}, {'UWS','MCS','EMCS','LIS'}; ...
-    'xlabel', 'string', [], 'EEG diagnosis'; ...
-    'ylabel', 'string', [], 'CRS-R diagnosis'; ...
-    'clsyfyr', 'struct', [], []; ...
-    'alpha', 'real', [], 0.05; ...
+    'groupnames', 'cell', {}, {'UWS','MCS','EMCS'}; ...
+    'keepfeat', 'real', [], 3; ...
     });
+
 loadsubj
 
 bands = {
@@ -15,9 +13,6 @@ bands = {
     'theta'
     'alpha'
     };
-
-fontname = 'Helvetica';
-fontsize = 24;
 
 featlist = {
     'ftdwpli','power',1
@@ -43,24 +38,28 @@ featlist = {
     'ftdwpli','modular span',3
     };
 
-if ~isempty(param.clsyfyr)
-    keepprop = 0.25;
-    varargin = varargin(setdiff(1:length(varargin),[find(strcmp('clsyfyr',varargin)) find(strcmp('clsyfyr',varargin))+1]));
-    selfeat = cell(1,size(param.clsyfyr,2));
+if param.keepfeat > 1
+    varargin = varargin(setdiff(1:length(varargin),[find(strcmp('combine',varargin)) find(strcmp('combine',varargin))+1]));
+    
+    load(sprintf('stats_%s.mat',param.group));
 
-    for g = 1:size(param.clsyfyr,2)
-        [sortedauc,sortidx] = sort(cell2mat({param.clsyfyr(:,g).auc}),'descend');
-        selfeatidx = sortidx(1:round(keepprop*length(sortedauc)));
+    selfeat = cell(1,size(clsyfyrs,2));
+
+    for g = 1:size(clsyfyrs,2)
+        [~,sortidx] = sort(cell2mat({clsyfyrs(:,g).auc}),'descend');
+        selfeatidx = sortidx(1:param.keepfeat);
 
         features = [];
         for f = selfeatidx
-                [thisfeat,groupvar] = plotmeasure(listname,featlist{f,:},'noplot','on',varargin{:});
+                [thisfeat,groupvar] = plotmeasure(listname,featlist{f,1:3},'noplot','on',varargin{:});
                 features = cat(2,features,thisfeat);
-                selfeat{g} = cat(1,selfeat{g},featlist(f,:));
+                selfeat{g} = cat(1,selfeat{g},featlist(f,1:3));
         end
+        fprintf('Combining the following features...\n');
         selfeat{g}
         
         groups = unique(groupvar(~isnan(groupvar)));
+        groups = groups(groups < 3);
         grouppairs = nchoosek(groups,2);
         
         features = features(groupvar == grouppairs(g,1) | groupvar == grouppairs(g,2),:);
@@ -73,18 +72,6 @@ if ~isempty(param.clsyfyr)
         fprintf('%s vs %s: AUC = %.2f, p = %.5f, Chi2 = %.2f, Chi2 p = %.4f, accu = %d%%.\n',...
             param.groupnames{grouppairs(g,1)+1},param.groupnames{grouppairs(g,2)+1},...
             clsyfyr(g).auc,clsyfyr(g).pval,clsyfyr(g).chi2,clsyfyr(g).chi2pval,clsyfyr(g).accu);
-        
-        %% plot confusion matrix
-        confmat = confusionmat(groupvar,clsyfyr(g).predLabels);
-        confmat = confmat*100 ./ repmat(sum(confmat,2),1,2);
-        
-        plotconfusion(confmat,{param.groupnames{grouppairs(g,1)+1},param.groupnames{grouppairs(g,2)+1}});
-        set(gca,'FontName',fontname,'FontSize',fontsize);
-        xlabel('EEG diagnosis','FontName',fontname,'FontSize',fontsize);
-        ylabel('CRS-R diagnosis','FontName',fontname,'FontSize',fontsize);
-        
-        export_fig(gcf,sprintf('figures/clsyfyr_%s_vs_%s_cm.tiff',param.groupnames{grouppairs(g,1)+1},param.groupnames{grouppairs(g,2)+1}));
-        close(gcf);
     end
 
     save(sprintf('combclsyfyr_%s.mat',param.group),'selfeat','clsyfyr');
@@ -94,6 +81,7 @@ else
         [features,groupvar] = plotmeasure(listname,featlist{f,:},'noplot','on',varargin{:});
         
         groups = unique(groupvar(~isnan(groupvar)));
+        groups = groups(groups < 3);
         grouppairs = nchoosek(groups,2);
         
         for g = 1:size(grouppairs,1)
@@ -102,58 +90,72 @@ else
             [~,~,thisgroupvar] = unique(thisgroupvar);
             thisgroupvar = thisgroupvar-1;
             
-            clsyfyr(f,g) = buildclassifier(thisfeat,thisgroupvar);
+            clsyfyr(g) = buildclassifier(thisfeat,thisgroupvar,'runpca','false');
             
             fprintf('%s %s - %s vs %s: AUC = %.2f, p = %.5f, Chi2 = %.2f, Chi2 p = %.4f, accu = %d%%.\n',...
                 featlist{f,2},bands{featlist{f,3}},param.groupnames{grouppairs(g,1)+1},param.groupnames{grouppairs(g,2)+1},...
-                clsyfyr(f,g).auc,clsyfyr(f,g).pval,clsyfyr(f,g).chi2,clsyfyr(f,g).chi2pval,clsyfyr(f,g).accu);
-            
-            %     %% plot confusion matrix
-            %     confmat = confusionmat(thisgroupvar,predLabels);
-            %     confmat = confmat*100 ./ repmat(sum(confmat,2),1,2);
-            %
-            %     plotconfusion(confmat,{param.groupnames{grouppairs(g,1)+1},param.groupnames{grouppairs(g,2)+1}});
-            %     set(gca,'FontName',fontname,'FontSize',fontsize);
-            %     xlabel('EEG diagnosis','FontName',fontname,'FontSize',fontsize);
-            %     ylabel('CRS-R diagnosis','FontName',fontname,'FontSize',fontsize);
-            %
-            %     export_fig(gcf,sprintf('figures/clsyfyr_%s_vs_%s_cm.tiff',param.groupnames{grouppairs(g,1)+1},param.groupnames{grouppairs(g,2)+1}));
-            %     close(gcf);
+                clsyfyr(g).auc,clsyfyr(g).pval,clsyfyr(g).chi2,clsyfyr(g).chi2pval,clsyfyr(g).accu);
         end
+        featspec = featlist(f,:);
+        save(sprintf('clsyfyrs/clsyfyr_%s_%s_%s_%s.mat',featspec{1},featspec{2},bands{featspec{3}},param.group),...
+            'clsyfyr','featspec');
+        clear clsyfyr
     end
-    save(sprintf('clsyfyr_%s.mat',param.group),'featlist','clsyfyr');
 end
 
 end
 
-function bestcls = buildclassifier(features,groupvar)
+function bestcls = buildclassifier(features,groupvar,varargin)
+
+param = finputcheck(varargin, {
+    'C', 'real', [], []; ...
+    'K', 'real', [], []; ...
+    'runpca', 'string', {'true','false'}, 'false'; ...
+    });
 
 clsyfyrparams = {'KFold',4,'Standardize',true,'KernelFunction','RBF'};
-Cvals = unique(sort(cat(2, 10.^(-5:5), 5.^(-5:5), 2.^(-5:5))));
-Kvals = unique(sort(cat(2, 10.^(-5:5), 5.^(-5:5), 2.^(-5:5))));
 
-for c = 1:length(Cvals)
-    for k = 1:length(Kvals)
-        
-        rng('default');
-        svmmodel = fitcsvm(features,groupvar,clsyfyrparams{:},'BoxConstraint',Cvals(c),'KernelScale',Kvals(k));
-        
-        orig_state = warning('off','all');
-        [~,postProb] = kfoldPredict(fitSVMPosterior(svmmodel));
-        warning(orig_state);
-        
-        [x,y,t,auc(c,k)] = perfcurve(groupvar,postProb(:,2),1);
-        [~,bestthresh] = max(y + (1-x) - 1);
-        predLabels = double(postProb(:,2) > t(bestthresh));
-        [~,~] = crosstab(groupvar,predLabels);
-    end
+if size(features,2) > 1 && strcmp(param.runpca,'true')
+    [bestcls.pcaCoeff, pcaScores, ~, ~, explained] = pca(...
+        features, ...
+        'Centered', true);
+    % Keep enough components to explain the desired amount of variance.
+    explainedVarianceToKeepAsFraction = 95/100;
+    bestcls.numPCAComponentsToKeep = find(cumsum(explained)/sum(explained) >= explainedVarianceToKeepAsFraction, 1);
+    features = pcaScores(:,1:bestcls.numPCAComponentsToKeep);
 end
 
-[~,maxidx] = max(auc(:));
-[bestC,bestK] = ind2sub(size(auc),maxidx);
-
-bestcls.C = Cvals(bestC);
-bestcls.K = Kvals(bestK);
+lastwarn('');
+if isempty(param.C) || isempty(param.K)
+    Cvals = unique(sort(cat(2, 10.^(-5:5), 5.^(-5:5), 2.^(-5:5))));
+    Kvals = unique(sort(cat(2, 10.^(-5:5), 5.^(-5:5), 2.^(-5:5))));
+    
+    for c = 1:length(Cvals)
+        for k = 1:length(Kvals)
+            
+            rng('default');
+            svmmodel = fitcsvm(features,groupvar,clsyfyrparams{:},'BoxConstraint',Cvals(c),'KernelScale',Kvals(k));
+            [~,postProb] = kfoldPredict(fitSVMPosterior(svmmodel));
+            if ~strcmp(lastwarn,'')
+                lastwarn('');
+                auc(c,k) = 0.5;
+            else
+                [x,y,t,auc(c,k)] = perfcurve(groupvar,postProb(:,2),1);
+                [~,bestthresh] = max(y + (1-x) - 1);
+                predLabels = double(postProb(:,2) > t(bestthresh));
+            end
+        end
+    end
+    
+    [~,maxidx] = max(abs(auc(:)));
+    [bestC,bestK] = ind2sub(size(auc),maxidx);
+    
+    bestcls.C = Cvals(bestC);
+    bestcls.K = Kvals(bestK);
+else
+    bestcls.C = param.C;
+    bestcls.K = param.K;
+end
 
 rng('default');
 svmmodel = fitcsvm(features,groupvar,clsyfyrparams{:},'BoxConstraint',bestcls.C,'KernelScale',bestcls.K);
@@ -163,10 +165,13 @@ svmmodel = fitcsvm(features,groupvar,clsyfyrparams{:},'BoxConstraint',bestcls.C,
 
 bestcls.pval = ranksum(postProb(groupvar == 0,2),postProb(groupvar == 1,2));
 
-[~,bestthresh] = min(sqrt((0-x).^2 + (1-y).^2));
-bestcls.predLabels = double(postProb(:,2) > t(bestthresh));
+% [~,bestthresh] = min(sqrt((0-x).^2 + (1-y).^2));
+[~,bestthresh] = max(abs(y + (1-x) - 1));
+predLabels = double(postProb(:,2) > t(bestthresh));
 
-[~,bestcls.chi2,bestcls.chi2pval] = crosstab(groupvar,bestcls.predLabels);
-bestcls.accu = round(sum(groupvar==bestcls.predLabels)*100/length(groupvar));
+[~,bestcls.chi2,bestcls.chi2pval] = crosstab(groupvar,predLabels);
+bestcls.accu = round(sum(groupvar==predLabels)*100/length(groupvar));
 
+bestcls.confmat = confusionmat(groupvar,predLabels);
+bestcls.confmat = bestcls.confmat*100 ./ repmat(sum(bestcls.confmat,2),1,2);
 end
