@@ -33,8 +33,8 @@ tasklist = {
 %     'calcftspec' 'subjlist(subjidx,1)'
 %     'plotftspec' 'subjlist(subjidx,1)'
 %     'ftcoherence' 'subjlist(subjidx,1)'
-%     'calcgraph' '{subjlist{subjidx,1} ''ftdwpli''}'
-    'calcwsmi' 'subjlist(subjidx,1)'
+    'calcgraph' '{subjlist{subjidx,1} ''ftdwpli''}'
+%     'calcwsmi' 'subjlist(subjidx,1)'
     };
 
 j = 1;
@@ -60,7 +60,9 @@ end
 % matlabpool(P);
 
 %% local parallel pool
-parpool('local');
+if isempty(gcp('nocreate'))
+    parpool('local');
+end
 parfor j = 1:length(jobs)
     jobs(j).task(jobs(j).input_args{:});
 end

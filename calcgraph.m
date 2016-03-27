@@ -1,7 +1,6 @@
 function calcgraph(basename,conntype,varargin)
 
 loadpaths
-loadsubj
 
 param = finputcheck(varargin, {
     'randomise', 'string', {'on','off'}, 'off'; ...
@@ -75,7 +74,7 @@ for f = 1:size(matrix,1)
             %%%%%%  WEIGHTED %%%%%%%%%
             
             allcc{iter,1}(thresh,:) = clustering_coef_wu(weicoh);
-            allcp{iter,1}(thresh) = charpath(distance_wei(weight_conversion(weicoh,'lengths')));
+            allcp{iter,1}(thresh) = charpath(distance_wei(weight_conversion(weicoh,'lengths')),0,0);
             alleff{iter,1}(thresh) = efficiency_wei(weicoh);
             allbet{iter,1}(thresh,:) = betweenness_wei(weight_conversion(weicoh,'lengths'));
             allden{iter,1}(thresh) = density_und(weicoh);
@@ -101,7 +100,7 @@ for f = 1:size(matrix,1)
             %%%%%%  BINARY %%%%%%%%%
             
             allcc{iter,2}(thresh,:) = clustering_coef_bu(bincoh);
-            allcp{iter,2}(thresh) = charpath(distance_bin(bincoh));
+            allcp{iter,2}(thresh) = charpath(distance_bin(bincoh),0,0);
             alleff{iter,2}(thresh) = efficiency_bin(bincoh);
             allbet{iter,2}(thresh,:) = betweenness_bin(bincoh);
             allden{iter,2}(thresh) = density_und(bincoh);

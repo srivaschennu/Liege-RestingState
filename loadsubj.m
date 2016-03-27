@@ -1,16 +1,3 @@
-newpatlist = {
-    '52'
-    '61'
-    '63'
-    '65'
-    '69'
-    '58'
-    '64'
-    '78'
-    '85'
-    '97'
-    '115'    
-    };
 
 patlist = {
     %'N','Adm diag','CRS Diag','PET','tennis','TBI?','Age','male','days onset','Outcome' 'CRS-R score'
@@ -118,84 +105,87 @@ patlist = {
     '113'		1		1		1		NaN		1		32		0		4681	NaN		16
     '114'		NaN		0		NaN		NaN		0		49		0		359		NaN		7
     '115'		3		2		1		NaN		0		33		0		308		NaN		22
-
-% '22' %skipped - data error
-% '28' %noisy
-% '32'
-% '34' %noisy
-% '45' %not enough data
-% '49'
-% '55' %no data
-% '66' %corrupt header
-% '70' %only 255 channels
-% '100' %no data
-% '109' %very noisy
-% '116' %corrupt data
-% '117' no covariates
+    
+    % '22' %skipped - data error
+    % '28' %noisy
+    % '32'
+    % '34' %noisy
+    % '45' %not enough data
+    % '49'
+    % '55' %no data
+    % '66' %corrupt header
+    % '70' %only 255 channels
+    % '100' %no data
+    % '109' %very noisy
+    % '116' %corrupt data
+    % '117' no covariates
     };
 
-% oldpatlist = {
-%     'p0311_restingstate1'
-%     'p0411_restingstate1'
-%     'p1611_restingstate'
-%     'p0510V2_restingstate'
-%     'p1311_restingstate'
-%     'p2011_restingstate'
-%     'p0612_restingstate'
-%     'p71v3_restingstate'
-%     'p0712_restingstate'
-%     'p0113_restingstate'
-%     'p0313_restingstate'
-%     'p0613_restingstate'
-%     'p0812_restingstate1'
-%     'p0611_restingstate'
-%     'p0312_restingstate'
-%     'p0211_restingstate1'
-%     'p0511_restingstate'
-%     'p0811_restingstate'
-%     'p0911_restingstate'
-%     'p1011_restingstate'
-%     'p1511_restingstate'
-%     'p1811_restingstate'
-%     'p1911_restingstate'
-%     'p0112_restingstate'
-%     'p0212_restingstate'
-%     'p0512_restingstate'
-%     'p0710V2_restingstate'
-%     'p0711_restingstate'
-%     'p1711_restingstate'
-%     'p1012_restingstate'
-%     'p0213_restingstate'
-%     'p0413_restingstate'
-%     };
+campatlist = {
+    %
+    % patients
+    %name                     type   crs    com-foll? followup? etio    ris
+    'p0311_restingstate1'		0		7		0		''		0		19262
+    'p0411_restingstate1'		0		7		0		''		1		19277
+    'p1611_restingstate'		0		7		1		''		1		19829
+    'p0510V2_restingstate'		0		7		0		''		1		18744
+    'p1311_restingstate'		0		8		0		''		1		19655
+    'p2011_restingstate'		0		7		0		''		0		20112
+    'p0612_restingstate'		0		8		0		''		1		20174
+    'p71v3_restingstate'		0		8		0		''		1		17680
+    'p0712_restingstate'		0		7		0		''		0		21348
+    'p0113_restingstate'		0		7		1		''		1		21636
+    'p0313_restingstate'		0		7		1		''		1		21675
+    'p0613_restingstate'		0		8		0		''		1		22248
+    'p0812_restingstate1'		0		7		1		''		1		21415
+    'p0611_restingstate'		1		10		1		''		0		19348
+    'p0312_restingstate'		1		8		1		''		0		20466
+    'p0211_restingstate1'		1		12		1		''		1		19219
+    'p0511_restingstate'		1		9		1		''		0		19306
+    'p0811_restingstate'		1		10		0		''		0		19447
+    'p0911_restingstate'		1		11		1		''		1		19475
+    'p1011_restingstate'		1		10		0		''		1		19551
+    'p1511_restingstate'		1		10		1		''		1		19757
+    'p1811_restingstate'		1		12		0		''		1		19953
+    'p1911_restingstate'		1		9		0		''		1		20054
+    'p0112_restingstate'		1		9		1		''		0		20255
+    'p0212_restingstate'		1		12		0		''		1		13676
+    'p0512_restingstate'		1		8		1		''		1		20800
+    'p0710V2_restingstate'		1		14		1		''		1		18872
+    'p0711_restingstate'		1		15		0		''		1		17853
+    'p1711_restingstate'		1		17		0		''		0		16656
+    'p1012_restingstate'		1		13		1		''		1		21482
+    'p0213_restingstate'		1		19		1		''		1		21677
+    'p0413_restingstate'		1		14		0		''		1		22117
+    };
 
-% ctrllist = {
-% 'NW_restingstate'		2		2		2		2		2		2		2		2		10
-% 'p37_restingstate'		2		2		2		2		2		2		2		2		10
-% 'p38_restingstate'		2		2		2		2		2		2		2		2		10
-% 'p40_restingstate'		2		2		2		2		2		2		2		2		10
-% 'p41_restingstate'		2		2		2		2		2		2		2		2		10
-% 'p42_restingstate'		2		2		2		2		2		2		2		2		10
-% 'p43_restingstate'		2		2		2		2		2		2		2		2		10
-% 'p44_restingstate'		2		2		2		2		2		2		2		2		10
-% 'p45_restingstate'		2		2		2		2		2		2		2		2		10
-% 'p46_restingstate'		2		2		2		2		2		2		2		2		10
-% 'p47_restingstate'		2		2		2		2		2		2		2		2		10
-% 'p48_restingstate'		2		2		2		2		2		2		2		2		10
-% 'p49_restingstate'		2		2		2		2		2		2		2		2		10
-% 'subj01_restingstate'		2		2		2		2		2		2		2		2		10
-% 'subj02_restingstate'		2		2		2		2		2		2		2		2		10
-% 'VS_restingstate'		2		2		2		2		2		2		2		2		10
-% 'SS_restingstate'		2		2		2		2		2		2		2		2		10
-% 'SB_restingstate'		2		2		2		2		2		2		2		2		10
-% 'ML_restingstate'		2		2		2		2		2		2		2		2		10
-% 'MC_restingstate'		2		2		2		2		2		2		2		2		10
-% 'JS_restingstate'		2		2		2		2		2		2		2		2		10
-% 'ET_restingstate'		2		2		2		2		2		2		2		2		10
-% 'EP_restingstate'		2		2		2		2		2		2		2		2		10
-% 'CL_restingstate'		2		2		2		2		2		2		2		2		10
-% 'CD_restingstate'		2		2		2		2		2		2		2		2		10
-% 'AC_restingstate'		2		2		2		2		2		2		2		2		10
-%     };
+camctrllist = {
+'NW_restingstate'		2		25		2		''		2		0
+'p37_restingstate'		2		25		2		''		2		0
+'p38_restingstate'		2		25		2		''		2		0
+'p40_restingstate'		2		25		2		''		2		0
+'p41_restingstate'		2		25		2		''		2		0
+'p42_restingstate'		2		25		2		''		2		0
+'p43_restingstate'		2		25		2		''		2		0
+'p44_restingstate'		2		25		2		''		2		0
+'p45_restingstate'		2		25		2		''		2		0
+'p46_restingstate'		2		25		2		''		2		0
+'p47_restingstate'		2		25		2		''		2		0
+'p48_restingstate'		2		25		2		''		2		0
+'p49_restingstate'		2		25		2		''		2		0
+'subj01_restingstate'	2		25		2		''		2		0
+'subj02_restingstate'	2		25		2		''		2		0
+'VS_restingstate'		2		25		2		''		2		0
+'SS_restingstate'		2		25		2		''		2		0
+'SB_restingstate'		2		25		2		''		2		0
+'ML_restingstate'		2		25		2		''		2		0
+'MC_restingstate'		2		25		2		''		2		0
+'JS_restingstate'		2		25		2		''		2		0
+'ET_restingstate'		2		25		2		''		2		0
+'EP_restingstate'		2		25		2		''		2		0
+'CL_restingstate'		2		25		2		''		2		0
+'CD_restingstate'		2		25		2		''		2		0
+'AC_restingstate'		2		25		2		''		2		0
+};
 
-% allsubj = cat(1,ctrllist,patlist);
+allcamsubj = cat(1,campatlist,camctrllist);

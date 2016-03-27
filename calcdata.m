@@ -5,20 +5,20 @@ loadsubj
 
 subjlist = eval(listname);
 
-load sortedlocs.mat
+load sortedlocs_91.mat
 
 for s = 1:size(subjlist,1)
     basename = subjlist{s,1};
     fprintf('Processing %s.\n',basename);
     
     specinfo = load([filepath basename 'spectra.mat']);
-    [sortedchan,sortidx] = sort({specinfo.chanlocs.labels});
+    [sortedchan,sortidx] = sort({specinfo.chann.labels});
     if ~strcmp(chanlist,cell2mat(sortedchan))
         error('Channel names do not match!');
     end
     specinfo.spectra = specinfo.spectra(sortidx,:);
     
-    load([filepath conntype filesep basename conntype '.mat']);
+    load([filepath conntype filesep basename conntype 'fdr.mat']);
     [sortedchan,sortidx] = sort({chanlocs.labels});
     if ~strcmp(chanlist,cell2mat(sortedchan))
         error('Channel names do not match!');

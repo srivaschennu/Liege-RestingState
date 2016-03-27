@@ -41,58 +41,23 @@ featlist = {
     'ftdwpli','modular span',3
     };
 
-features = [];
-allpvec = [];
-featnames = cell(1,size(featlist,1));
 for f = 1:size(featlist,1)
-    [allfeat{f},groupvar,allauc{f},~,allpval{f}] = plotmeasure(listname,featlist{f,:},'noplot','on',varargin{:});
-    p_thresh = fdr(allpval{f}(:),param.alpha);
-    allpval{f}(allpval{f}>p_thresh) = 1;
-end
-
-groups = unique(groupvar(~isnan(groupvar)));
-grouppairs = nchoosek(groups,2);
-
-fprintf('\n');
-
-for f = 1:size(featlist,1)
-    for g = 1:size(grouppairs,1)
-        [~,maxaucidx] = max(allauc{f}(g,:));
-        if allpval{f}(g,maxaucidx) < param.alpha
-            fprintf('%s band %s: %s vs %s AUC = %.2f, p = %.4f.\n', featlist{f,2},bands{featlist{f,3}},...
-                param.groupnames{grouppairs(g,1)+1},param.groupnames{grouppairs(g,2)+1},...
-                allauc{f}(g,maxaucidx),allpval{f}(g,maxaucidx));
+    [measure,groupvar] = plotmeasure(listname,featlist{f,:},'noplot','on',varargin{:});
+    measure = mean(measure(~isnan(groupvar),:),2);
+    groupvar = groupvar(~isnan(groupvar),1);
+    
+    if f == 1
+        grouplist = cell(size(groupvar));
+        groups = unique(groupvar(~isnan(groupvar)));
+        for g = 1:length(groups)
+            grouplist(groupvar == groups(g)) = {param.groupnames{g}};
         end
     end
+    
+    [~,anovatbl] = anova1(measure,grouplist,'off');
+    
+    fprintf('%s - %s: F(%d) = %.2f, p = %.4f.\n',featlist{f,2},bands{featlist{f,3}},...
+        anovatbl{2,3},anovatbl{2,5},anovatbl{2,6});
 end
 
-% corr_pvals = bonf_holm(pvals);
-% [~,pval_mask] = fdr(pvals,0.05);
-% corr_pvals = pvals;
-% corr_pvals(~pval_mask) = 1;
-
-% for bandidx = 1:length(bands)
-%     fprintf('%s band: t(%.1f) = %5.2f, p = %.4f.\n',bands{bandidx},stats(bandidx).df,stats(bandidx).tstat,corr_pvals(bandidx));
-%     fprintf('%s band: AUC = %.2f, U = %d, p = %.4f.\n',bands{bandidx},stats(bandidx).auc,stats(bandidx).U,corr_pvals(bandidx));
-% end
-
-% nonnanidx = ~isnan(grpout);
-% grouplist = cell(size(grpout));
-% grouplist(grpout == 0) = {'Group 0'};
-% grouplist(grpout == 1) = {'Group 1'};
-% 
-% datatable = table(grouplist(nonnanidx),dataout(nonnanidx,1),dataout(nonnanidx,2),dataout(nonnanidx,3),'VariableNames',{'group',bands{1},bands{2},bands{3}});
-% design = table(bands,'VariableNames',{'bands'});
-% rmmodel = fitrm(datatable,'delta-alpha~group','WithinDesign',design);
-% multcomptbl = multcompare(rmmodel,'group','By','bands');
-
-% fprintf('\n');
-% for r = 1:size(multcomptbl,1)
-%     fprintf('%s - %s vs. %s: Diff = %.2f, ',multcomptbl.bands{r},multcomptbl.group_1{r},multcomptbl.group_2{r},multcomptbl.Difference(r));
-%     if multcomptbl.pValue(r) >= 1e-4
-%         fprintf('p = %.4f\n',multcomptbl.pValue(r));
-%     else
-%         fprintf('p = %.0e\n',multcomptbl.pValue(r));
-%     end
-% end
-% fprintf('\n');
+fprintf('\n');
