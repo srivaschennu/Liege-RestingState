@@ -27,7 +27,7 @@ elseif strcmp(param.latticise,'on')
     savename = sprintf('%s/%s/%s%slattgraph.mat',filepath,conntype,basename,conntype);
     numruns = param.numrand;
 else
-    savename = sprintf('%s/%s/%s%sgraph.mat',filepath,conntype,basename,conntype);
+    savename = sprintf('%s/%s/%s%sgraph_test.mat',filepath,conntype,basename,conntype);
     numruns = 1;
 end
 
