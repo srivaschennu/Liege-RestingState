@@ -19,6 +19,7 @@ fontsize = 20;
 
 admdiag = cell2mat(subjlist(:,2));
 crsdiag = cell2mat(subjlist(:,3));
+petdiag = cell2mat(subjlist(:,4));
 
 load('combclsyfyr_crsdiag.mat');
 eegdiag = zeros(size(crsdiag,1),1);
@@ -27,10 +28,23 @@ eegdiag(crsdiag == 0 | crsdiag == 2) = eegdiag(crsdiag == 0 | crsdiag == 2) | cl
 
 correct_admdiag = logical(admdiag(~isnan(admdiag))) == logical(crsdiag(~isnan(admdiag)));
 correct_admdiag_plus_eeg = (logical(admdiag(~isnan(admdiag))) | logical(eegdiag(~isnan(admdiag)))) == logical(crsdiag(~isnan(admdiag)));
+% correct_admdiag_plus_pet = (logical(admdiag(~isnan(admdiag) & ~isnan(petdiag))) | logical(petdiag(~isnan(admdiag) & ~isnan(petdiag)))) == logical(crsdiag(~isnan(admdiag) & ~isnan(petdiag)));
+% correct_admdiag_plus_pet_plus_eeg = (logical(admdiag(~isnan(admdiag) & ~isnan(petdiag))) | logical(petdiag(~isnan(admdiag) & ~isnan(petdiag))) | logical(eegdiag(~isnan(admdiag) & ~isnan(petdiag)))) == logical(crsdiag(~isnan(admdiag) & ~isnan(petdiag)));
+
 diaginfo = [
     sum(correct_admdiag == 1) sum(correct_admdiag == 0); ...
     sum(correct_admdiag_plus_eeg == 1) sum(correct_admdiag_plus_eeg == 0)
     ];
+
+% diaginfo = [
+%     sum(correct_admdiag == 1) sum(correct_admdiag == 0); ...
+%     sum(correct_admdiag_plus_pet == 1) sum(correct_admdiag_plus_pet == 0)
+%     ];
+% 
+% diaginfo = [
+%     sum(correct_admdiag == 1) sum(correct_admdiag == 0); ...
+%     sum(correct_admdiag_plus_pet_plus_eeg == 1) sum(correct_admdiag_plus_pet_plus_eeg == 0)
+%     ];
 
 figure('Color','white');
 p_h = pie(diaginfo(1,:));
