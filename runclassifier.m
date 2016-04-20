@@ -50,7 +50,7 @@ selfeat = cell(1,size(clsyfyrs,2));
 
 for g = 1:size(clsyfyrs,2)
     [~,sortidx] = sort(cell2mat({clsyfyrs(:,g).auc}),'descend');
-    selfeatidx = sortidx(1:param.keepfeat);
+    selfeatidx = 1:21;%sortidx(1:param.keepfeat);
     
     features = [];
     for f = selfeatidx
@@ -65,7 +65,9 @@ for g = 1:size(clsyfyrs,2)
     groups = groups(groups < 3);
     grouppairs = nchoosek(groups,2);
     
-    features = features(groupvar == grouppairs(g,1) | groupvar == grouppairs(g,2),:);
+    load Beta.mat
+    [~,sortidx] = sort(abs(Beta),'descend');
+    features = features(groupvar == grouppairs(g,1) | groupvar == grouppairs(g,2),sortidx(1:param.keepfeat));
     groupvar = groupvar(groupvar == grouppairs(g,1) | groupvar == grouppairs(g,2));
     [~,~,groupvar] = unique(groupvar);
     groupvar = groupvar-1;
@@ -126,9 +128,9 @@ param = finputcheck(varargin, {
     });
 
 if strcmp(param.train,'true')
-    clsyfyrparams = {'Standardize',true,'KernelFunction','RBF'};
+    clsyfyrparams = {'Standardize',true};
 else
-    clsyfyrparams = {'KFold',4,'Standardize',true,'KernelFunction','RBF'};
+    clsyfyrparams = {'KFold',4,'Standardize',true};
 end
 
 if size(features,2) > 1 && strcmp(param.runpca,'true')
