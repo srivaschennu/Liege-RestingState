@@ -238,8 +238,8 @@ if strcmp(param.noplot,'off')
             set(gca,'YLim',[0 1]);
         end
     else
-        barh(auc);
-        ylim([0.5 length(auc)+0.5]);
+        barh(auc(:,maxaucidx));
+        ylim([0.5 size(auc,1)+0.5]);
         set(gca,'YTick',1:length(grouppairnames),'YTickLabels',grouppairnames);
         if ~isempty(param.xlim)
             set(gca,'XLim',param.ylim);

@@ -18,31 +18,31 @@ bands = {
     };
 
 featlist = {
-    'ftdwpli','power',1
-    'ftdwpli','power',2
-    'ftdwpli','power',3
-    'ftdwpli','median',1
-    'ftdwpli','median',2
+%     'ftdwpli','power',1
+%     'ftdwpli','power',2
+%     'ftdwpli','power',3
+%     'ftdwpli','median',1
+%     'ftdwpli','median',2
     'ftdwpli','median',3
-    'ftdwpli','clustering',1
-    'ftdwpli','clustering',2
-    'ftdwpli','clustering',3
-    'ftdwpli','characteristic path length',1
-    'ftdwpli','characteristic path length',2
-    'ftdwpli','characteristic path length',3
-    'ftdwpli','modularity',1
-    'ftdwpli','modularity',2
-    'ftdwpli','modularity',3
-    'ftdwpli','participation coefficient',1
-    'ftdwpli','participation coefficient',2
+%     'ftdwpli','clustering',1
+%     'ftdwpli','clustering',2
+%     'ftdwpli','clustering',3
+%     'ftdwpli','characteristic path length',1
+%     'ftdwpli','characteristic path length',2
+%     'ftdwpli','characteristic path length',3
+%     'ftdwpli','modularity',1
+%     'ftdwpli','modularity',2
+%     'ftdwpli','modularity',3
+%     'ftdwpli','participation coefficient',1
+%     'ftdwpli','participation coefficient',2
     'ftdwpli','participation coefficient',3
-    'ftdwpli','modular span',1
-    'ftdwpli','modular span',2
-    'ftdwpli','modular span',3
+%     'ftdwpli','modular span',1
+%     'ftdwpli','modular span',2
+%     'ftdwpli','modular span',3
     };
 
 for f = 1:size(featlist,1)
-    [measure,groupvar] = plotmeasure(listname,featlist{f,:},'noplot','on',varargin{:});
+    [measure,groupvar] = plotmeasure(listname,featlist{f,:},varargin{:});
     measure = mean(measure(~isnan(groupvar),:),2);
     groupvar = groupvar(~isnan(groupvar),1);
     
@@ -54,9 +54,13 @@ for f = 1:size(featlist,1)
         end
     end
     
-    [~,anovatbl] = anova1(measure,grouplist,'off');
+%     [~,anovatbl] = anova1(measure,grouplist,'off');
+%     fprintf('%s - %s: F(%d) = %.2f, p = %.4f.\n',featlist{f,2},bands{featlist{f,3}},...
+%         anovatbl{2,3},anovatbl{2,5},anovatbl{2,6});
+
+    [~,anovatbl] = kruskalwallis(measure,grouplist,'off');
     
-    fprintf('%s - %s: F(%d) = %.2f, p = %.4f.\n',featlist{f,2},bands{featlist{f,3}},...
+    fprintf('%s - %s: Chi2(%d) = %.2f, p = %.4f.\n',featlist{f,2},bands{featlist{f,3}},...
         anovatbl{2,3},anovatbl{2,5},anovatbl{2,6});
 end
 
