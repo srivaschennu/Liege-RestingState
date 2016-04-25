@@ -29,11 +29,11 @@ tasklist = {
 %     'rejectic' '{subjlist{subjidx,1} ''prompt'' ''off''}'
 %     'rejartifacts' '{[subjlist{subjidx,1} ''_clean''] 2 4 0 [] 200 100}'
 %     'rereference' '{subjlist{subjidx,1} 5 1}'
-%     'checktrials' '{subjlist{subjidx,1} 60}'
+    'checktrials' '{subjlist{subjidx,1} 60 ''_epochs''}'
 %     'calcftspec' 'subjlist(subjidx,1)'
 %     'plotftspec' 'subjlist(subjidx,1)'
 %     'ftcoherence' 'subjlist(subjidx,1)'
-    'calcgraph' '{subjlist{subjidx,1} ''ftdwpli''}'
+%     'calcgraph' '{subjlist{subjidx,1} ''ftdwpli''}'
 %     'calcwsmi' 'subjlist(subjidx,1)'
     };
 
@@ -48,24 +48,24 @@ for subjidx = 1:size(subjlist,1)
     end
 end
 
-% % %% run in serial order
-% for j = 1:length(jobs)
-%     disp(jobs(j));
-%     jobs(j).task(jobs(j).input_args{:});
-% end
+% %% run in serial order
+for j = 1:length(jobs)
+    disp(jobs(j));
+    jobs(j).task(jobs(j).input_args{:});
+end
 
 % %% CBU parallel pool
 % P=cbupool(24);
 % P.ResourceTemplate='-l nodes=^N^,mem=12GB,walltime=4:00:00';
 % matlabpool(P);
 
-%% local parallel pool
-if isempty(gcp('nocreate'))
-    parpool('local');
-end
-parfor j = 1:length(jobs)
-    jobs(j).task(jobs(j).input_args{:});
-end
+% %% local parallel pool
+% if isempty(gcp('nocreate'))
+%     parpool('local');
+% end
+% parfor j = 1:length(jobs)
+%     jobs(j).task(jobs(j).input_args{:});
+% end
 
 % %% CBU distributed computing
 % scheduler = cbu_scheduler('custom',{jobqueue,numworkers,memory,walltime,jobspath});
