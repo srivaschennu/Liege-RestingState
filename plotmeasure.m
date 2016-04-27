@@ -2,7 +2,7 @@ function [scores,group,stats,pet] = plotmeasure(listname,conntype,measure,bandid
 
 param = finputcheck(varargin, {
     'group', 'string', [], 'crsdiag'; ...
-    'groupnames', 'cell', {}, {'UWS','MCS','EMCS','LIS'}; ...
+    'groupnames', 'cell', {}, {'UWS','MCS','EMCS','LIS','CTR'}; ...
     'changroup', 'string', [], 'all'; ...
     'changroup2', 'string', [], 'all'; ...
     'xlabel', 'string', [], ''; ...
@@ -56,6 +56,7 @@ facecolorlist = [
     0.25 1 0.25
     1 0.75 0.75
     0.75 1 1
+    1 0.75 1
     ];
 
 groupnames = param.groupnames;
@@ -199,7 +200,7 @@ if strcmp(param.noplot,'off')
     set(gcf,'Position',figpos);
     
     hold all
-    violin(plotdata,'edgecolor',colorlist(1:length(groups),:),'facecolor',facecolorlist(1:length(groups),:),'facealpha',1,'mc',[]);
+    violin(plotdata,'edgecolor',colorlist(1:length(groups),:),'facecolor',facecolorlist(1:length(groups),:),'facealpha',1,'medc',[]);
     set(gca,'XLim',[0.5 length(groups)+0.5],'XTick',1:length(groups),...
         'XTickLabel',groupnames','FontName',fontname,'FontSize',fontsize);
     ylabel(param.ylabel,'FontName',fontname,'FontSize',fontsize);

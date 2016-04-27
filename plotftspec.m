@@ -38,3 +38,6 @@ for f = 1:size(specinfo.freqlist,1)
         sprintf('\\%s',bands{f}),'FontName',fontname,'FontSize',fontsize);
 end
 box on
+
+export_fig(gcf,sprintf('figures/%s_spec.eps',basename));
+close(gcf);

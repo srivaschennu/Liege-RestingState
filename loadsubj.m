@@ -126,9 +126,9 @@ ctrllist = {
     'Blanche_20100713'		NaN		4		NaN		NaN		NaN		62		1		NaN		NaN		NaN
     'Cahoolessur_20100526'	NaN		4		NaN		NaN		NaN		32		1		NaN		NaN		NaN
     'Conte_20100302'		NaN		4		NaN		NaN		NaN		48		0		NaN		NaN		NaN
-    'Doyen_20101207'		NaN		4		NaN		NaN		NaN		41		1		NaN		NaN		NaN
+%     'Doyen_20101207'		NaN		4		NaN		NaN		NaN		41		1		NaN		NaN		NaN
     'Ergo_20100428'         NaN		4		NaN		NaN		NaN		37		1		NaN		NaN		NaN
-    'Fafchamps_20100427'	NaN		4		NaN		NaN		NaN		32		1		NaN		NaN		NaN
+%     'Fafchamps_20100427'	NaN		4		NaN		NaN		NaN		32		1		NaN		NaN		NaN
     'Froidart_20101012'		NaN		4		NaN		NaN		NaN		69		0		NaN		NaN		NaN
     'Genot_20110301'		NaN		4		NaN		NaN		NaN		70		0		NaN		NaN		NaN
     'Germay_20100302'		NaN		4		NaN		NaN		NaN		21		1		NaN		NaN		NaN
@@ -154,6 +154,8 @@ ctrllist = {
 %     'Zeevaert_20100210'		NaN		4		NaN		NaN		NaN		19		1		NaN		NaN		NaN %not enough trials
     'Zevenne_20100421'		NaN		4		NaN		NaN		NaN		67		0		NaN		NaN		NaN
     };
+
+allsubj = cat(1,patlist,ctrllist);
 
 campatlist = {
     %

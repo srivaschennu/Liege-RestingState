@@ -24,7 +24,7 @@ cfg.foilim        = [0.5 45];
 cfg.taper = 'dpss';
 cfg.tapsmofrq = 0.3;
 cfg.keeptrials = 'yes';
-numrand = 50;
+numrand = 0;
 
 EEG = ft_freqanalysis(cfg,EEG);
 abscrsspctrm = abs(EEG.crsspctrm);

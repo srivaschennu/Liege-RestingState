@@ -25,6 +25,7 @@ grouplist = {
     'MCS'
     'EMCS'
     'LIS'
+    'CTR'
     };
 
 for g = 1:length(grouplist)
