@@ -126,9 +126,7 @@ ctrllist = {
     'Blanche_20100713'		NaN		4		NaN		NaN		NaN		62		1		NaN		NaN		NaN
     'Cahoolessur_20100526'	NaN		4		NaN		NaN		NaN		32		1		NaN		NaN		NaN
     'Conte_20100302'		NaN		4		NaN		NaN		NaN		48		0		NaN		NaN		NaN
-%     'Doyen_20101207'		NaN		4		NaN		NaN		NaN		41		1		NaN		NaN		NaN
     'Ergo_20100428'         NaN		4		NaN		NaN		NaN		37		1		NaN		NaN		NaN
-%     'Fafchamps_20100427'	NaN		4		NaN		NaN		NaN		32		1		NaN		NaN		NaN
     'Froidart_20101012'		NaN		4		NaN		NaN		NaN		69		0		NaN		NaN		NaN
     'Genot_20110301'		NaN		4		NaN		NaN		NaN		70		0		NaN		NaN		NaN
     'Germay_20100302'		NaN		4		NaN		NaN		NaN		21		1		NaN		NaN		NaN
@@ -137,9 +135,7 @@ ctrllist = {
     'Kabwe_20100427'		NaN		4		NaN		NaN		NaN		44		0		NaN		NaN		NaN
     'Kirfel_20101110'		NaN		4		NaN		NaN		NaN		45		1		NaN		NaN		NaN
     'Lambert_20100714'		NaN		4		NaN		NaN		NaN		55		0		NaN		NaN		NaN
-%     'Lambrecht_20110201'	NaN		4		NaN		NaN		NaN		60		0		NaN		NaN		NaN %not enough trials
     'Lejeune_20100330'		NaN		4		NaN		NaN		NaN		48		0		NaN		NaN		NaN
-%     'Lemmens_20101012'		NaN		4		NaN		NaN		NaN		41      1		NaN		NaN		NaN %not enough trials
     'Lesage_20100324'		NaN		4		NaN		NaN		NaN		28		1		NaN		NaN		NaN
     'Lopez_20100323'		NaN		4		NaN		NaN		NaN		25		0		NaN		NaN		NaN
     'Luypaert_20100720'		NaN		4		NaN		NaN		NaN		30		1		NaN		NaN		NaN
@@ -151,8 +147,13 @@ ctrllist = {
     'VanLoo_20100210'		NaN		4		NaN		NaN		NaN		23		0		NaN		NaN		NaN
     'Vossen_20100720'		NaN		4		NaN		NaN		NaN		33		1		NaN		NaN		NaN
     'Wathelet_20100602'		NaN		4		NaN		NaN		NaN		53		1		NaN		NaN		NaN
-%     'Zeevaert_20100210'		NaN		4		NaN		NaN		NaN		19		1		NaN		NaN		NaN %not enough trials
     'Zevenne_20100421'		NaN		4		NaN		NaN		NaN		67		0		NaN		NaN		NaN
+    
+    %     'Doyen_20101207'		NaN		4		NaN		NaN		NaN		41      1		NaN		NaN		NaN %noisy
+    %     'Fafchamps_20100427'	NaN		4		NaN		NaN		NaN		32		1		NaN		NaN		NaN %noisy
+    %     'Lambrecht_20110201'	NaN		4		NaN		NaN		NaN		60		0		NaN		NaN		NaN %not enough trials
+    %     'Lemmens_20101012'		NaN		4		NaN		NaN		NaN		41      1		NaN		NaN		NaN %not enough trials
+    %     'Zeevaert_20100210'		NaN		4		NaN		NaN		NaN		19		1		NaN		NaN		NaN %not enough trials
     };
 
 allsubj = cat(1,patlist,ctrllist);
