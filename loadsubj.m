@@ -156,6 +156,27 @@ ctrllist = {
     %     'Zeevaert_20100210'		NaN		4		NaN		NaN		NaN		19		1		NaN		NaN		NaN %not enough trials
     };
 
+lis = {
+    '54'		3		3		1		NaN		0		52		1		143		NaN		NaN
+    '74'		3		3		1		0		1		54		0		2122	NaN		17
+    '87'		1		3		1		NaN		1		41		1		7387	NaN		20
+    '93'		NaN		3		1		NaN		0		28		0		2130	NaN		NaN
+    };
+
+emcs = {
+    '52'		1		2		1		NaN		1		57		1		1398	NaN		16 %noisy
+    '58'		1		2		1		NaN		1		34		0		375		NaN		23
+    '61'		0		2		1		NaN		1		37		1		6177	NaN		23 % very noisy
+    '63'		NaN		2		1		NaN		1		32		1		845		NaN		23 %very noisy
+    '64'		NaN		2		0		NaN		0		37		1		263		NaN		23
+    '65'		NaN		2		NaN		NaN		0		14		1		185		NaN		19 %very noisy
+    '69'		1		2		1		NaN		0		60		1		406		NaN		23 %noisy
+    '78'		NaN		2		NaN		NaN		0		63		0		168		NaN		15
+    '85'		NaN		2		1		1		1		28		1		2423	NaN		21
+    '97'		1		2		1		NaN		1		42		1		1186	NaN		21
+    '115'		3		2		1		NaN		0		33		0		308		NaN		22
+    };
+
 allsubj = cat(1,patlist,ctrllist);
 
 campatlist = {

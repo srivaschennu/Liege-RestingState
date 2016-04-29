@@ -32,7 +32,7 @@ for s = 1:size(subjlist,1)
         bandpower = zeros(size(subjlist,1),size(matrix,1),length(chanlocs));
         specent = zeros(size(subjlist,1),length(chanlocs));
         bandpeak = zeros(size(subjlist,1),size(matrix,1));
-        allcoh = zeros(length(subjlist),size(matrix,1),length(chanlocs),length(chanlocs));
+        allcoh = zeros(size(subjlist,1),size(matrix,1),length(chanlocs),length(chanlocs));
 %         allbootcoh = zeros(length(subjlist),size(matrix,1),length(chanlocs),length(chanlocs));
     end
     

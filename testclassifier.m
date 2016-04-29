@@ -2,8 +2,7 @@ function testclassifier(listname,varargin)
 
 param = finputcheck(varargin, {
     'group', 'string', [], 'crsdiag'; ...
-    'groupnames', 'cell', {}, {'UWS','MCS'}; ...
-    'keepfeat', 'real', [], 3; ...
+    'clsyfyrnum', 'real', [], 1; ...
     });
 
 loadsubj
@@ -20,23 +19,22 @@ bands = {
 fontname = 'Helvetica';
 fontsize = 22;
 
-load sortedlocs_91.mat
+load sortedlocs.mat
 load(sprintf('combclsyfyr_%s_train.mat',param.group));
 
-clsyfyr = clsyfyr(1);
-selfeat = selfeat{1};
-groupvar = cell2mat(subjlist(:,2));
+clsyfyr = clsyfyr(param.clsyfyrnum);
+selfeat = selfeat{param.clsyfyrnum};
+
+groupvar = cell2mat(subjlist(:,3));
+groupvar(:) = grouppairs(param.clsyfyrnum,2);
 
 features = [];
 for f = 1:size(selfeat,1)
-    thisfeat = getmeasure(listname,selfeat{f,1:3},sortedlocs,struct('changroup','all_91','changroup2','all_91'));
+    thisfeat = getmeasure(listname,selfeat{f,1:3},sortedlocs,struct('changroup','all','changroup2','all'));
     features = cat(2,features,thisfeat);
 end
 fprintf('Testing with the following features...\n');
 selfeat
-
-features = features(groupvar == 0 | groupvar == 1,:);
-groupvar = groupvar(groupvar == 0 | groupvar == 1);
 
 [~,scores] = predict(fitSVMPosterior(clsyfyr.svmmodel),features);
 scores = scores(:,2);
@@ -46,7 +44,7 @@ accu = round(sum(logical(groupvar) == predlabels)*100/length(groupvar));
 [~,chi2,chi2pval] = crosstab(groupvar,predlabels);
 confmat = confusionmat(groupvar,predlabels);
 confmat = confmat*100 ./ repmat(sum(confmat,2),1,2);
-plotconfusion(confmat,param.groupnames);
+plotconfusion(confmat,groupnames([grouppairs(param.clsyfyrnum,1)+1 grouppairs(param.clsyfyrnum,2)+1]));
 set(gca,'FontName',fontname,'FontSize',fontsize);
 xlabel('Predicted diagnosis','FontName',fontname,'FontSize',fontsize);
 ylabel('True diagnosis','Fontname',fontname,'FontSize',fontsize);

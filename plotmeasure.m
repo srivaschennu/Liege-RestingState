@@ -189,7 +189,7 @@ end
 if strcmp(param.noplot,'off')
     clear plotdata
     for g = 1:length(groups)
-        plotdata{g} = mean(testdata(groupvar == groups(g),:),2);
+        plotdata{g} = mean(testdata(groupvar == groups(g) & crsdiag == 0,:),2);
     end
     
     %% plot mean graph

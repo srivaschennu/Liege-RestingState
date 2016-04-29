@@ -28,8 +28,15 @@ grouplist = {
     'CTR'
     };
 
+grouplist = {
+    '29'
+    '38'
+    '71'
+    };
+
 for g = 1:length(grouplist)
-    groupcoh(g,:,:) = squeeze(mean(allcoh(grp(:,2) == g-1,bandidx,:,:),1));
+%     groupcoh(g,:,:) = squeeze(mean(allcoh(grp(:,2) == g-1,bandidx,:,:),1));
+    groupcoh(g,:,:) = squeeze(mean(allcoh(strcmp(grouplist{g},subjlist(:,1)),bandidx,:,:),1));
     threshcoh(g,:,:) = threshold_proportional(squeeze(groupcoh(g,:,:)),1-plotqt);
     for c = 1:size(threshcoh,2)
         groupdeg(g,c) = sum(threshcoh(g,c,:))/(size(threshcoh,2)-1);
