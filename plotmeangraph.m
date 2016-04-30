@@ -1,14 +1,32 @@
-function plotmeangraph(listname,conntype,bandidx)
+function plotmeangraph(listname,conntype,bandidx,varargin)
 
 loadpaths
+param = finputcheck(varargin, {
+    'group', 'string', [], 'crsdiag'; ...
+    'groupnames', 'cell', {}, {'UWS','MCS','EMCS','LIS','CTR'}; ...
+    });
 
 load(sprintf('%s/%s/alldata_%s_%s.mat',filepath,conntype,listname,conntype));
 load sortedlocs
 
 loadsubj
-subjlist = eval(listname);
 
-grp = cell2mat(subjlist(:,2:end));
+subjlist = eval(listname);
+refdiag = cell2mat(subjlist(:,2));
+crsdiag = cell2mat(subjlist(:,3));
+crsaware = double(cell2mat(subjlist(:,3)) > 0);
+petdiag = cell2mat(subjlist(:,4));
+tennis = cell2mat(subjlist(:,5));
+etiology = cell2mat(subjlist(:,6));
+daysonset = cell2mat(subjlist(:,9));
+outcome = double(cell2mat(subjlist(:,10)) > 2);
+outcome(isnan(cell2mat(subjlist(:,10)))) = NaN;
+mcstennis = tennis .* crsdiag;
+mcstennis(crsdiag == 0) = NaN;
+crs = cell2mat(subjlist(:,11));
+
+groupvar = eval(param.group);
+groups = unique(groupvar(~isnan(groupvar)));
 
 bands = {
     'delta'
@@ -20,23 +38,15 @@ bands = {
 
 plotqt = 0.7;
 
-grouplist = {
-    'UWS'
-    'MCS'
-    'EMCS'
-    'LIS'
-    'CTR'
-    };
+% grouplist = {
+%     '29'
+%     '38'
+%     '71'
+%     };
 
-grouplist = {
-    '29'
-    '38'
-    '71'
-    };
-
-for g = 1:length(grouplist)
-%     groupcoh(g,:,:) = squeeze(mean(allcoh(grp(:,2) == g-1,bandidx,:,:),1));
-    groupcoh(g,:,:) = squeeze(mean(allcoh(strcmp(grouplist{g},subjlist(:,1)),bandidx,:,:),1));
+for g = 1:length(groups)
+    groupcoh(g,:,:) = squeeze(mean(allcoh(groupvar == groups(g),bandidx,:,:),1));
+    %     groupcoh(g,:,:) = squeeze(mean(allcoh(strcmp(param.groupnames{g},subjlist(:,1)),bandidx,:,:),1));
     threshcoh(g,:,:) = threshold_proportional(squeeze(groupcoh(g,:,:)),1-plotqt);
     for c = 1:size(threshcoh,2)
         groupdeg(g,c) = sum(threshcoh(g,c,:))/(size(threshcoh,2)-1);
@@ -46,7 +56,7 @@ end
 erange = [min(nonzeros(threshcoh(:))) max(threshcoh(:))];
 vrange = [min(nonzeros(groupdeg(:))) max(groupdeg(:))];
 
-for g = 1:length(grouplist)
+for g = 1:length(param.groupnames)
     while true
         minfo(g,:) = plotgraph3d(squeeze(groupcoh(g,:,:)),sortedlocs,'sortedlocs.spl','plotqt',plotqt,'escale',erange,'vscale',vrange,'cshift',0.35,'numcolors',5);
         if strcmp(questdlg('Save figure?',mfilename,'Yes','No','Yes'), 'Yes')
@@ -58,10 +68,10 @@ for g = 1:length(grouplist)
     camva(8);
     camtarget([-9.7975  -28.8277   41.8981]);
     campos([-1.7547    1.7161    1.4666]*1000);
-    fprintf('%s %s - number of modules: %d\n',grouplist{g},bands{bandidx},length(unique(minfo(g,:))));
-    set(gcf,'Name',sprintf('%s %s',grouplist{g},bands{bandidx}));
+    fprintf('%s %s - number of modules: %d\n',param.groupnames{g},bands{bandidx},length(unique(minfo(g,:))));
+    set(gcf,'Name',sprintf('%s %s',param.groupnames{g},bands{bandidx}));
     set(gcf,'InvertHardCopy','off');
-    print(gcf,sprintf('figures/meangraph_%s_%s.tif',grouplist{g},bands{bandidx}),'-dtiff','-r100');
-%     saveas(gcf,sprintf('figures/meangraph_%s_%s.fig',grouplist{g},bands{bandidx}));
+    print(gcf,sprintf('figures/meangraph_%s_%s.tif',param.groupnames{g},bands{bandidx}),'-dtiff','-r100');
+    %     saveas(gcf,sprintf('figures/meangraph_%s_%s.fig',grouplist{g},bands{bandidx}));
     close(gcf);
 end

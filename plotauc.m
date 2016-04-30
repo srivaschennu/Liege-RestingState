@@ -1,8 +1,8 @@
-function plotauc(varargin)
+function plotauc(listname,varargin)
 
 param = finputcheck(varargin, {
     'group', 'string', [], 'crsdiag'; ...
-    'groupnames', 'cell', {}, {'UWS','MCS','EMCS','LIS'}; ...
+    'groupnames', 'cell', {}, {'UWS','MCS','EMCS','LIS','CTR'}; ...
     'alpha', 'real', [], 0.05; ...
     'xlim', 'real', [], []; ...
     'nonsig', 'string', {'on','off'}, 'on'; ...
@@ -42,8 +42,12 @@ featlist = {
     };
 
 groups = 0:length(param.groupnames)-1;
-groups = groups(groups < 3);
-grouppairs = nchoosek(groups,2);
+grouppairs = [
+    0 1
+    1 2
+    2 4
+    ];
+pairidx = [1 5 9];
 
 colorlist = [
     0 0.0 0.5
@@ -77,12 +81,12 @@ for f = 1:size(featlist,1)
     %         end
     %     end
     %     clsyfyrs(f,:) = clsyfyr;
-    [~,~,stats] = plotmeasure('patlist',featlist{f,1},featlist{f,2},featlist{f,3},'noplot','on','group',param.group,'groupnames',param.groupnames);
+    [~,~,stats] = plotmeasure(listname,featlist{f,1},featlist{f,2},featlist{f,3},'noplot','on','group',param.group,'groupnames',param.groupnames);
     clsyfyrs(f,:) = stats;
 end
 
 if size(clsyfyrs,2) > 3
-    clsyfyrs = clsyfyrs(:,[1 2 4]);
+    clsyfyrs = clsyfyrs(:,pairidx);
 end
 
 if size(clsyfyrs,2) == 1
