@@ -59,7 +59,6 @@ set(gcf,'InvertHardCopy','off');
 print(gcf,sprintf('figures/crscorr3d_%s_%s.tif',listname,bands{bandidx}),'-dtiff','-r200');
 close(gcf);
 
-
 %% correlate with CRS-R
 crs = cell2mat(subjlist(:,11));
 testdata = mean(allcoh(:,bandidx,logical(netmask{1})),3);
@@ -71,6 +70,7 @@ mdl = fitlm(datatable(:,2),datatable(:,1),'RobustOpts','on');
 pointsize = 100;
 figure('Color','white');
 hold all
+
 %VS
 legendoff(scatter(datatable(datatable(:,4) == 0 & datatable(:,3) == 0,2), ...
     datatable(datatable(:,4) == 0 & datatable(:,3) == 0,1),pointsize,'red'));

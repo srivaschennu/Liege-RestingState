@@ -2,7 +2,7 @@ function [scores,group,stats,pet] = plotmeasure(listname,conntype,measure,bandid
 
 param = finputcheck(varargin, {
     'group', 'string', [], 'crsdiag'; ...
-    'groupnames', 'cell', {}, {'UWS','MCS','EMCS','LIS','CTR'}; ...
+    'groupnames', 'cell', {}, {'UWS','MCS-','MCS+','EMCS','LIS','CTR'}; ...
     'changroup', 'string', [], 'all'; ...
     'changroup2', 'string', [], 'all'; ...
     'xlabel', 'string', [], ''; ...
@@ -57,6 +57,7 @@ facecolorlist = [
     1 0.75 0.75
     0.75 1 1
     1 0.75 1
+    1 1 0.5
     ];
 
 groupnames = param.groupnames;
@@ -187,20 +188,24 @@ end
 % auc(auc < 0.5) = 1-auc(auc < 0.5);
 
 if strcmp(param.noplot,'off')
-    clear plotdata
-    for g = 1:length(groups)
-        plotdata{g} = mean(testdata(groupvar == groups(g) & crsdiag == 0,:),2);
-    end
+%     clear plotdata
+%     for g = 1:length(groups)
+%         plotdata{g} = mean(testdata(groupvar == groups(g),:),2);
+%     end
     
     %% plot mean graph
     figure('Color','white');
     figpos = get(gcf,'Position');
-    figpos(3) = figpos(3)*2/3;
+%     figpos(3) = figpos(3)*2/3;
     % figpos(4) = figpos(4)*3/4;
     set(gcf,'Position',figpos);
     
     hold all
-    violin(plotdata,'edgecolor',colorlist(1:length(groups),:),'facecolor',facecolorlist(1:length(groups),:),'facealpha',1,'medc',[]);
+%     violin(plotdata,'edgecolor',colorlist(1:length(groups),:),'facecolor',facecolorlist(1:length(groups),:),'facealpha',1,'medc',[]);
+    boxh = notBoxPlot(testdata,groupvar+1,0.5,'patch',ones(size(testdata,1),1));
+    for h = 1:length(boxh)
+        set(boxh(h).data,'Color',colorlist(h,:),'MarkerFaceColor',facecolorlist(h,:))
+    end
     set(gca,'XLim',[0.5 length(groups)+0.5],'XTick',1:length(groups),...
         'XTickLabel',groupnames','FontName',fontname,'FontSize',fontsize);
     ylabel(param.ylabel,'FontName',fontname,'FontSize',fontsize);
