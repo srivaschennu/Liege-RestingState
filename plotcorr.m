@@ -40,12 +40,15 @@ stats.test_stat = poscorr;
 corrmat = zeros(size(allcoh,3),size(allcoh,4));
 ind_upper = find(triu(ones(size(allcoh,3),size(allcoh,4)),1))';
 corrmat(ind_upper) = poscorr(1,:);
-corrmat = triu(corrmat,1)+triu(corrmat,1)';
+corrmat(~netmask{1}) = 0;
 meancorr = mean(corrmat(logical(netmask{1})));
+% meancorr = mean(corrmat(logical(netmask{1})));
+corrmat = triu(corrmat,1)+triu(corrmat,1)';
+
 corrp = zeros(size(allcoh,3),size(allcoh,4));
 corrp(ind_upper) = posp(1,:);
 corrp = triu(corrp,1)+triu(corrp,1)';
-corrmat(corrp>=stats.alpha) = 0;
+% corrmat(corrp>=stats.alpha) = 0;
 
 %% plot 3d graph
 plotgraph3d(corrmat,sortedlocs,'sortedlocs.spl','plotqt',0,'vscale',[0 0.12]);
@@ -72,14 +75,14 @@ figure('Color','white');
 hold all
 
 %VS
-legendoff(scatter(datatable(datatable(:,4) == 0 & datatable(:,3) == 0,2), ...
-    datatable(datatable(:,4) == 0 & datatable(:,3) == 0,1),pointsize,'red'));
+legendoff(scatter(datatable(datatable(:,4) == 0 & datatable(:,3) ~= 1,2), ...
+    datatable(datatable(:,4) == 0 & datatable(:,3) ~= 1,1),pointsize,'red'));
 legendoff(scatter(datatable(datatable(:,4) == 0 & datatable(:,3) == 1,2), ...
     datatable(datatable(:,4) == 0 & datatable(:,3) == 1,1),pointsize,'red','filled'));
 
 %MCS
-legendoff(scatter(datatable(datatable(:,4) == 1 & datatable(:,3) == 0,2), ...
-    datatable(datatable(:,4) == 1 & datatable(:,3) == 0,1),pointsize,'blue'));
+legendoff(scatter(datatable(datatable(:,4) == 1 & datatable(:,3) ~= 1,2), ...
+    datatable(datatable(:,4) == 1 & datatable(:,3) ~= 1,1),pointsize,'blue'));
 legendoff(scatter(datatable(datatable(:,4) == 1 & datatable(:,3) == 1,2), ...
     datatable(datatable(:,4) == 1 & datatable(:,3) == 1,1),pointsize,'blue','filled'));
 
