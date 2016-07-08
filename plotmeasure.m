@@ -2,7 +2,7 @@ function [scores,group,stats,pet] = plotmeasure(listname,conntype,measure,bandid
 
 param = finputcheck(varargin, {
     'group', 'string', [], 'crsdiag'; ...
-    'groupnames', 'cell', {}, {'UWS','MCS-','MCS+','EMCS','LIS','CTR'}; ...
+    'groupnames', 'cell', {}, {'UWS','MCS-','MCS+','EMCS','LIS','CTRL'}; ...
     'changroup', 'string', [], 'all'; ...
     'changroup2', 'string', [], 'all'; ...
     'xlabel', 'string', [], ''; ...
@@ -97,7 +97,7 @@ if strcmp(param.noplot,'off')
             set(gca,'YLim',param.ylim);
         end
         legend(groupnames,'Location',param.legendlocation);
-        export_fig(gcf,sprintf('figures/%s_%s_%s_%s.eps',conntype,measure,bands{bandidx},param.group),'-r200');
+        export_fig(gcf,sprintf('figures/%s_%s_%s_%s.eps',conntype,measure,bands{bandidx},param.group),'-r300');
         close(gcf);
     end
 end
@@ -202,7 +202,7 @@ if strcmp(param.noplot,'off')
     
     hold all
 %     violin(plotdata,'edgecolor',colorlist(1:length(groups),:),'facecolor',facecolorlist(1:length(groups),:),'facealpha',1,'medc',[]);
-    boxh = notBoxPlot(testdata,groupvar+1,0.5,'patch',ones(size(testdata,1),1));
+    boxh = notBoxPlot(mean(testdata,2),groupvar+1,0.5,'patch',ones(size(testdata,1),1));
     for h = 1:length(boxh)
         set(boxh(h).data,'Color',colorlist(h,:),'MarkerFaceColor',facecolorlist(h,:))
     end
@@ -223,7 +223,7 @@ if strcmp(param.noplot,'off')
         legend('hide');
     end
     box off
-    export_fig(gcf,sprintf('figures/%s_avg_%s_%s_%s.tiff',conntype,measure,bands{bandidx},param.group),'-r200');
+    export_fig(gcf,sprintf('figures/%s_avg_%s_%s_%s.tiff',conntype,measure,bands{bandidx},param.group),'-r300');
     close(gcf);
     
     %% plot auc
@@ -258,7 +258,7 @@ if strcmp(param.noplot,'off')
     end
     set(gca,'FontName',fontname,'FontSize',fontsize);
     
-    export_fig(gcf,sprintf('figures/%s_auc_%s_%s_%s.tiff',conntype,measure,bands{bandidx},param.group),'-r200');
+    export_fig(gcf,sprintf('figures/%s_auc_%s_%s_%s.tiff',conntype,measure,bands{bandidx},param.group),'-r300');
     close(gcf);
     
 end

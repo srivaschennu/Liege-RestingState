@@ -3,7 +3,7 @@ function plotmeangraph(listname,conntype,bandidx,varargin)
 loadpaths
 param = finputcheck(varargin, {
     'group', 'string', [], 'crsdiag'; ...
-    'groupnames', 'cell', {}, {'UWS','MCS','EMCS','LIS','CTR'}; ...
+    'groupnames', 'cell', {}, {'UWS','MCS-','MCS+','EMCS','LIS','CTR'}; ...
     });
 
 load(sprintf('%s/%s/alldata_%s_%s.mat',filepath,conntype,listname,conntype));
@@ -71,7 +71,7 @@ for g = 1:length(param.groupnames)
     fprintf('%s %s - number of modules: %d\n',param.groupnames{g},bands{bandidx},length(unique(minfo(g,:))));
     set(gcf,'Name',sprintf('%s %s',param.groupnames{g},bands{bandidx}));
     set(gcf,'InvertHardCopy','off');
-    print(gcf,sprintf('figures/meangraph_%s_%s.tif',param.groupnames{g},bands{bandidx}),'-dtiff','-r100');
+    print(gcf,sprintf('figures/meangraph_%s_%s.tif',param.groupnames{g},bands{bandidx}),'-dtiff','-r300');
     %     saveas(gcf,sprintf('figures/meangraph_%s_%s.fig',grouplist{g},bands{bandidx}));
     close(gcf);
 end

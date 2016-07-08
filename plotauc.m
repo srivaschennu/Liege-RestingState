@@ -2,7 +2,7 @@ function plotauc(listname,varargin)
 
 param = finputcheck(varargin, {
     'group', 'string', [], 'crsdiag'; ...
-    'groupnames', 'cell', {}, {'UWS','MCS','EMCS','LIS','CTR'}; ...
+    'groupnames', 'cell', {}, {'UWS','MCS-','MCS+','EMCS','LIS','CTRL'}; ...
     'alpha', 'real', [], 0.05; ...
     'xlim', 'real', [], []; ...
     'nonsig', 'string', {'on','off'}, 'on'; ...
@@ -45,9 +45,10 @@ groups = 0:length(param.groupnames)-1;
 grouppairs = [
     0 1
     1 2
-    2 4
+    2 3
+    3 5
     ];
-pairidx = [1 5 9];
+pairidx = [1 6 10 14];
 
 colorlist = [
     0 0.0 0.5
@@ -103,14 +104,14 @@ p_thresh = 0.05;
 
 figure('Color','white');
 figpos = get(gcf,'Position');
-figpos(3) = figpos(3)*3;
+figpos(3) = figpos(3)*2;
 figpos(4) = figpos(4)*2;
 set(gcf,'Position',figpos);
 
 markersizes = [100 275];
 hold all
 for g = 1:size(clsyfyrs,2)
-    grouppairnames{g} = sprintf('%s - %s',param.groupnames{grouppairs(g,1)+1},param.groupnames{grouppairs(g,2)+1});
+    grouppairnames{g} = sprintf('%s / %s',param.groupnames{grouppairs(g,1)+1},param.groupnames{grouppairs(g,2)+1});
 end
 
 for f = 1:size(clsyfyrs,1)
