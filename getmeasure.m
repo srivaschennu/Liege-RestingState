@@ -1,9 +1,10 @@
-function testdata = getmeasure(listname,conntype,measure,bandidx,sortedlocs,param)
+function [testdata,plottvals] = getmeasure(listname,conntype,measure,bandidx,sortedlocs,param)
 
 loadpaths
 changroups
 
 weiorbin = 3;
+plottvals = [];
 
 if strcmpi(measure,'power')
     %     load(sprintf('%s/%s/alldata_%s_%s.mat',filepath,conntype,listname,conntype));
@@ -22,7 +23,7 @@ elseif strcmpi(measure,'mean')
 elseif strcmpi(measure,'refdiag')
     testdata = refdiag;
 else
-    trange = [0.8 0.1];
+    trange = [0.5 0.1];
     load(sprintf('%s%s//graphdata_%s_%s.mat',filepath,conntype,listname,conntype),'graph','tvals');
     trange = (tvals <= trange(1) & tvals >= trange(2));
     plottvals = tvals(trange);

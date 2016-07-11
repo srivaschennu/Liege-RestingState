@@ -1,7 +1,7 @@
 function plotconfusion(confmat,groupnames)
 
 fontname = 'Helvetica';
-fontsize = 24;
+fontsize = 32;
 
 figure('Color','white');
 imshow(confmat,'InitialMagnification',5000);

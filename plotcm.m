@@ -12,12 +12,12 @@ groups = groups(groups < 3);
 grouppairs = nchoosek(groups,2);
 
 fontname = 'Helvetica';
-fontsize = 20;
+fontsize = 28;
 
 load(sprintf('combclsyfyr_%s.mat',param.group));
 for g = 1:size(clsyfyr,2)
     
-    fprintf('%s vs %s: AUC = %.2f, p = %.5f, Chi2 = %.2f, Chi2 p = %.4f, accu = %d%%.\n',...
+    fprintf('%s vs %s: AUC = %.2f, p = %.5f, Chi2 = %.2f, Chi2 p = %.1e, accu = %d%%.\n',...
         param.groupnames{grouppairs(g,1)+1},param.groupnames{grouppairs(g,2)+1},...
         clsyfyr(g).auc,clsyfyr(g).pval,clsyfyr(g).chi2,clsyfyr(g).chi2pval,clsyfyr(g).accu);
     

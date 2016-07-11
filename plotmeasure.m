@@ -62,7 +62,7 @@ facecolorlist = [
 
 groupnames = param.groupnames;
 
-testdata = getmeasure(listname,conntype,measure,bandidx,sortedlocs,param);
+[testdata,plottvals] = getmeasure(listname,conntype,measure,bandidx,sortedlocs,param);
 
 bands = {
     'delta'
@@ -81,7 +81,7 @@ if strcmp(param.noplot,'off')
         groupste(g,:) = nanstd(plotdata)/sqrt(length(plotdata));
     end
     
-    if exist('plottvals','var')
+    if ~isempty(plottvals)
         %% plot graph across connection densities
         
         figure('Color','white');
@@ -90,7 +90,7 @@ if strcmp(param.noplot,'off')
         for g = 1:length(groups)
             errorbar(plottvals,groupmean(g,:),groupste(g,:),'LineWidth',1,'Color',colorlist(g,:));
         end
-        set(gca,'XLim',[plottvals(end) plottvals(1)],'FontName',fontname,'FontSize',fontsize);
+        set(gca,'XLim',[plottvals(end)-0.01 plottvals(1)+0.01],'FontName',fontname,'FontSize',fontsize);
         xlabel('Graph connection density','FontName',fontname,'FontSize',fontsize);
         ylabel(param.ylabel,'FontName',fontname,'FontSize',fontsize);
         if ~isempty(param.ylim)
@@ -144,6 +144,10 @@ for g = 1:size(grouppairs,1)
     
     for d = 1:size(thistestdata,2)
         [x,y,t,auc(g,d)] = perfcurve(thisgroupvar, thistestdata(:,d),1);
+        if auc(g,d) < 0.5
+            auc(g,d) = 1-auc(g,d);
+        end
+        
         [~,bestthresh] = max(abs(y + (1-x) - 1));
         %         [~,bestthresh] = min(sqrt((0-x).^2 + (1-y).^2));
         thisconfmat = confusionmat(thisgroupvar,double(thistestdata(:,d) > t(bestthresh)));
@@ -184,8 +188,6 @@ for g = 1:size(grouppairs,1)
         end
     end
 end
-
-% auc(auc < 0.5) = 1-auc(auc < 0.5);
 
 if strcmp(param.noplot,'off')
 %     clear plotdata
@@ -229,10 +231,10 @@ if strcmp(param.noplot,'off')
     %% plot auc
     figure('Color','white');
     hold all
-    if exist('plottvals','var')
+    if ~isempty(plottvals)
         set(gca,'XDir','reverse');
         for g = 1:size(grouppairs,1)
-            plot(plottvals,auc(g,:),'LineWidth',2,'Color',colorlist(g,:));
+            plot(plottvals,auc(g,:),'LineWidth',2);
         end
         set(gca,'XLim',[plottvals(end) plottvals(1)]);
         xlabel('Graph connection density','FontName',fontname,'FontSize',fontsize);
