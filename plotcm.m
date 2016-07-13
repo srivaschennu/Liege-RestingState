@@ -21,7 +21,7 @@ for g = 1:size(clsyfyr,2)
         param.groupnames{grouppairs(g,1)+1},param.groupnames{grouppairs(g,2)+1},...
         clsyfyr(g).auc,clsyfyr(g).pval,clsyfyr(g).chi2,clsyfyr(g).chi2pval,clsyfyr(g).accu);
     
-    plotconfusion(clsyfyr(g).confmat,{param.groupnames{grouppairs(g,1)+1},param.groupnames{grouppairs(g,2)+1}});
+    plotconfusionmat(clsyfyr(g).confmat,{param.groupnames{grouppairs(g,1)+1},param.groupnames{grouppairs(g,2)+1}});
     set(gca,'FontName',fontname,'FontSize',fontsize);
     if ~isempty(param.xlabel)
         xlabel(param.xlabel,'FontName',fontname,'FontSize',fontsize);
