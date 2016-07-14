@@ -125,7 +125,7 @@ for g = 1:size(grouppairs,1)
         
         if strcmp(param.plotcm,'on')
             % plot confusion matrix
-            plotconfusion(pet(g).confmat,{param.groupnames{grouppairs(g,1)+1},param.groupnames{grouppairs(g,2)+1}});
+            plotconfusionmat(pet(g).confmat,{param.groupnames{grouppairs(g,1)+1},param.groupnames{grouppairs(g,2)+1}});
             set(gca,'FontName',fontname,'FontSize',fontsize);
             if ~isempty(param.xlabel)
                 xlabel(param.xlabel,'FontName',fontname,'FontSize',fontsize);
@@ -171,7 +171,7 @@ for g = 1:size(grouppairs,1)
             param.groupnames{grouppairs(g,1)+1},param.groupnames{grouppairs(g,2)+1},...
             auc(g,maxaucidx),(thisconfmat(2,2) + thisconfmat(1,1))/100 - 1, pval(g,maxaucidx));
         if strcmp(param.plotcm,'on')
-            plotconfusion(squeeze(confmat(g,maxaucidx,:,:)),{param.groupnames{grouppairs(g,1)+1},param.groupnames{grouppairs(g,2)+1}});
+            plotconfusionmat(squeeze(confmat(g,maxaucidx,:,:)),{param.groupnames{grouppairs(g,1)+1},param.groupnames{grouppairs(g,2)+1}});
             set(gca,'FontName',fontname,'FontSize',fontsize);
             if ~isempty(param.xlabel)
                 xlabel(param.xlabel,'FontName',fontname,'FontSize',fontsize);

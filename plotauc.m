@@ -179,7 +179,7 @@ if strcmp(param.plotcm,'on')
             featlist{bestauc,2},bands{featlist{bestauc,3}},param.groupnames{grouppairs(g,1)+1},param.groupnames{grouppairs(g,2)+1},...
             clsyfyrs(bestauc,g).auc,clsyfyrs(bestauc,g).pval,clsyfyrs(bestauc,g).chi2,clsyfyrs(bestauc,g).chi2pval,clsyfyrs(bestauc,g).accu);
         
-        plotconfusion(clsyfyrs(bestauc,g).confmat,{param.groupnames{grouppairs(g,1)+1},param.groupnames{grouppairs(g,2)+1}});
+        plotconfusionmat(clsyfyrs(bestauc,g).confmat,{param.groupnames{grouppairs(g,1)+1},param.groupnames{grouppairs(g,2)+1}});
         set(gca,'FontName',fontname,'FontSize',fontsize);
         if ~isempty(param.xlabel)
             xlabel(param.xlabel,'FontName',fontname,'FontSize',fontsize);

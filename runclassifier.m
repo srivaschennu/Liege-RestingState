@@ -80,7 +80,7 @@ for g = 1:size(clsyfyrs,2)
     if strcmp(param.train,'true')
         clsyfyr(g) = buildclassifier(features,groupvar,'train','true');
     else
-        clsyfyr(g) = buildclassifier(features,groupvar);
+        clsyfyr(g) = buildnnclassifier(features,groupvar);
         
         fprintf('%s vs %s: AUC = %.2f, p = %.5f, Chi2 = %.2f, Chi2 p = %.4f, accu = %d%%.\n',...
             param.groupnames{grouppairs(g,1)+1},param.groupnames{grouppairs(g,2)+1},...
@@ -136,7 +136,7 @@ if strcmp(param.train,'true')
 else
     clsyfyrparams = {'KFold',4,'Standardize',true,'KernelFunction','RBF'};
 end
-Nvals = 5:5:50;
+Nvals = 10:10:200;
 
 nsamp = size(features,1);
 cvpart = cvpartition(nsamp,'KFold',4);
@@ -208,7 +208,7 @@ param = finputcheck(varargin, {
 if strcmp(param.train,'true')
     clsyfyrparams = {'Standardize',true,'KernelFunction','RBF'};
 else
-    clsyfyrparams = {'KFold',4,'Standardize',true,'KernelFunction','RBF'};
+    clsyfyrparams = {'KFold',4,'Standardize',true};%,'KernelFunction','RBF'};
 end
 
 if size(features,2) > 1 && strcmp(param.runpca,'true')
