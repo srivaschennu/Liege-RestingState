@@ -57,8 +57,8 @@ grouppairs = [
 
 for g = 1:size(clsyfyrs,2)
     [~,sortidx] = sort(cell2mat({clsyfyrs(:,g).auc}),'descend');
-    selfeatidx = sortidx(1:param.keepfeat);
-%     selfeatidx = 1:size(featlist,1);
+%     selfeatidx = sortidx(1:param.keepfeat);
+    selfeatidx = 1:size(featlist,1);
     
     features = [];
     for f = selfeatidx
@@ -80,7 +80,7 @@ for g = 1:size(clsyfyrs,2)
     if strcmp(param.train,'true')
         clsyfyr(g) = buildclassifier(features,groupvar,'train','true');
     else
-        clsyfyr(g) = buildnnclassifier(features,groupvar);
+        clsyfyr(g) = buildclassifier(features,groupvar);
         
         fprintf('%s vs %s: AUC = %.2f, p = %.5f, Chi2 = %.2f, Chi2 p = %.4f, accu = %d%%.\n',...
             param.groupnames{grouppairs(g,1)+1},param.groupnames{grouppairs(g,2)+1},...
