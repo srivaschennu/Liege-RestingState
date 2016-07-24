@@ -76,7 +76,7 @@ groups = unique(groupvar(~isnan(groupvar)));
 
 if strcmp(param.noplot,'off')
     for g = 1:length(groups)
-        plotdata = testdata(groupvar == groups(g),:);
+        plotdata = mean(testdata(groupvar == groups(g),:,:),3);
         groupmean(g,:) = nanmean(plotdata);
         groupste(g,:) = nanstd(plotdata)/sqrt(length(plotdata));
     end
@@ -111,7 +111,7 @@ for g = 1:size(grouppairs,1)
     [~,~,thisgroupvar] = unique(thisgroupvar);
     thisgroupvar = thisgroupvar-1;
     thispetdiag = petdiag(groupvar == grouppairs(g,1) | groupvar == grouppairs(g,2));
-    thistestdata = testdata(groupvar == grouppairs(g,1) | groupvar == grouppairs(g,2),:);
+    thistestdata = testdata(groupvar == grouppairs(g,1) | groupvar == grouppairs(g,2),:,:);
     
     pet(g).confmat = confusionmat(thisgroupvar(~isnan(thispetdiag)),thispetdiag(~isnan(thispetdiag)));
     pet(g).confmat = pet(g).confmat*100 ./ repmat(sum(pet(g).confmat,2),1,2);
@@ -143,7 +143,8 @@ for g = 1:size(grouppairs,1)
     end
     
     for d = 1:size(thistestdata,2)
-        [x,y,t,auc(g,d)] = perfcurve(thisgroupvar, thistestdata(:,d),1);
+        thistestdata2 = squeeze(thistestdata(:,d,:));
+        [x,y,t,auc(g,d)] = perfcurve(thisgroupvar, thistestdata2,1);
         if auc(g,d) < 0.5
             auc(g,d) = 1-auc(g,d);
         end
