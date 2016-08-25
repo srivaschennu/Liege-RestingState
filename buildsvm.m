@@ -1,4 +1,4 @@
-function bestcls = buildclassifier(features,groupvar,varargin)
+function bestcls = buildsvm(features,groupvar,varargin)
 
 param = finputcheck(varargin, {
     'C', 'real', [], []; ...

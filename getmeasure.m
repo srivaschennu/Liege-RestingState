@@ -49,12 +49,12 @@ else
     elseif strcmpi(measure,'mutual information')
         testdata = squeeze(mean(graph{m,weiorbin}(:,:,bandidx,trange),4));
     elseif strcmpi(measure,'participation coefficient')
-%         testdata = squeeze(std(graph{m,weiorbin}(:,bandidx,trange,:),[],4));
+        testdata = squeeze(std(graph{m,weiorbin}(:,bandidx,trange,:),[],4));
         %         testdata = squeeze(graph{m,weiorbin}(:,bandidx,trange,:));
         %         testdata = testdata - repmat(quantile(testdata,0.75,3),1,1,size(testdata,3));
         %         testdata(testdata < 0) = NaN;
         %         testdata = nanmean(testdata,3);
-        testdata = squeeze(graph{m,weiorbin}(:,bandidx,trange,:));
+%         testdata = squeeze(graph{m,weiorbin}(:,bandidx,trange,:));
     else
         testdata = squeeze(mean(graph{m,weiorbin}(:,bandidx,trange,:),4));
     end
