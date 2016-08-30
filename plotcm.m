@@ -14,7 +14,7 @@ grouppairs = nchoosek(groups,2);
 fontname = 'Helvetica';
 fontsize = 28;
 
-load(sprintf('combclsyfyr_%s.mat',param.group));
+load(sprintf('clsyfyr_%s.mat',param.group));
 for g = 1:size(clsyfyr,2)
     
     fprintf('%s vs %s: AUC = %.2f, p = %.5f, Chi2 = %.2f, Chi2 p = %.1e, accu = %d%%.\n',...

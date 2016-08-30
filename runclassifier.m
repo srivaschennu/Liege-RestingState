@@ -1,14 +1,37 @@
 function runclassifier(listname,varargin)
 
 param = finputcheck(varargin, {
+    'changroup', 'string', [], 'all'; ...
+    'changroup2', 'string', [], 'all'; ...
     'group', 'string', [], 'crsdiag'; ...
-    'groupnames', 'cell', {}, {'UWS','MCS','EMCS'}; ...
-    'keepfeat', 'real', [], 3; ...
+    'grouppair', 'real', [], []; ...
+    'groupnames', 'cell', {}, {'UWS','MCS'}; ...
     'runpca', 'string', {'true','false'}, 'false'; ...
     'train', 'string', {'true','false'}, 'false'; ...
     });
 
+loadpaths
 loadsubj
+changroups
+weiorbin = 3;
+plottvals = [];
+load sortedlocs
+
+subjlist = eval(listname);
+refdiag = cell2mat(subjlist(:,2));
+crsdiag = cell2mat(subjlist(:,3));
+crsaware = double(cell2mat(subjlist(:,3)) > 0);
+petdiag = cell2mat(subjlist(:,4));
+tennis = cell2mat(subjlist(:,5));
+etiology = cell2mat(subjlist(:,6));
+daysonset = cell2mat(subjlist(:,9));
+outcome = double(cell2mat(subjlist(:,10)) > 2);
+outcome(isnan(cell2mat(subjlist(:,10)))) = NaN;
+mcstennis = tennis .* crsdiag;
+mcstennis(crsdiag == 0) = NaN;
+crs = cell2mat(subjlist(:,11));
+
+groupvar = eval(param.group);
 
 bands = {
     'delta'
@@ -40,155 +63,78 @@ featlist = {
     'ftdwpli','modular span',3
     };
 
-% if param.keepfeat > 1
-varargin = varargin(setdiff(1:length(varargin),[find(strcmp('keepfeat',varargin)) find(strcmp('keepfeat',varargin))+1]));
-varargin = varargin(setdiff(1:length(varargin),[find(strcmp('train',varargin)) find(strcmp('train',varargin))+1]));
+if isempty(param.grouppair)
+    grouppair = [0 1];
+else
+    grouppair = param.grouppair;
+end
 
-load(sprintf('stats_%s.mat',param.group));
-
-selfeat = cell(1,size(clsyfyrs,2));
-
-grouppairs = [
-    0 1
-    1 2
-    2 3
-    3 5
-    ];
-
-for g = 1:size(clsyfyrs,2)
-    [~,sortidx] = sort(cell2mat({clsyfyrs(:,g).auc}),'descend');
-    selfeatidx = sortidx(1:param.keepfeat);
+for f = 1:size(featlist,1)
+    fprintf('Feature set: ');
+    disp(featlist(f,:));
+    conntype = featlist{f,1};
+    measure = featlist{f,2};
+    bandidx = featlist{f,3};
     
-    features = [];
-    for f = selfeatidx
-        [thisfeat,groupvar] = plotmeasure(listname,featlist{f,1:3},'noplot','on',varargin{:});
-        features = cat(2,features,thisfeat);
-        selfeat{g} = cat(1,selfeat{g},featlist(f,1:3));
+    if strcmpi(measure,'power')
+        %     load(sprintf('%s/%s/alldata_%s_%s.mat',filepath,conntype,listname,conntype));
+        load(sprintf('%s/%s/alldata_%s_%s.mat',filepath,conntype,listname,conntype),'bandpower');
+        features = squeeze(bandpower(:,bandidx,ismember({sortedlocs.labels},eval(param.changroup))) * 100);
+    elseif strcmpi(measure,'specent')
+        %     load(sprintf('%s/%s/alldata_%s_%s.mat',filepath,conntype,listname,conntype));
+        load(sprintf('%s/%s/alldata_%s_%s.mat',filepath,conntype,listname,conntype),'specent');
+        features = squeeze(specent(:,ismember({sortedlocs.labels},eval(param.changroup))));
+    elseif strcmpi(measure,'median')
+        load(sprintf('%s/%s/alldata_%s_%s.mat',filepath,conntype,listname,conntype),'allcoh');
+        features = median(allcoh(:,bandidx,ismember({sortedlocs.labels},eval(param.changroup)),ismember({sortedlocs.labels},eval(param.changroup2))),4);
+    elseif strcmpi(measure,'mean')
+        load(sprintf('%s/%s/alldata_%s_%s.mat',filepath,conntype,listname,conntype),'allcoh');
+        features = mean(allcoh(:,bandidx,ismember({sortedlocs.labels},eval(param.changroup)),ismember({sortedlocs.labels},eval(param.changroup2))),4);
+    elseif strcmpi(measure,'refdiag')
+        features = refdiag;
+    else
+        trange = [0.5 0.1];
+        load(sprintf('%s%s//graphdata_%s_%s.mat',filepath,conntype,listname,conntype),'graph','tvals');
+        trange = (tvals <= trange(1) & tvals >= trange(2));
+        plottvals = tvals(trange);
+        
+        if strcmpi(measure,'small-worldness')
+            randgraph = load(sprintf('%s/%s/graphdata_%s_rand_%s.mat',filepath,conntype,listname,conntype));
+            graph{end+1,1} = 'small-worldness';
+            graph{end,2} = ( mean(graph{1,2},4) ./ mean(randgraph.graph{1,2},4) ) ./ ( graph{2,2} ./ randgraph.graph{2,2} ) ;
+            graph{end,3} = ( mean(graph{1,3},4) ./ mean(randgraph.graph{1,3},4) ) ./ ( graph{2,3} ./ randgraph.graph{2,3} ) ;
+        end
+        
+        %     if ~strcmpi(measure,'small-worldness')
+        %         m = find(strcmpi(measure,graph(:,1)));
+        %         graph{m,2} = graph{m,2} ./ randgraph.graph{m,2};
+        %         graph{m,3} = graph{m,3} ./ randgraph.graph{m,3};
+        %     end
+        
+        m = find(strcmpi(measure,graph(:,1)));
+        features = squeeze(graph{m,weiorbin}(:,bandidx,trange,:));
     end
-    fprintf('Combining the following features...\n');
-    selfeat{g}
     
-%     groups = unique(groupvar(~isnan(groupvar)));
-%     grouppairs = nchoosek(groups,2);
-    
-    features = features(groupvar == grouppairs(g,1) | groupvar == grouppairs(g,2),:);
-    groupvar = groupvar(groupvar == grouppairs(g,1) | groupvar == grouppairs(g,2));
+    features = features(groupvar == grouppair(1) | groupvar == grouppair(2),:,:);
+    groupvar = groupvar(groupvar == grouppair(1) | groupvar == grouppair(2));
     [~,~,groupvar] = unique(groupvar);
     groupvar = groupvar-1;
     
     if strcmp(param.train,'true')
-        clsyfyr(g) = buildclassifier(features,groupvar,'train','true');
+        clsyfyr{f} = buildsvm(features,groupvar,'train','true');
     else
-        clsyfyr(g) = buildclassifier(features,groupvar);
+        clsyfyr{f} = buildsvm(features,groupvar,'runpca','true');
         
         fprintf('%s vs %s: AUC = %.2f, p = %.5f, Chi2 = %.2f, Chi2 p = %.4f, accu = %d%%.\n',...
-            param.groupnames{grouppairs(g,1)+1},param.groupnames{grouppairs(g,2)+1},...
-            clsyfyr(g).auc,clsyfyr(g).pval,clsyfyr(g).chi2,clsyfyr(g).chi2pval,clsyfyr(g).accu);
+            param.groupnames{grouppair(1)+1},param.groupnames{grouppair(2)+1},...
+            clsyfyr{f}.auc,clsyfyr{f}.pval,clsyfyr{f}.chi2,clsyfyr{f}.chi2pval,clsyfyr{f}.accu);
+    end
+    
+    groupnames = param.groupnames;
+    if strcmp(param.train,'true')
+        save(sprintf('clsyfyr_%s_train.mat',param.group),'clsyfyr','grouppair','groupnames');
+    else
+        save(sprintf('clsyfyr_%s.mat',param.group),'clsyfyr','grouppair','groupnames');
     end
 end
 
-groupnames = param.groupnames;
-if strcmp(param.train,'true')
-    save(sprintf('combclsyfyr_%s_train.mat',param.group),'selfeat','clsyfyr','grouppairs','groupnames');
-else
-    save(sprintf('combclsyfyr_%s.mat',param.group),'selfeat','clsyfyr','grouppairs','groupnames');
-end
-
-% else
-%     for f = 1:size(featlist,1)
-%         [features,groupvar] = plotmeasure(listname,featlist{f,:},'noplot','on',varargin{:});
-%
-%         groups = unique(groupvar(~isnan(groupvar)));
-%         groups = groups(groups < 3);
-%         grouppairs = nchoosek(groups,2);
-%
-%         for g = 1:size(grouppairs,1)
-%             thisfeat = features(groupvar == grouppairs(g,1) | groupvar == grouppairs(g,2),:);
-%             thisgroupvar = groupvar(groupvar == grouppairs(g,1) | groupvar == grouppairs(g,2));
-%             [~,~,thisgroupvar] = unique(thisgroupvar);
-%             thisgroupvar = thisgroupvar-1;
-%
-%             clsyfyr(g) = buildclassifier(thisfeat,thisgroupvar,'runpca','false');
-%
-%             fprintf('%s %s - %s vs %s: AUC = %.2f, p = %.5f, Chi2 = %.2f, Chi2 p = %.4f, accu = %d%%.\n',...
-%                 featlist{f,2},bands{featlist{f,3}},param.groupnames{grouppairs(g,1)+1},param.groupnames{grouppairs(g,2)+1},...
-%                 clsyfyr(g).auc,clsyfyr(g).pval,clsyfyr(g).chi2,clsyfyr(g).chi2pval,clsyfyr(g).accu);
-%         end
-%         featspec = featlist(f,:);
-%         save(sprintf('clsyfyrs/clsyfyr_%s_%s_%s_%s.mat',featspec{1},featspec{2},bands{featspec{3}},param.group),...
-%             'clsyfyr','featspec');
-%         clear clsyfyr
-%     end
-% end
-
-end
-
-function bestcls = buildnnclassifier(features,groupvar,varargin)
-
-param = finputcheck(varargin, {
-    'N', 'real', [], []; ...
-    'train', 'string', {'true','false'}, 'false'; ...
-    });
-
-if strcmp(param.train,'true')
-    clsyfyrparams = {'Standardize',true,'KernelFunction','RBF'};
-else
-    clsyfyrparams = {'KFold',4,'Standardize',true,'KernelFunction','RBF'};
-end
-Nvals = 10:10:200;
-
-nsamp = size(features,1);
-cvpart = cvpartition(nsamp,'KFold',4);
-groupvar = [groupvar ~groupvar];
-for n = 1:length(Nvals)
-    outputs = zeros(nsamp,2);
-    for f = 1:cvpart.NumTestSets
-        rng('default');
-        nnet = patternnet(Nvals(n));
-        
-        trainidx = find(training(cvpart,f));
-        testidx = find(test(cvpart,f));
-        validx = trainidx(length(trainidx)-length(testidx)+1:end);
-        trainidx = trainidx(1:length(trainidx)-length(testidx));
-        nnet.divideFcn = 'divideind';
-        nnet.divideParam.trainInd = trainidx;
-        nnet.divideParam.valInd = validx;
-        nnet.divideParam.testInd = testidx;
-        
-        nnet = train(nnet,features',groupvar');
-        outputs(testidx,:) = nnet(features(testidx,:)')';
-    end
-    [~,~,~,auc(n)] = perfcurve(groupvar(:,1),outputs(:,1),1);
-end
-auc(auc < 0.5) = 1-auc(auc < 0.5);
-[~,maxidx] = max(auc);
-bestN = Nvals(maxidx);
-
-for f = 1:cvpart.NumTestSets
-rng('default');
-nnet = patternnet(bestN);
-        trainidx = training(cvpart,f);
-        testidx = test(cvpart,f);
-        validx = trainidx(length(trainidx)-length(testidx)+1:end);
-        trainidx = trainidx(1:length(trainidx)-length(testidx));
-        nnet.divideFcn = divideind(nsamp,trainidx,validx,testidx);
-        
-        bestcls.nnet = train(nnet,features,groupvar);
-        outputs = nnet(features);
-end
-
-
-bestcls.pval = ranksum(postProb(groupvar == 0,2),postProb(groupvar == 1,2));
-
-% [~,bestthresh] = min(sqrt((0-x).^2 + (1-y).^2));
-[~,bestthresh] = max(abs(y + (1-x) - 1));
-predLabels = double(postProb(:,2) > t(bestthresh));
-bestcls.bestthresh = t(bestthresh);
-
-[~,bestcls.chi2,bestcls.chi2pval] = crosstab(groupvar,predLabels);
-bestcls.accu = round(sum(groupvar==predLabels)*100/length(groupvar));
-
-bestcls.confmat = confusionmat(groupvar,predLabels);
-bestcls.confmat = bestcls.confmat*100 ./ repmat(sum(bestcls.confmat,2),1,2);
-bestcls.predlabels = predLabels;
-end

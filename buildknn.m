@@ -1,4 +1,4 @@
-function bestcls = buildsvm(features,groupvar,varargin)
+function bestcls = buildknn(features,groupvar,varargin)
 
 param = finputcheck(varargin, {
     'runpca', 'string', {'true','false'}, 'false'; ...
@@ -10,14 +10,13 @@ if ndims(features) == 3
 end
 
 if strcmp(param.train,'true')
-    clsyfyrparams = {'Standardize',true,'KernelFunction','RBF'};
+    clsyfyrparams = {'Standardize',true};
 else
-    clsyfyrparams = {'KFold',4,'Standardize',true,'KernelFunction','RBF'};
+    clsyfyrparams = {'KFold',4,'Standardize',true};
 end
 
 lastwarn('');
-Cvals = unique(sort(cat(2, 10.^(-5:5), 5.^(-5:5), 2.^(-5:5))));
-Kvals = unique(sort(cat(2, 10.^(-5:5), 5.^(-5:5), 2.^(-5:5))));
+Nvals = 1:10;
 
 for d = 1:size(features,3)
     fprintf('Density %d\n',d);
@@ -33,32 +32,29 @@ for d = 1:size(features,3)
         thisfeat = pcaScores(:,1:bestcls.numPCAComponentsToKeep);
     end
     
-    for c = 1:length(Cvals)
-        for k = 1:length(Kvals)
-            
-            rng('default');
-            model = fitcsvm(thisfeat,groupvar,clsyfyrparams{:},'BoxConstraint',Cvals(c),'KernelScale',Kvals(k));
-            if strcmp(param.train,'true')
-                [~,postProb] = predict(fitSVMPosterior(model),thisfeat);
-            else
-                [~,postProb] = kfoldPredict(fitSVMPosterior(model));
-            end
-            if ~strcmp(lastwarn,'')
-                lastwarn('');
-                auc(d,c,k) = 0.5;
-            else
-                [x,y,t,auc(d,c,k)] = perfcurve(groupvar,postProb(:,2),1);
-            end
+    for n = 1:length(Nvals)
+        
+        rng('default');
+        model = fitcknn(thisfeat,groupvar,clsyfyrparams{:},'NumNeighbors',n);
+        if strcmp(param.train,'true')
+            [~,postProb] = predict(model,thisfeat);
+        else
+            [~,postProb] = predict(model,thisfeat);
+        end
+        if ~strcmp(lastwarn,'')
+            lastwarn('');
+            auc(d,n) = 0.5;
+        else
+            [x,y,t,auc(d,n)] = perfcurve(groupvar,postProb(:,2),1);
         end
     end
 end
 
 [~,maxidx] = max(abs(auc(:)));
-[bestD,bestC,bestK] = ind2sub(size(auc),maxidx);
+[bestD,bestN] = ind2sub(size(auc),maxidx);
 
 bestcls.D = bestD;
-bestcls.C = Cvals(bestC);
-bestcls.K = Kvals(bestK);
+bestcls.N = Nvals(bestN);
 
 rng('default');
 thisfeat = features(:,:,bestD);
@@ -72,12 +68,12 @@ if size(thisfeat,2) > 1 && strcmp(param.runpca,'true')
     thisfeat = pcaScores(:,1:bestcls.numPCAComponentsToKeep);
 end
 
-bestcls.model = fitcsvm(thisfeat,groupvar,clsyfyrparams{:},'BoxConstraint',bestcls.C,'KernelScale',bestcls.K);
+bestcls.model = fitcknn(thisfeat,groupvar,clsyfyrparams{:},'NumNeighbors',bestcls.N);
 
 if ~strcmp(param.train,'true')
-    [~,postProb] = kfoldPredict(fitSVMPosterior(bestcls.model));
+    [~,postProb] = kfoldPredict(bestcls.model);
 else
-    [~,postProb] = predict(fitSVMPosterior(bestcls.model),thisfeat);
+    [~,postProb] = predict(bestcls.model,thisfeat);
 end
 [x,y,t,bestcls.auc] = perfcurve(groupvar,postProb(:,2),1);
 
