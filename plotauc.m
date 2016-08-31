@@ -71,26 +71,29 @@ facecolorlist = [
 fontname = 'Helvetica';
 fontsize = 20;
 
-for f = 1:size(featlist,1)
-    %     load(sprintf('clsyfyrs/clsyfyr_%s_%s_%s_%s.mat',featlist{f,1},featlist{f,2},bands{featlist{f,3}},param.group));
-    %     if exist('clsyfyrs','var')
-    %         fnlist = fieldnames(clsyfyr);
-    %         for fn = 1:length(fnlist)
-    %             if ~isfield(clsyfyrs,fnlist{fn})
-    %                 clsyfyr = rmfield(clsyfyr,fnlist{fn});
-    %             end
-    %         end
-    %     end
-    %     clsyfyrs(f,:) = clsyfyr;
-    [~,~,stats] = plotmeasure(listname,featlist{f,1},featlist{f,2},featlist{f,3},'noplot','on','group',param.group,'groupnames',param.groupnames);
-    clsyfyrs(f,:) = stats;
+% for f = 1:size(featlist,1)
+%     %     load(sprintf('clsyfyr/clsyfyr_%s_%s_%s_%s.mat',featlist{f,1},featlist{f,2},bands{featlist{f,3}},param.group));
+%     %     if exist('clsyfyr','var')
+%     %         fnlist = fieldnames(clsyfyr);
+%     %         for fn = 1:length(fnlist)
+%     %             if ~isfield(clsyfyr,fnlist{fn})
+%     %                 clsyfyr = rmfield(clsyfyr,fnlist{fn});
+%     %             end
+%     %         end
+%     %     end
+%     %     clsyfyr(f,:) = clsyfyr;
+%     [~,~,stats] = plotmeasure(listname,featlist{f,1},featlist{f,2},featlist{f,3},'noplot','on','group',param.group,'groupnames',param.groupnames);
+%     clsyfyr(f,:) = stats;
+% end
+
+load(sprintf('clsyfyr_%s.mat',param.group));
+clsyfyr = clsyfyr';
+
+if size(clsyfyr,2) > 3
+    clsyfyr = clsyfyr(:,pairidx);
 end
 
-if size(clsyfyrs,2) > 3
-    clsyfyrs = clsyfyrs(:,pairidx);
-end
-
-if size(clsyfyrs,2) == 1
+if size(clsyfyr,2) == 1
     colorlist = [
         0 0 0
         ];
@@ -99,7 +102,7 @@ if size(clsyfyrs,2) == 1
         ];
 end
 
-p_thresh = fdr(cell2mat({clsyfyrs(:).pval}),param.alpha);
+p_thresh = fdr(cell2mat({clsyfyr.pval}),param.alpha);
 p_thresh = 0.05;
 
 figure('Color','white');
@@ -110,27 +113,27 @@ set(gcf,'Position',figpos);
 
 markersizes = [100 275];
 hold all
-for g = 1:size(clsyfyrs,2)
+for g = 1:size(clsyfyr,2)
     grouppairnames{g} = sprintf('%s / %s',param.groupnames{grouppairs(g,1)+1},param.groupnames{grouppairs(g,2)+1});
 end
 
-for f = 1:size(clsyfyrs,1)
+for f = 1:size(clsyfyr,1)
     if strcmp(param.nonsig,'on')
-        legendoff(line([0.5 max(cell2mat({clsyfyrs(f,:).auc}))],[f f],'LineWidth',0.5,'Color',[0.5 0.5 0.5]));
-    elseif  strcmp(param.nonsig,'off') && sum(cell2mat({clsyfyrs(f,:).pval}) < p_thresh) > 0
-        legendoff(line([0.5 max(cell2mat({clsyfyrs(f,cell2mat({clsyfyrs(f,:).pval}) < p_thresh).auc}))],[f f],'LineWidth',0.5,'Color',[0.5 0.5 0.5]));
+        legendoff(line([0.5 max(cell2mat({clsyfyr(f,:).auc}))],[f f],'LineWidth',0.5,'Color',[0.5 0.5 0.5]));
+    elseif  strcmp(param.nonsig,'off') && sum(cell2mat({clsyfyr(f,:).pval}) < p_thresh) > 0
+        legendoff(line([0.5 max(cell2mat({clsyfyr(f,cell2mat({clsyfyr(f,:).pval}) < p_thresh).auc}))],[f f],'LineWidth',0.5,'Color',[0.5 0.5 0.5]));
     end
-    for g = 1:size(clsyfyrs,2)
-        if clsyfyrs(f,g).pval >= p_thresh
+    for g = 1:size(clsyfyr,2)
+        if clsyfyr(f,g).pval >= p_thresh
             markersize = markersizes(1);
         else
             markersize = markersizes(2);
         end
         if f == 1
-            sc_h(f,g) = scatter(clsyfyrs(f,g).auc,f,markersize,...
+            sc_h(f,g) = scatter(clsyfyr(f,g).auc,f,markersize,...
                 'MarkerFaceColor',facecolorlist(g,:),'MarkerEdgeColor',colorlist(g,:),'LineWidth',1.5);
         else
-            sc_h(f,g) = legendoff(scatter(clsyfyrs(f,g).auc,f,markersize,...
+            sc_h(f,g) = legendoff(scatter(clsyfyr(f,g).auc,f,markersize,...
                 'MarkerFaceColor',facecolorlist(g,:),'MarkerEdgeColor',colorlist(g,:),'LineWidth',1.5));
         end
     end
@@ -143,13 +146,13 @@ else
     xlim(param.xlim);
 end
 xlabel('Area Under the Curve','FontName',fontname,'FontSize',fontsize);
-ylim([0 size(clsyfyrs,1)+1]);
-set(gca,'YTick',1:size(clsyfyrs,1),'YTickLabel',featlist(:,end));
+ylim([0 size(clsyfyr,1)+1]);
+set(gca,'YTick',1:size(clsyfyr,1),'YTickLabel',featlist(:,end));
 
 if strcmp(param.nonsig,'off')
-    for f = 1:size(clsyfyrs,1)
-        for g = 1:size(clsyfyrs,2)
-            if clsyfyrs(f,g).pval >= p_thresh
+    for f = 1:size(clsyfyr,1)
+        for g = 1:size(clsyfyr,2)
+            if clsyfyr(f,g).pval >= p_thresh
                 set(sc_h(f,g),'MarkerFaceColor','none','MarkerEdgeColor','none');
             end
         end
@@ -157,29 +160,29 @@ if strcmp(param.nonsig,'off')
 end
 
 [~,icons] = legend(grouppairnames,'Location','SouthOutside','Orientation','Horizontal','box','off');
-for g = 1:size(clsyfyrs,2)
+for g = 1:size(clsyfyr,2)
     set(icons(g),'FontName',fontname,'FontSize',fontsize-2);
 end
-for g = 1:size(clsyfyrs,2)
-    set(icons(g+size(clsyfyrs,2)).Children,'MarkerSize',14,'MarkerFaceColor',facecolorlist(g,:),'MarkerEdgeColor',colorlist(g,:));
+for g = 1:size(clsyfyr,2)
+    set(icons(g+size(clsyfyr,2)).Children,'MarkerSize',14,'MarkerFaceColor',facecolorlist(g,:),'MarkerEdgeColor',colorlist(g,:));
 end
 
 export_fig(sprintf('figures/auc_%s.tiff',param.group),'-r200');
 close(gcf);
 
-save(sprintf('stats_%s.mat',param.group),'clsyfyrs','featlist');
+save(sprintf('stats_%s.mat',param.group),'clsyfyr','featlist');
 
 %% plot confusion matrix of best classifier
 
 if strcmp(param.plotcm,'on')
-    for g = 1:size(clsyfyrs,2)
-        [~,bestauc] = max(cell2mat({clsyfyrs(:,g).auc}));
+    for g = 1:size(clsyfyr,2)
+        [~,bestauc] = max(cell2mat({clsyfyr(:,g).auc}));
         
         fprintf('%s %s - %s vs %s: AUC = %.2f, p = %.5f, Chi2 = %.2f, Chi2 p = %.4f, accu = %d%%.\n',...
             featlist{bestauc,2},bands{featlist{bestauc,3}},param.groupnames{grouppairs(g,1)+1},param.groupnames{grouppairs(g,2)+1},...
-            clsyfyrs(bestauc,g).auc,clsyfyrs(bestauc,g).pval,clsyfyrs(bestauc,g).chi2,clsyfyrs(bestauc,g).chi2pval,clsyfyrs(bestauc,g).accu);
+            clsyfyr(bestauc,g).auc,clsyfyr(bestauc,g).pval,clsyfyr(bestauc,g).chi2,clsyfyr(bestauc,g).chi2pval,clsyfyr(bestauc,g).accu);
         
-        plotconfusionmat(clsyfyrs(bestauc,g).confmat,{param.groupnames{grouppairs(g,1)+1},param.groupnames{grouppairs(g,2)+1}});
+        plotconfusionmat(clsyfyr(bestauc,g).confmat,{param.groupnames{grouppairs(g,1)+1},param.groupnames{grouppairs(g,2)+1}});
         set(gca,'FontName',fontname,'FontSize',fontsize);
         if ~isempty(param.xlabel)
             xlabel(param.xlabel,'FontName',fontname,'FontSize',fontsize);

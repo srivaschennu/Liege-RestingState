@@ -15,6 +15,9 @@ else
     clsyfyrparams = {'KFold',4,'Standardize',true,'KernelFunction','RBF'};
 end
 
+% PCA - Keep enough components to explain the desired amount of variance.
+explainedVarianceToKeepAsFraction = 95/100;
+
 lastwarn('');
 Cvals = unique(sort(cat(2, 10.^(-5:5), 5.^(-5:5), 2.^(-5:5))));
 Kvals = unique(sort(cat(2, 10.^(-5:5), 5.^(-5:5), 2.^(-5:5))));
@@ -23,14 +26,12 @@ for d = 1:size(features,3)
     fprintf('Density %d\n',d);
     thisfeat = features(:,:,d);
     
-    if size(thisfeat,2) > 1 && strcmp(param.runpca,'true')
-        [bestcls.pcaCoeff, pcaScores, ~, ~, explained] = pca(...
+    if size(thisfeat,2) > 1 && strcmp(param.runpca,'true')  
+        [~, pcaScores, ~, ~, explained] = pca(...
             thisfeat, ...
             'Centered', true);
-        % Keep enough components to explain the desired amount of variance.
-        explainedVarianceToKeepAsFraction = 95/100;
-        bestcls.numPCAComponentsToKeep = find(cumsum(explained)/sum(explained) >= explainedVarianceToKeepAsFraction, 1);
-        thisfeat = pcaScores(:,1:bestcls.numPCAComponentsToKeep);
+        numPCAComponentsToKeep = find(cumsum(explained)/sum(explained) >= explainedVarianceToKeepAsFraction, 1);
+        thisfeat = pcaScores(:,1:numPCAComponentsToKeep);
     end
     
     for c = 1:length(Cvals)
@@ -45,13 +46,14 @@ for d = 1:size(features,3)
             end
             if ~strcmp(lastwarn,'')
                 lastwarn('');
-                auc(d,c,k) = 0.5;
+                auc{d}(c,k) = 0.5;
             else
-                [x,y,t,auc(d,c,k)] = perfcurve(groupvar,postProb(:,2),1);
+                [~,~,~,auc{d}(c,k)] = perfcurve(groupvar,postProb(:,2),1);
             end
         end
     end
 end
+auc = permute(cat(3,auc{:}),[3 1 2]);
 
 [~,maxidx] = max(abs(auc(:)));
 [bestD,bestC,bestK] = ind2sub(size(auc),maxidx);
@@ -66,8 +68,6 @@ if size(thisfeat,2) > 1 && strcmp(param.runpca,'true')
     [bestcls.pcaCoeff, pcaScores, ~, ~, explained] = pca(...
         thisfeat, ...
         'Centered', true);
-    % Keep enough components to explain the desired amount of variance.
-    explainedVarianceToKeepAsFraction = 95/100;
     bestcls.numPCAComponentsToKeep = find(cumsum(explained)/sum(explained) >= explainedVarianceToKeepAsFraction, 1);
     thisfeat = pcaScores(:,1:bestcls.numPCAComponentsToKeep);
 end

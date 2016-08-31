@@ -69,7 +69,14 @@ else
     grouppair = param.grouppair;
 end
 
+groupvar = groupvar(groupvar == grouppair(1) | groupvar == grouppair(2));
+[~,~,groupvar] = unique(groupvar);
+groupvar = groupvar-1;
+
 for f = 1:size(featlist,1)
+    if f ~= 18
+        continue;
+    end
     fprintf('Feature set: ');
     disp(featlist(f,:));
     conntype = featlist{f,1};
@@ -116,25 +123,22 @@ for f = 1:size(featlist,1)
     end
     
     features = features(groupvar == grouppair(1) | groupvar == grouppair(2),:,:);
-    groupvar = groupvar(groupvar == grouppair(1) | groupvar == grouppair(2));
-    [~,~,groupvar] = unique(groupvar);
-    groupvar = groupvar-1;
     
     if strcmp(param.train,'true')
-        clsyfyr{f} = buildsvm(features,groupvar,'train','true');
+        clsyfyr(f) = buildsvm(features,groupvar,'train','true');
     else
-        clsyfyr{f} = buildsvm(features,groupvar,'runpca','true');
+        clsyfyr(f) = buildsvm(features,groupvar,'runpca','false');
         
         fprintf('%s vs %s: AUC = %.2f, p = %.5f, Chi2 = %.2f, Chi2 p = %.4f, accu = %d%%.\n',...
             param.groupnames{grouppair(1)+1},param.groupnames{grouppair(2)+1},...
-            clsyfyr{f}.auc,clsyfyr{f}.pval,clsyfyr{f}.chi2,clsyfyr{f}.chi2pval,clsyfyr{f}.accu);
+            clsyfyr(f).auc,clsyfyr(f).pval,clsyfyr(f).chi2,clsyfyr(f).chi2pval,clsyfyr(f).accu);
     end
     
     groupnames = param.groupnames;
     if strcmp(param.train,'true')
-        save(sprintf('clsyfyr_%s_train.mat',param.group),'clsyfyr','grouppair','groupnames');
+        save(sprintf('clsyfyr_%s_train.mat',param.group),'clsyfyr','grouppair','groupnames','featlist');
     else
-        save(sprintf('clsyfyr_%s.mat',param.group),'clsyfyr','grouppair','groupnames');
+        save(sprintf('clsyfyr_%s.mat',param.group),'clsyfyr','grouppair','groupnames','featlist');
     end
 end
 
