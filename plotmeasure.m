@@ -152,6 +152,8 @@ for g = 1:size(grouppairs,1)
         [~,bestthresh] = max(abs(y + (1-x) - 1));
         %         [~,bestthresh] = min(sqrt((0-x).^2 + (1-y).^2));
         thisconfmat = confusionmat(thisgroupvar,double(thistestdata(:,d) > t(bestthresh)));
+        [~,chi2(g,d),chi2pval(g,d)] = crosstab(thisgroupvar,double(thistestdata(:,d) > t(bestthresh)));
+        accu(g,d) = sum(thisgroupvar == double(thistestdata(:,d) > t(bestthresh)))/length(thisgroupvar);
         thisconfmat = thisconfmat*100 ./ repmat(sum(thisconfmat,2),1,2);
         confmat(g,d,:,:) = thisconfmat;
         [pval(g,d),~,stat] = ranksum(thistestdata(thisgroupvar == 0,d),thistestdata(thisgroupvar == 1,d));
@@ -166,6 +168,9 @@ for g = 1:size(grouppairs,1)
     stats(g).pval = pval(g,maxaucidx);
     stats(g).confmat = squeeze(confmat(g,maxaucidx,:,:));
     stats(g).maxaucidx = maxaucidx;
+    stats(g).chi2 = chi2(g,maxaucidx);
+    stats(g).chi2pval = chi2pval(g,maxaucidx);
+    stats(g).accu = accu(g,maxaucidx);
     
     if strcmp(param.noplot,'off')
         fprintf('%s %s: %s vs %s AUC = %.2f, J = %.2f, p = %.4f.\n',measure,bands{bandidx},...
