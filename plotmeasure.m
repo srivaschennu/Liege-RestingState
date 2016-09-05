@@ -144,7 +144,11 @@ for g = 1:size(grouppairs,1)
     
     for d = 1:size(thistestdata,2)
         thistestdata2 = squeeze(thistestdata(:,d,:));
+        
         [x,y,t,auc(g,d)] = perfcurve(thisgroupvar, thistestdata2,1);
+        if length(unique(thistestdata2)) <= 2
+            auc(g,d) = 0.5;
+        end
         if auc(g,d) < 0.5
             auc(g,d) = 1-auc(g,d);
         end

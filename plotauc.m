@@ -1,44 +1,21 @@
-function plotauc(listname,varargin)
+function plotauc(varargin)
 
 param = finputcheck(varargin, {
     'group', 'string', [], 'crsdiag'; ...
     'groupnames', 'cell', {}, {'UWS','MCS-','MCS+','EMCS','LIS','CTRL'}; ...
-    'alpha', 'real', [], 0.05; ...
+    'pairlist' 'real', [], [1 6 10 14]; ...
     'xlim', 'real', [], []; ...
     'nonsig', 'string', {'on','off'}, 'on'; ...
     'plotcm', 'string', {'on','off'}, 'off'; ...
     'xlabel', 'string', [], ''; ...
     'ylabel', 'string', [], ''; ...
+    'alpha', 'real', [], 0.05; ...
     });
 
 bands = {
     'delta'
     'theta'
     'alpha'
-    };
-
-featlist = {
-    'ftdwpli'    'power'                  [1]    '\delta'
-    'ftdwpli'    'power'                  [2]    'Relative power \theta'
-    'ftdwpli'    'power'                  [3]    '\alpha'
-    'ftdwpli'    'median'                 [1]    '\delta'
-    'ftdwpli'    'median'                 [2]    'Median dwPLI \theta'
-    'ftdwpli'    'median'                 [3]    '\alpha'
-    'ftdwpli'    'clustering'             [1]    '\delta'
-    'ftdwpli'    'clustering'             [2]    'Clustering coeff. \theta'
-    'ftdwpli'    'clustering'             [3]    '\alpha'
-    'ftdwpli'    'characteristic path length'     [1]    '\delta'
-    'ftdwpli'    'characteristic path length'     [2]    'Path length \theta'
-    'ftdwpli'    'characteristic path length'     [3]    '\alpha'
-    'ftdwpli'    'modularity'             [1]    '\delta'
-    'ftdwpli'    'modularity'             [2]    'Modularity \theta'
-    'ftdwpli'    'modularity'             [3]    '\alpha'
-    'ftdwpli'    'participation coefficient'     [1]    '\delta'
-    'ftdwpli'    'participation coefficient'     [2]    'Participation coeff. \theta'
-    'ftdwpli'    'participation coefficient'     [3]    '\alpha'
-    'ftdwpli'    'modular span'           [1]    '\delta'
-    'ftdwpli'    'modular span'           [2]    'Modular span \theta'
-    'ftdwpli'    'modular span'           [3]    '\alpha'
     };
 
 groups = 0:length(param.groupnames)-1;
@@ -48,7 +25,6 @@ grouppairs = [
     2 3
     3 5
     ];
-pairidx = [1 6 10 14];
 
 colorlist = [
     0 0.0 0.5
@@ -71,23 +47,10 @@ facecolorlist = [
 fontname = 'Helvetica';
 fontsize = 20;
 
-for f = 1:size(featlist,1)
-    %     load(sprintf('clsyfyr/clsyfyr_%s_%s_%s_%s.mat',featlist{f,1},featlist{f,2},bands{featlist{f,3}},param.group));
-    %     if exist('clsyfyr','var')
-    %         fnlist = fieldnames(clsyfyr);
-    %         for fn = 1:length(fnlist)
-    %             if ~isfield(clsyfyr,fnlist{fn})
-    %                 clsyfyr = rmfield(clsyfyr,fnlist{fn});
-    %             end
-    %         end
-    %     end
-    %     clsyfyr(f,:) = clsyfyr;
-    [~,~,statdata] = plotmeasure(listname,featlist{f,1},featlist{f,2},featlist{f,3},'noplot','on','group',param.group,'groupnames',param.groupnames);
-    stats(f,:) = statdata;
-end
+load(sprintf('stats_%s.mat',param.group),'stats','featlist');
 
-if size(stats,2) > 3
-    stats = stats(:,pairidx);
+if size(stats,2) > 2
+    stats = stats(:,param.pairlist);
 end
 
 if size(stats,2) == 1
@@ -166,8 +129,6 @@ end
 
 export_fig(sprintf('figures/auc_%s.tiff',param.group),'-r200');
 close(gcf);
-
-save(sprintf('stats_%s.mat',param.group),'stats','featlist');
 
 %% plot confusion matrix of best classifier
 
