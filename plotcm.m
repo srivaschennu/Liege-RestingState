@@ -12,7 +12,7 @@ groups = groups(groups < 3);
 grouppairs = nchoosek(groups,2);
 
 fontname = 'Helvetica';
-fontsize = 28;
+fontsize = 32;
 
 load(sprintf('clsyfyr_%s.mat',param.group));
 for g = 1:size(clsyfyr,2)

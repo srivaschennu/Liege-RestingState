@@ -55,6 +55,8 @@ else
         %         testdata(testdata < 0) = NaN;
         %         testdata = nanmean(testdata,3);
 %         testdata = squeeze(graph{m,weiorbin}(:,bandidx,trange,:));
+    elseif strcmpi(measure,'characteristic path length')
+        testdata = round(squeeze(mean(graph{m,weiorbin}(:,bandidx,trange,:),4)));
     else
         testdata = squeeze(mean(graph{m,weiorbin}(:,bandidx,trange,:),4));
     end

@@ -146,9 +146,9 @@ for g = 1:size(grouppairs,1)
         thistestdata2 = squeeze(thistestdata(:,d,:));
         
         [x,y,t,auc(g,d)] = perfcurve(thisgroupvar, thistestdata2,1);
-        if length(unique(thistestdata2)) <= 2
-            auc(g,d) = 0.5;
-        end
+%         if length(unique(thistestdata2)) <= 4
+%             auc(g,d) = 0.5;
+%         end
         if auc(g,d) < 0.5
             auc(g,d) = 1-auc(g,d);
         end
@@ -157,7 +157,7 @@ for g = 1:size(grouppairs,1)
         %         [~,bestthresh] = min(sqrt((0-x).^2 + (1-y).^2));
         thisconfmat = confusionmat(thisgroupvar,double(thistestdata(:,d) > t(bestthresh)));
         [~,chi2(g,d),chi2pval(g,d)] = crosstab(thisgroupvar,double(thistestdata(:,d) > t(bestthresh)));
-        accu(g,d) = sum(thisgroupvar == double(thistestdata(:,d) > t(bestthresh)))/length(thisgroupvar);
+        accu(g,d) = sum(thisgroupvar == double(thistestdata(:,d) > t(bestthresh)))*100/length(thisgroupvar);
         thisconfmat = thisconfmat*100 ./ repmat(sum(thisconfmat,2),1,2);
         confmat(g,d,:,:) = thisconfmat;
         [pval(g,d),~,stat] = ranksum(thistestdata(thisgroupvar == 0,d),thistestdata(thisgroupvar == 1,d));
