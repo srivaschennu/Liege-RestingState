@@ -20,10 +20,29 @@ bands = {
     'gamma'
     };
 
+colorlist = [
+    0 0.0 0.5
+    0 0.5 0
+    0.5 0.0 0
+    0   0.5 0.5
+    0.5 0   0.5
+    0.5 0.5 0
+    ];
+
+facecolorlist = [
+    0.75  0.75 1
+    0.25 1 0.25
+    1 0.75 0.75
+    0.75 1 1
+    1 0.75 1
+    1 1 0.5
+    ];
+
 load sortedlocs
 
 load(sprintf('%s/%s/alldata_%s_%s.mat',filepath,conntype,listname,conntype));
 load(sprintf('%s%s/%s_%s_corr.mat',filepath,conntype,listname,bands{bandidx}));
+subjlist = eval(listname);
 
 poscorr = allcorr;
 poscorr(allcorr < 0) = 0;
@@ -42,13 +61,11 @@ ind_upper = find(triu(ones(size(allcoh,3),size(allcoh,4)),1))';
 corrmat(ind_upper) = poscorr(1,:);
 corrmat(~netmask{1}) = 0;
 meancorr = mean(corrmat(logical(netmask{1})));
-% meancorr = mean(corrmat(logical(netmask{1})));
 corrmat = triu(corrmat,1)+triu(corrmat,1)';
 
 corrp = zeros(size(allcoh,3),size(allcoh,4));
 corrp(ind_upper) = posp(1,:);
 corrp = triu(corrp,1)+triu(corrp,1)';
-% corrmat(corrp>=stats.alpha) = 0;
 
 %% plot 3d graph
 plotgraph3d(corrmat,sortedlocs,'sortedlocs.spl','plotqt',0,'vscale',[0 0.12]);
@@ -64,31 +81,28 @@ close(gcf);
 
 %% correlate with CRS-R
 crs = cell2mat(subjlist(:,11));
-testdata = mean(allcoh(:,bandidx,logical(netmask{1})),3);
+testdata = median(allcoh(:,bandidx,logical(netmask{1})),3);
 tennis = cell2mat(subjlist(:,5));
 crsdiag = cell2mat(subjlist(:,3));
 
 datatable = sortrows(cat(2,crs,testdata,tennis,crsdiag),2);
-mdl = fitlm(datatable(:,2),datatable(:,1),'RobustOpts','on');
-pointsize = 100;
+% mdl = fitlm(datatable(:,2),datatable(:,1),'RobustOpts','on');
+pointsize = 50;
 figure('Color','white');
 hold all
 
-%VS
-legendoff(scatter(datatable(datatable(:,4) == 0 & datatable(:,3) ~= 1,2), ...
-    datatable(datatable(:,4) == 0 & datatable(:,3) ~= 1,1),pointsize,'red'));
-legendoff(scatter(datatable(datatable(:,4) == 0 & datatable(:,3) == 1,2), ...
-    datatable(datatable(:,4) == 0 & datatable(:,3) == 1,1),pointsize,'red','filled'));
+groups = unique(crsdiag);
+for g = 1:length(groups)
+    legendoff(scatter(datatable(datatable(:,4) == groups(g),2), ...
+        datatable(datatable(:,4) == groups(g),1),pointsize,...
+        colorlist(g,:),'MarkerFaceColor',facecolorlist(g,:)));
+end
 
-%MCS
-legendoff(scatter(datatable(datatable(:,4) == 1 & datatable(:,3) ~= 1,2), ...
-    datatable(datatable(:,4) == 1 & datatable(:,3) ~= 1,1),pointsize,'blue'));
-legendoff(scatter(datatable(datatable(:,4) == 1 & datatable(:,3) == 1,2), ...
-    datatable(datatable(:,4) == 1 & datatable(:,3) == 1,1),pointsize,'blue','filled'));
+% b = mdl.Coefficients.Estimate;
+% plot(datatable(:,2),b(1)+b(2)*datatable(:,2),'--','Color','black','LineWidth',1, ...
+%     'Display',sprintf('\\rho = %.1f, p = %.3f',meancorr,netpval));
 
-b = mdl.Coefficients.Estimate;
-plot(datatable(:,2),b(1)+b(2)*datatable(:,2),'--','Color','black','LineWidth',1, ...
-    'Display',sprintf('\\rho = %.1f, p = %.3f',meancorr,netpval));
+fprintf('Mean rho = %.3f, p = %.3f.\n',meancorr,netpval);
 
 set(gca,'FontName',fontname,'FontSize',fontsize);
 if ~isempty(param.ylim)
@@ -98,7 +112,7 @@ if ~isempty(param.xlim)
     set(gca,'XLim',param.xlim);
 end
 
-xlabel('dwPLI','FontName',fontname,'FontSize',fontsize);
+xlabel('Median dwPLI','FontName',fontname,'FontSize',fontsize);
 ylabel('CRS-R score','FontName',fontname,'FontSize',fontsize);
 
 leg_h = legend('show');

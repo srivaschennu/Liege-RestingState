@@ -27,7 +27,10 @@ changroups
 load sortedlocs
 
 subjlist = eval(listname);
+
 refdiag = cell2mat(subjlist(:,2));
+refaware = double(cell2mat(subjlist(:,2)) > 0);
+refaware(isnan(refdiag)) = NaN;
 crsdiag = cell2mat(subjlist(:,3));
 crsaware = double(cell2mat(subjlist(:,3)) > 0);
 petdiag = cell2mat(subjlist(:,4));
@@ -39,6 +42,11 @@ outcome(isnan(cell2mat(subjlist(:,10)))) = NaN;
 mcstennis = tennis .* crsdiag;
 mcstennis(crsdiag == 0) = NaN;
 crs = cell2mat(subjlist(:,11));
+
+admvscrs = NaN(size(refdiag));
+admvscrs(refaware == 0) = 0;
+admvscrs(refaware == 0 & crsaware == 0) = 0;
+admvscrs(refaware == 0 & crsaware > 0) = 1;
 
 groupvar = eval(param.group);
 
@@ -214,7 +222,11 @@ if strcmp(param.noplot,'off')
     
     hold all
 %     violin(plotdata,'edgecolor',colorlist(1:length(groups),:),'facecolor',facecolorlist(1:length(groups),:),'facealpha',1,'medc',[]);
-    boxh = notBoxPlot(mean(testdata,2),groupvar+1,0.5,'patch',ones(size(testdata,1),1));
+    if length(stats) == 1
+        boxh = notBoxPlot(testdata(:,stats.maxaucidx),groupvar+1,0.5,'patch',ones(size(testdata,1),1));
+    else
+        boxh = notBoxPlot(mean(testdata,2),groupvar+1,0.5,'patch',ones(size(testdata,1),1));
+    end
     for h = 1:length(boxh)
         set(boxh(h).data,'Color',colorlist(h,:),'MarkerFaceColor',facecolorlist(h,:))
     end
