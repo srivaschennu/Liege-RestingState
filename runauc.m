@@ -24,7 +24,7 @@ featlist = {
     'ftdwpli'    'modularity'             [2]    'Modularity \theta'
     'ftdwpli'    'modularity'             [3]    '\alpha'
     'ftdwpli'    'participation coefficient'     [1]    '\delta'
-    'ftdwpli'    'participation coefficient'     [2]    'Participation coeff. \theta'
+    'ftdwpli'    'participation coefficient'     [2]    '\sigma(Participation coeff.) \theta'
     'ftdwpli'    'participation coefficient'     [3]    '\alpha'
     'ftdwpli'    'modular span'           [1]    '\delta'
     'ftdwpli'    'modular span'           [2]    'Modular span \theta'

@@ -46,15 +46,14 @@ bands = {
 
 plotqt = 0.7;
 
-% grouplist = {
-%     '29'
-%     '38'
-%     '71'
-%     };
+groups = {
+    '79'
+    '110'
+    };
 
 for g = 1:length(groups)
-    groupcoh(g,:,:) = squeeze(mean(allcoh(groupvar == groups(g),bandidx,:,:),1));
-    %     groupcoh(g,:,:) = squeeze(mean(allcoh(strcmp(param.groupnames{g},subjlist(:,1)),bandidx,:,:),1));
+%     groupcoh(g,:,:) = squeeze(mean(allcoh(groupvar == groups(g),bandidx,:,:),1));
+        groupcoh(g,:,:) = squeeze(mean(allcoh(strcmp(groups{g},subjlist(:,1)),bandidx,:,:),1));
     threshcoh(g,:,:) = threshold_proportional(squeeze(groupcoh(g,:,:)),1-plotqt);
     for c = 1:size(threshcoh,2)
         groupdeg(g,c) = sum(threshcoh(g,c,:))/(size(threshcoh,2)-1);
