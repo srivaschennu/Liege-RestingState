@@ -31,7 +31,8 @@ crs = cell2mat(subjlist(:,11));
 admvscrs = NaN(size(refdiag));
 admvscrs(refaware == 0) = 0;
 admvscrs(refaware == 0 & crsaware == 0) = 0;
-admvscrs(refaware == 0 & crsaware > 0) = 1;
+admvscrs(refaware > 0 & crsaware > 0) = 1;
+admvscrs(refaware == 0 & crsaware > 0) = 2;
 
 groupvar = eval(param.group);
 groups = unique(groupvar(~isnan(groupvar)));
@@ -46,14 +47,14 @@ bands = {
 
 plotqt = 0.7;
 
-groups = {
-    '79'
-    '110'
-    };
+% groups = {
+%     '79'
+%     '110'
+%     };
 
 for g = 1:length(groups)
-%     groupcoh(g,:,:) = squeeze(mean(allcoh(groupvar == groups(g),bandidx,:,:),1));
-        groupcoh(g,:,:) = squeeze(mean(allcoh(strcmp(groups{g},subjlist(:,1)),bandidx,:,:),1));
+    groupcoh(g,:,:) = squeeze(mean(allcoh(groupvar == groups(g),bandidx,:,:),1));
+%         groupcoh(g,:,:) = squeeze(mean(allcoh(strcmp(groups{g},subjlist(:,1)),bandidx,:,:),1));
     threshcoh(g,:,:) = threshold_proportional(squeeze(groupcoh(g,:,:)),1-plotqt);
     for c = 1:size(threshcoh,2)
         groupdeg(g,c) = sum(threshcoh(g,c,:))/(size(threshcoh,2)-1);

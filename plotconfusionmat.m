@@ -1,7 +1,14 @@
-function plotconfusion(confmat,groupnames)
+function plotconfusionmat(confmat,groupnames,varargin)
+
+param = finputcheck(varargin, {
+    'xlabel', 'string', [], ''; ...
+    'ylabel', 'string', [], ''; ...
+    });
 
 fontname = 'Helvetica';
 fontsize = 32;
+
+confmat = confmat*100 ./ repmat(sum(confmat,2),1,2);
 
 figure('Color','white');
 imshow(confmat,'InitialMagnification',5000);
@@ -15,7 +22,8 @@ caxis([0 100]);
 
 set(gca,'YDir','normal','Visible','on',...
     'XTick',[1 2],'XTickLabel',groupnames,...
-    'YTick',[1 2],'YTickLabel',groupnames);
+    'YTick',[1 2],'YTickLabel',groupnames,...
+    'FontName',fontname,'FontSize',fontsize-6);
 for c1 = 1:size(confmat,1)
     for c2 = 1:size(confmat,2)
         h_txt = text(c2-0.07,c1,sprintf('%d%%',round(confmat(c1,c2))),'FontName',fontname,'FontSize',fontsize);
@@ -28,3 +36,14 @@ for c1 = 1:size(confmat,1)
 end
 line([1.5 1.5],[0.5 2.5],'LineWidth',1,'Color','black');
 line([0.5 2.5],[1.5 1.5],'LineWidth',1,'Color','black');
+
+if ~isempty(param.xlabel)
+    xlabel(param.xlabel,'FontName',fontname,'FontSize',fontsize-6);
+else
+    xlabel('EEG prediction','FontName',fontname,'FontSize',fontsize-6);
+end
+if ~isempty(param.ylabel)
+    ylabel(param.ylabel,'FontName',fontname,'FontSize',fontsize-6);
+else
+    ylabel('CRS-R diagnosis','FontName',fontname,'FontSize',fontsize-6);
+end

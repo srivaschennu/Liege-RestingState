@@ -45,7 +45,7 @@ else
     if strcmpi(measure,'modules')
         testdata = squeeze(max(graph{m,weiorbin}(:,bandidx,trange,:),[],4));
     elseif strcmpi(measure,'centrality')
-        testdata = squeeze(max(graph{m,weiorbin}(:,bandidx,trange,:),[],4));
+        testdata = squeeze(std(graph{m,weiorbin}(:,bandidx,trange,:),[],4));
     elseif strcmpi(measure,'mutual information')
         testdata = squeeze(mean(graph{m,weiorbin}(:,:,bandidx,trange),4));
     elseif strcmpi(measure,'participation coefficient')

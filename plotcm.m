@@ -26,7 +26,7 @@ for g = 1:size(clsyfyr,2)
     if ~isempty(param.xlabel)
         xlabel(param.xlabel,'FontName',fontname,'FontSize',fontsize);
     else
-        xlabel('EEG diagnosis','FontName',fontname,'FontSize',fontsize);
+        xlabel('EEG prediction','FontName',fontname,'FontSize',fontsize);
     end
     if ~isempty(param.ylabel)
         ylabel(param.ylabel,'FontName',fontname,'FontSize',fontsize);
@@ -34,6 +34,6 @@ for g = 1:size(clsyfyr,2)
         ylabel('CRS-R diagnosis','FontName',fontname,'FontSize',fontsize);
     end
     
-    export_fig(gcf,sprintf('figures/clsyfyr_%s_vs_%s_cm.tiff',param.groupnames{grouppairs(g,1)+1},param.groupnames{grouppairs(g,2)+1}));
+    export_fig(gcf,sprintf('figures/clsyfyr_%s_%s_vs_%s_cm.tiff',param.group,param.groupnames{grouppairs(g,1)+1},param.groupnames{grouppairs(g,2)+1}));
     close(gcf);
 end

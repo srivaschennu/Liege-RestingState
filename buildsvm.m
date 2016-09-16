@@ -92,6 +92,5 @@ bestcls.bestthresh = t(bestthresh);
 bestcls.accu = round(sum(groupvar==predLabels)*100/length(groupvar));
 
 bestcls.confmat = confusionmat(groupvar,predLabels);
-bestcls.confmat = bestcls.confmat*100 ./ repmat(sum(bestcls.confmat,2),1,2);
 bestcls.predlabels = predLabels;
 end

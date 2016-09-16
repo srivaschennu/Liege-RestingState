@@ -49,7 +49,8 @@ crs = cell2mat(subjlist(:,11));
 admvscrs = NaN(size(refdiag));
 admvscrs(refaware == 0) = 0;
 admvscrs(refaware == 0 & crsaware == 0) = 0;
-admvscrs(refaware == 0 & crsaware > 0) = 1;
+admvscrs(refaware > 0 & crsaware > 0) = 1;
+admvscrs(refaware == 0 & crsaware > 0) = 2;
 
 groupvar = eval(param.group);
 
@@ -157,9 +158,6 @@ for g = 1:size(grouppairs,1)
         thistestdata2 = squeeze(thistestdata(:,d,:));
         
         [x,y,t,auc(g,d)] = perfcurve(thisgroupvar, thistestdata2,1);
-%         if length(unique(thistestdata2)) <= 4
-%             auc(g,d) = 0.5;
-%         end
         if auc(g,d) < 0.5
             auc(g,d) = 1-auc(g,d);
         end
@@ -169,7 +167,6 @@ for g = 1:size(grouppairs,1)
         thisconfmat = confusionmat(thisgroupvar,double(thistestdata(:,d) > t(bestthresh)));
         [~,chi2(g,d),chi2pval(g,d)] = crosstab(thisgroupvar,double(thistestdata(:,d) > t(bestthresh)));
         accu(g,d) = sum(thisgroupvar == double(thistestdata(:,d) > t(bestthresh)))*100/length(thisgroupvar);
-        thisconfmat = thisconfmat*100 ./ repmat(sum(thisconfmat,2),1,2);
         confmat(g,d,:,:) = thisconfmat;
         [pval(g,d),~,stat] = ranksum(thistestdata(thisgroupvar == 0,d),thistestdata(thisgroupvar == 1,d));
         n0 = sum(thisgroupvar == 0); n1 = sum(thisgroupvar == 1);
@@ -211,25 +208,19 @@ for g = 1:size(grouppairs,1)
 end
 
 if strcmp(param.noplot,'off')
-%     clear plotdata
-%     for g = 1:length(groups)
-%         plotdata{g} = mean(testdata(groupvar == groups(g),:),2);
-%     end
-    
     %% plot mean graph
     figure('Color','white');
-    figpos = get(gcf,'Position');
-%     figpos(3) = figpos(3)*2/3;
-    % figpos(4) = figpos(4)*3/4;
+        figpos = get(gcf,'Position');
+    if length(groups) == 2
+        figpos(3) = figpos(3)*1/2;
+    elseif length(groups) == 3
+        figpos(3) = figpos(3)*2/3;
+    end
     set(gcf,'Position',figpos);
     
     hold all
-%     violin(plotdata,'edgecolor',colorlist(1:length(groups),:),'facecolor',facecolorlist(1:length(groups),:),'facealpha',1,'medc',[]);
-    if length(stats) == 1
-        boxh = notBoxPlot(testdata(:,stats.maxaucidx),groupvar+1,0.5,'patch',ones(size(testdata,1),1));
-    else
-        boxh = notBoxPlot(mean(testdata,2),groupvar+1,0.5,'patch',ones(size(testdata,1),1));
-    end
+    boxh = notBoxPlot(mean(testdata,2),groupvar+1,0.5,'patch',ones(size(testdata,1),1));
+    
     for h = 1:length(boxh)
         set(boxh(h).data,'Color',colorlist(h,:),'MarkerFaceColor',facecolorlist(h,:))
     end

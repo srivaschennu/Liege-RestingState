@@ -7,15 +7,15 @@ fontname = 'Helvetica';
 fontsize = 24;
 
 colorlist = [
-    0 0.25   0
-    0.25 0   0
-    0   0 0.25
+    0 0.0 0.5
+    0 0.5 0
+    0.5 0.0 0
     ];
 
 facecolorlist = [
-    0 0.6 0
-    0.75 0 0
-    0  0 0.75
+    0.25  0.25 1
+    0.25 1 0.25
+    1 0.25 0.25
     ];
 
 refdiag = cell2mat(subjlist(:,2));
