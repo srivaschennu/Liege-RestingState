@@ -8,7 +8,7 @@ param = finputcheck(varargin, {
 fontname = 'Helvetica';
 fontsize = 32;
 
-confmat = confmat*100 ./ repmat(sum(confmat,2),1,2);
+confmat = confmat*100 ./ repmat(sum(confmat,2),1,size(confmat,2));
 
 figure('Color','white');
 imshow(confmat,'InitialMagnification',5000);
@@ -21,8 +21,8 @@ colormap(jet);
 caxis([0 100]);
 
 set(gca,'YDir','normal','Visible','on',...
-    'XTick',[1 2],'XTickLabel',groupnames,...
-    'YTick',[1 2],'YTickLabel',groupnames,...
+    'XTick',1:size(confmat,2),'XTickLabel',groupnames,...
+    'YTick',1:size(confmat,1),'YTickLabel',groupnames,...
     'FontName',fontname,'FontSize',fontsize-6);
 for c1 = 1:size(confmat,1)
     for c2 = 1:size(confmat,2)
@@ -34,8 +34,11 @@ for c1 = 1:size(confmat,1)
         end
     end
 end
-line([1.5 1.5],[0.5 2.5],'LineWidth',1,'Color','black');
-line([0.5 2.5],[1.5 1.5],'LineWidth',1,'Color','black');
+
+for s = 1:size(confmat,1)-1
+    line(s+[0.5 0.5],[0.5 size(confmat,1)+0.5],'LineWidth',1,'Color','black');
+    line([0.5 size(confmat,2)+0.5],s+[0.5 0.5],[1.5 1.5],'LineWidth',1,'Color','black');
+end
 
 if ~isempty(param.xlabel)
     xlabel(param.xlabel,'FontName',fontname,'FontSize',fontsize-6);
