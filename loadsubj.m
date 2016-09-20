@@ -226,3 +226,5 @@ camctrllist = {
     };
 
 allcamsubj = cat(1,campatlist,camctrllist);
+emcs = patlist(cell2mat(patlist(:,3)) == 3,:);
+lis = patlist(cell2mat(patlist(:,3)) == 4,:);

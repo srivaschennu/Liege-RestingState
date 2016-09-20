@@ -2,13 +2,12 @@ function testclassifier(listname,varargin)
 
 param = finputcheck(varargin, {
     'group', 'string', [], 'crsdiag'; ...
-    'clsyfyrnum', 'real', [], 1; ...
+    'groups', 'real', [], []; ...
+    'groupnames', 'cell', {}, {'UWS','MCS'}; ...
     });
 
 loadsubj
 changroups
-
-subjlist = eval(listname);
 
 bands = {
     'delta'
@@ -20,34 +19,32 @@ fontname = 'Helvetica';
 fontsize = 22;
 
 load sortedlocs.mat
-load(sprintf('combclsyfyr_%s_train.mat',param.group));
+load(sprintf('clsyfyr_%s.mat',param.group),'clsyfyr','featlist');
 
-clsyfyr = clsyfyr(param.clsyfyrnum);
-selfeat = selfeat{param.clsyfyrnum};
+subjlist = eval(listname);
+refdiag = cell2mat(subjlist(:,2));
+crsdiag = cell2mat(subjlist(:,3));
+crsaware = double(cell2mat(subjlist(:,3)) > 0);
+petdiag = cell2mat(subjlist(:,4));
+tennis = cell2mat(subjlist(:,5));
+etiology = cell2mat(subjlist(:,6));
+daysonset = cell2mat(subjlist(:,9));
+outcome = double(cell2mat(subjlist(:,10)) > 2);
+outcome(isnan(cell2mat(subjlist(:,10)))) = NaN;
+mcstennis = tennis .* crsdiag;
+mcstennis(crsdiag == 0) = NaN;
+crs = cell2mat(subjlist(:,11));
 
-groupvar = cell2mat(subjlist(:,3));
-groupvar(:) = grouppairs(param.clsyfyrnum,2);
+groupvar = eval(param.group);
 
+fprintf('Feature set: ');
 features = [];
-for f = 1:size(selfeat,1)
-    thisfeat = getmeasure(listname,selfeat{f,1:3},sortedlocs,struct('changroup','all','changroup2','all'));
-    features = cat(2,features,thisfeat);
+for f = 1:size(featlist,1)
+    disp(featlist(f,:));
+    features = getfeatures(listname,featlist{f,1:3});
+    results(f) = testmultisvm(clsyfyr(f),features,groupvar,'runpca','false');
 end
-fprintf('Testing with the following features...\n');
-selfeat
 
-[~,scores] = predict(fitSVMPosterior(clsyfyr.svmmodel),features);
-scores = scores(:,2);
-predlabels = double(scores >= clsyfyr.bestthresh);
-accu = round(sum(logical(groupvar) == predlabels)*100/length(groupvar));
+save(sprintf('testres_%s.mat',param.group),'results','clsyfyr','featlist');
 
-[~,chi2,chi2pval] = crosstab(groupvar,predlabels);
-confmat = confusionmat(groupvar,predlabels);
-confmat = confmat*100 ./ repmat(sum(confmat,2),1,2);
-plotconfusion(confmat,groupnames([grouppairs(param.clsyfyrnum,1)+1 grouppairs(param.clsyfyrnum,2)+1]));
-set(gca,'FontName',fontname,'FontSize',fontsize);
-xlabel('Predicted diagnosis','FontName',fontname,'FontSize',fontsize);
-ylabel('True diagnosis','Fontname',fontname,'FontSize',fontsize);
-
-fprintf('Test Chi2 = %.2f, p = %.4f, accu = %d%%.\n',chi2,chi2pval,accu);
 end

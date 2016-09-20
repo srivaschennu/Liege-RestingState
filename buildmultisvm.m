@@ -1,20 +1,15 @@
-function bestcls = buildsvm(features,groupvar,varargin)
+function bestcls = buildmultisvm(features,groupvar,varargin)
 
 rng('default');
 
 param = finputcheck(varargin, {
     'runpca', 'string', {'true','false'}, 'false'; ...
-    'train', 'string', {'true','false'}, 'false'; ...
     });
 
 features = permute(features,[1 3 2]);
 
-clsyfyrparams = {'Standardize',true};
-if strcmp(param.train,'true')
-    cvoption = {};
-else
-    cvoption = {'KFold',4};
-end
+clsyfyrparams = {'Standardize',true,'KernelFunction','RBF'};
+cvoption = {'KFold',4};
 
 % PCA - Keep enough components to explain the desired amount of variance.
 explainedVarianceToKeepAsFraction = 95/100;
@@ -54,14 +49,9 @@ parfor d = 1:size(features,3)
     
     for c = 1:length(Cvals)
         for k = 1:length(Kvals)
-            model = fitcsvm(thisfeat,trainlabels,clsyfyrparams{:},cvoption{:},'BoxConstraint',Cvals(c),'KernelScale',Kvals(k));
-            [~,postProb] = kfoldPredict(fitSVMPosterior(model));
-            [~,msgid] = lastwarn;
-            if strcmp(msgid,'stats:glmfit:IllConditioned')
-                auc{d}(c,k) = 0.5;
-            else
-                [~,~,~,auc{d}(c,k)] = perfcurve(trainlabels,postProb(:,2),1);
-            end
+            model = fitcecoc(thisfeat,trainlabels,cvoption{:},...
+                'Learners',templateSVM(clsyfyrparams{:},'BoxConstraint',Cvals(c),'KernelScale',Kvals(k)));
+            auc{d}(c,k) = 1-kfoldLoss(model);
         end
     end
     warning('on','stats:glmfit:IterationLimit');
@@ -83,23 +73,16 @@ if size(thisfeat,2) > 1 && strcmp(param.runpca,'true')
     thisfeat = pcaScores(:,1:bestcls.numPCAComponentsToKeep);
 end
 
-bestcls.model = fitcsvm(thisfeat,trainlabels,clsyfyrparams{:},cvoption{:},'BoxConstraint',bestcls.C,'KernelScale',bestcls.K);
-[~,postProb] = kfoldPredict(fitSVMPosterior(bestcls.model));
+model = fitcecoc(thisfeat,trainlabels,cvoption{:},...
+    'Learners',templateSVM(clsyfyrparams{:},'BoxConstraint',bestcls.C,'KernelScale',bestcls.K));
+predlabels = kfoldPredict(model);
+[bestcls.confmat,bestcls.chi2,bestcls.chi2pval] = crosstab(trainlabels,predlabels);
+bestcls.accu = (1 - kfoldLoss(model)) * 100;
 
-[x,y,t,bestcls.auc] = perfcurve(trainlabels,postProb(:,2),1);
-bestcls.pval = ranksum(postProb(trainlabels == 0,2),postProb(trainlabels == 1,2));
-% [~,bestthresh] = min(sqrt((0-x).^2 + (1-y).^2));
-[~,bestthresh] = max(abs(y + (1-x) - 1));
-bestcls.bestthresh = t(bestthresh);
-predlabels = double(postProb(:,2) > bestcls.bestthresh);
-bestcls.confmat = confusionmat(trainlabels,predlabels);
-bestcls.J = bestcls.confmat(1,1)/(bestcls.confmat(1,1)+bestcls.confmat(1,2)) + ...
-    bestcls.confmat(2,2)/(bestcls.confmat(2,1)+bestcls.confmat(2,2)) - 1;
-[~,bestcls.chi2,bestcls.chi2pval] = crosstab(trainlabels,predlabels);
-bestcls.accu = round(sum(trainlabels==predlabels)*100/length(trainlabels));
+bestcls.model = fitcecoc(thisfeat,trainlabels,...
+    'Learners',templateSVM(clsyfyrparams{:},'BoxConstraint',bestcls.C,'KernelScale',bestcls.K));
 
 % %% test best classifier on test data in locked cupboard
-% bestcls.model = fitcsvm(thisfeat,trainlabels,clsyfyrparams{:},'BoxConstraint',bestcls.C,'KernelScale',bestcls.K);
 % 
 % thisfeat = testfeatures(:,:,bestD);
 % if size(thisfeat,2) > 1 && strcmp(param.runpca,'true')
