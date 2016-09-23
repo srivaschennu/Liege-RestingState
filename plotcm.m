@@ -5,6 +5,7 @@ param = finputcheck(varargin, {
     'groupnames', 'cell', {}, {'UWS','MCS-','MCS+','EMCS','LIS'}; ...
     'xlabel', 'string', [], ''; ...
     'ylabel', 'string', [], ''; ...
+    'clim', 'real', [], [0 100]; ...
     });
 
 fontname = 'Helvetica';
@@ -17,7 +18,7 @@ for g = 1:size(clsyfyr,2)
 %         param.groupnames{grouppairs(g,1)+1},param.groupnames{grouppairs(g,2)+1},...
 %         clsyfyr(g).auc,clsyfyr(g).pval,clsyfyr(g).chi2,clsyfyr(g).chi2pval,clsyfyr(g).accu);
     
-    plotconfusionmat(clsyfyr(g).confmat,param.groupnames(1:length(groups)));
+    plotconfusionmat(clsyfyr(g).confmat,param.groupnames(1:length(groups)),'clim',param.clim);
     set(gca,'FontName',fontname,'FontSize',fontsize);
     if ~isempty(param.xlabel)
         xlabel(param.xlabel,'FontName',fontname,'FontSize',fontsize);
