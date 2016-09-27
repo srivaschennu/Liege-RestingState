@@ -98,4 +98,6 @@ bestcls.model = fitcecoc(thisfeat,trainlabels,...
 % bestcls.testaccu = round(sum(testlabels==predlabels(~isnan(predlabels)))*100/length(testlabels));
 % bestcls.predlabels = predlabels;
 
+bestcls.clsyfyrparams = clsyfyrparams;
+bestcls.cvoption = cvoption;
 end

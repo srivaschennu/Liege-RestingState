@@ -115,4 +115,6 @@ bestcls.accu = round(sum(trainlabels==predlabels)*100/length(trainlabels));
 % bestcls.testaccu = round(sum(testlabels==predlabels(~isnan(predlabels)))*100/length(testlabels));
 % bestcls.predlabels = predlabels;
 
+bestcls.clsyfyrparams = clsyfyrparams;
+bestcls.cvoption = cvoption;
 end
