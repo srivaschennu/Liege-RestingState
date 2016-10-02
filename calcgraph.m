@@ -27,7 +27,8 @@ elseif strcmp(param.latticise,'on')
     savename = sprintf('%s/%s/%s%slattgraph.mat',filepath,conntype,basename,conntype);
     numruns = param.numrand;
 else
-    savename = sprintf('%s/%s/%s%sgraph.mat',filepath,conntype,basename,conntype);
+%     savename = sprintf('%s/%s/%s%sgraph.mat',filepath,conntype,basename,conntype);
+    savename = sprintf('%s/%s%sgraph.mat',conntype,basename,conntype);
     numruns = 1;
 end
 
@@ -52,8 +53,14 @@ if ~strcmp(chanlist,cell2mat(sortedchan))
 end
 matrix = matrix(:,sortidx,sortidx);
 bootmat = bootmat(:,sortidx,sortidx,:);
-
 chanlocs = chanlocs(sortidx);
+
+load([chanlocpath '256to128.mat']);
+[~,keepidx] = intersect({chanlocs.labels},{keeplocs.labels});
+matrix = matrix(:,keepidx,keepidx);
+bootmat = bootmat(:,keepidx,keepidx,:);
+chanlocs = chanlocs(keepidx);
+
 for f = 1:size(matrix,1)
     fprintf('\nBand %d iteration',f);
     for iter = 1:numruns
