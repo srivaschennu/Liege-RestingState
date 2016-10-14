@@ -495,7 +495,7 @@ else
   % Perform interpolation
   %%%%%%%%%%%%%%%%%%%%%%%%%%
 
-  meanval = mean(values); values = values - meanval; % make mean zero
+  meanval = mean(values); meanval = 0.1; values = values - meanval; % make mean zero
   onemat = ones(enum,1);
   lamd = 0.1;
   C = pinv([(G + lamd);ones(1,enum)]) * [values(:);0]; % fixing division error

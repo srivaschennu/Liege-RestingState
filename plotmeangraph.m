@@ -66,7 +66,7 @@ vrange = [min(nonzeros(groupdeg(:))) max(groupdeg(:))];
 
 for g = 1:length(param.groupnames)
     while true
-        minfo(g,:) = plotgraph3d(squeeze(groupcoh(g,:,:)),sortedlocs,'sortedlocs.spl','plotqt',plotqt,'escale',erange,'vscale',vrange,'cshift',0.35,'numcolors',5);
+        minfo(g,:) = plotgraph3d(squeeze(groupcoh(g,:,:)),sortedlocs,'sortedlocs.spl','plotqt',plotqt,'escale',erange,'vscale',vrange,'cshift',0.5,'numcolors',5);
         if strcmp(questdlg('Save figure?',mfilename,'Yes','No','Yes'), 'Yes')
             break
         end
@@ -76,6 +76,7 @@ for g = 1:length(param.groupnames)
     camva(8);
     camtarget([-9.7975  -28.8277   41.8981]);
     campos([-1.7547    1.7161    1.4666]*1000);
+    camzoom(1.25);
     fprintf('%s %s - number of modules: %d\n',param.groupnames{g},bands{bandidx},length(unique(minfo(g,:))));
     set(gcf,'Name',sprintf('%s %s',param.groupnames{g},bands{bandidx}));
     set(gcf,'InvertHardCopy','off');
