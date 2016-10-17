@@ -6,7 +6,7 @@ loadsubj
 subjlist = eval(listname);
 
 load sortedlocs.mat
-% load([chanlocpath '256to128.mat']);
+% load([chanlocpath '173to91.mat']);
 
 for s = 1:size(subjlist,1)
     basename = subjlist{s,1};

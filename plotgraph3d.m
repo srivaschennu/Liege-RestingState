@@ -107,7 +107,7 @@ for r = 1:size(matrix,1)
             eheight = (matrix(r,c)*lhfactor)+1;
             if minfo(r) == minfo(c)
                 ecol = colorlist(minfo(r),:);
-                hLine = plotarc3d(chanlocs3d([r,c],:),eheight,ecol,1);
+                hLine = plotarc3d(chanlocs3d([r,c],:),eheight,ecol,0.5);
                 %                 set(hLine,'Color',ecol,'LineWidth',0.1);
             elseif strcmp(param.plotinter,'on')
                 hLine = plotarc3d(chanlocs3d([r,c],:),eheight);

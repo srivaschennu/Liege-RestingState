@@ -55,7 +55,7 @@ matrix = matrix(:,sortidx,sortidx);
 bootmat = bootmat(:,sortidx,sortidx,:);
 chanlocs = chanlocs(sortidx);
 
-load([chanlocpath '256to128.mat']);
+load([chanlocpath '173to91.mat']);
 [~,keepidx] = intersect({chanlocs.labels},{keeplocs.labels});
 matrix = matrix(:,keepidx,keepidx);
 bootmat = bootmat(:,keepidx,keepidx,:);
