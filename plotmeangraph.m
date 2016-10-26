@@ -24,6 +24,12 @@ etiology = cell2mat(subjlist(:,6));
 daysonset = cell2mat(subjlist(:,9));
 outcome = double(cell2mat(subjlist(:,10)) > 2);
 outcome(isnan(cell2mat(subjlist(:,10)))) = NaN;
+vsoutcome = double(cell2mat(subjlist(:,10)) > 2);
+vsoutcome(isnan(cell2mat(subjlist(:,10)))) = NaN;
+mcsoutcome = double(cell2mat(subjlist(:,10)) > 2);
+mcsoutcome(isnan(cell2mat(subjlist(:,10)))) = NaN;
+mcsoutcome(crsaware == 0) = NaN;
+vsoutcome(crsaware > 0) = NaN;
 mcstennis = tennis .* crsdiag;
 mcstennis(crsdiag == 0) = NaN;
 crs = cell2mat(subjlist(:,11));
@@ -47,15 +53,15 @@ bands = {
 
 plotqt = 0.7;
 
-groups = {
-    '79'
-    '110'
-    'Minot_20100601'
-    };
+% groups = {
+%     '79'
+%     '110'
+%     'Minot_20100601'
+%     };
 
 for g = 1:length(groups)
-%     groupcoh(g,:,:) = squeeze(mean(allcoh(groupvar == groups(g),bandidx,:,:),1));
-        groupcoh(g,:,:) = squeeze(mean(allcoh(strcmp(groups{g},subjlist(:,1)),bandidx,:,:),1));
+    groupcoh(g,:,:) = squeeze(mean(allcoh(groupvar == groups(g),bandidx,:,:),1));
+%         groupcoh(g,:,:) = squeeze(mean(allcoh(strcmp(groups{g},subjlist(:,1)),bandidx,:,:),1));
     threshcoh(g,:,:) = threshold_proportional(squeeze(groupcoh(g,:,:)),1-plotqt);
     for c = 1:size(threshcoh,2)
         groupdeg(g,c) = sum(threshcoh(g,c,:))/(size(threshcoh,2)-1);
