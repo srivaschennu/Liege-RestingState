@@ -116,7 +116,6 @@ patlist = {
     % '66' %corrupt header
     % '70' %only 255 channels
     % '100' %no data
-    % '109' %very noisy
     % '116' %corrupt data
     % '117' no covariates
     };
