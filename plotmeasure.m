@@ -36,6 +36,7 @@ crsaware = double(cell2mat(subjlist(:,3)) > 0);
 petdiag = cell2mat(subjlist(:,4));
 tennis = cell2mat(subjlist(:,5));
 etiology = cell2mat(subjlist(:,6));
+age = cell2mat(subjlist(:,7));
 daysonset = cell2mat(subjlist(:,9));
 outcome = double(cell2mat(subjlist(:,10)) > 2);
 outcome(isnan(cell2mat(subjlist(:,10)))) = NaN;

@@ -10,17 +10,13 @@ param = finputcheck(varargin, {
 features = permute(features,[1 3 2]);
 
 clsyfyrparams = {'Standardize',true};
-if strcmp(param.train,'true')
-    cvoption = {};
-else
-    cvoption = {'KFold',4};
-end
+cvoption = {'KFold',4};
 
 % PCA - Keep enough components to explain the desired amount of variance.
 explainedVarianceToKeepAsFraction = 95/100;
 
-Cvals = unique(sort(cat(2, 10.^(-5:5), 5.^(-5:5), 2.^(-5:5))));
-Kvals = unique(sort(cat(2, 10.^(-5:5), 5.^(-5:5), 2.^(-5:5))));
+Cvals = unique(sort(cat(2, 10.^(-3:3), 5.^(-3:3), 2.^(-5:5))));
+Kvals = unique(sort(cat(2, 10.^(-3:3), 5.^(-3:3), 2.^(-5:5))));
 
 trainfeatures = features;
 trainlabels = groupvar;
@@ -34,7 +30,8 @@ trainlabels = groupvar;
 %% start parallel pool
 curpool = gcp('nocreate');
 if isempty(curpool)
-    parpool(parallel.defaultClusterProfile,size(features,3));
+%     parpool(parallel.defaultClusterProfile,size(features,3));
+    parpool(parallel.defaultClusterProfile,3);
 elseif curpool.NumWorkers ~= size(features,3)
     delete(curpool);
     parpool(parallel.defaultClusterProfile,size(features,3));
@@ -84,6 +81,8 @@ if size(thisfeat,2) > 1 && strcmp(param.runpca,'true')
 end
 
 bestcls.model = fitcsvm(thisfeat,trainlabels,clsyfyrparams{:},cvoption{:},'BoxConstraint',bestcls.C,'KernelScale',bestcls.K);
+bestcls.fullmodel = fitcsvm(thisfeat,trainlabels,clsyfyrparams{:},'BoxConstraint',bestcls.C,'KernelScale',bestcls.K);
+
 [~,postProb] = kfoldPredict(fitSVMPosterior(bestcls.model));
 
 [x,y,t,bestcls.auc] = perfcurve(trainlabels,postProb(:,2),1);

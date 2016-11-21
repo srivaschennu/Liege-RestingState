@@ -14,7 +14,7 @@ if size(thisfeat,2) > 1 && strcmp(param.runpca,'true')
     thisfeat = pcaScores(:,1:clsyfyr.numPCAComponentsToKeep);
 end
 
-results.predlabels = predict(clsyfyr.model,thisfeat);
+results.predlabels = predict(fitSVMPosterior(clsyfyr.model),thisfeat);
 testlabels = double(testlabels > 0);
 predlabels = double(results.predlabels > 0);
 [~,results.chi2,results.chi2pval] = crosstab(testlabels,predlabels);

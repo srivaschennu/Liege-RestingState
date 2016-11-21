@@ -13,7 +13,10 @@ loadpaths
 loadsubj
 
 subjlist = eval(listname);
+
 refdiag = cell2mat(subjlist(:,2));
+refaware = double(cell2mat(subjlist(:,2)) > 0);
+refaware(isnan(refdiag)) = NaN;
 crsdiag = cell2mat(subjlist(:,3));
 crsaware = double(cell2mat(subjlist(:,3)) > 0);
 petdiag = cell2mat(subjlist(:,4));
@@ -25,6 +28,12 @@ outcome(isnan(cell2mat(subjlist(:,10)))) = NaN;
 mcstennis = tennis .* crsdiag;
 mcstennis(crsdiag == 0) = NaN;
 crs = cell2mat(subjlist(:,11));
+
+admvscrs = NaN(size(refdiag));
+admvscrs(refaware == 0) = 0;
+admvscrs(refaware == 0 & crsaware == 0) = 0;
+admvscrs(refaware > 0 & crsaware > 0) = 1;
+admvscrs(refaware == 0 & crsaware > 0) = 2;
 
 groupvar = eval(param.group);
 
@@ -79,7 +88,7 @@ for f = 1:size(featlist,1)
     features = getfeatures(listname,conntype,measure,bandidx);
     features = features(selgroupidx,:,:);    
 
-    clsyfyr(f) = buildmultisvm(features,groupvar,'runpca','false');
+    clsyfyr(f) = buildsvm(features,groupvar,'runpca','false');
     
 %         fprintf('%s vs %s: AUC = %.2f, p = %.5f, Chi2 = %.2f, Chi2 p = %.4f, accu = %d%%.\n',...
 %             param.groupnames{groups(1)+1},param.groupnames{groups(2)+1},...
