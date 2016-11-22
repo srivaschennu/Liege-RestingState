@@ -9,8 +9,9 @@ param = finputcheck(varargin, {
 
 features = permute(features,[1 3 2]);
 
-clsyfyrparams = {'Standardize',true};
+clsyfyrparams = {'Standardize',true,'KernelFunction','RBF'};
 cvoption = {'KFold',4};
+% cvoption = {'Leaveout','on'};
 
 % PCA - Keep enough components to explain the desired amount of variance.
 explainedVarianceToKeepAsFraction = 95/100;
@@ -34,7 +35,8 @@ if isempty(curpool)
     parpool(parallel.defaultClusterProfile,3);
 elseif curpool.NumWorkers ~= size(features,3)
     delete(curpool);
-    parpool(parallel.defaultClusterProfile,size(features,3));
+%     parpool(parallel.defaultClusterProfile,size(features,3));
+    parpool(parallel.defaultClusterProfile,3);
 end
 
 %% search through parameters for best cross-validated classifier
@@ -80,22 +82,20 @@ if size(thisfeat,2) > 1 && strcmp(param.runpca,'true')
     thisfeat = pcaScores(:,1:bestcls.numPCAComponentsToKeep);
 end
 
-bestcls.model = fitcsvm(thisfeat,trainlabels,clsyfyrparams{:},cvoption{:},'BoxConstraint',bestcls.C,'KernelScale',bestcls.K);
-bestcls.fullmodel = fitcsvm(thisfeat,trainlabels,clsyfyrparams{:},'BoxConstraint',bestcls.C,'KernelScale',bestcls.K);
+model = fitcsvm(thisfeat,trainlabels,clsyfyrparams{:},cvoption{:},'BoxConstraint',bestcls.C,'KernelScale',bestcls.K);
 
-[~,postProb] = kfoldPredict(fitSVMPosterior(bestcls.model));
-
+[~,postProb] = kfoldPredict(fitSVMPosterior(model));
 [x,y,t,bestcls.auc] = perfcurve(trainlabels,postProb(:,2),1);
 bestcls.pval = ranksum(postProb(trainlabels == 0,2),postProb(trainlabels == 1,2));
 % [~,bestthresh] = min(sqrt((0-x).^2 + (1-y).^2));
-[~,bestthresh] = max(abs(y + (1-x) - 1));
+[bestcls.J,bestthresh] = max(abs(y + (1-x) - 1));
 bestcls.bestthresh = t(bestthresh);
 predlabels = double(postProb(:,2) > bestcls.bestthresh);
 bestcls.confmat = confusionmat(trainlabels,predlabels);
-bestcls.J = bestcls.confmat(1,1)/(bestcls.confmat(1,1)+bestcls.confmat(1,2)) + ...
-    bestcls.confmat(2,2)/(bestcls.confmat(2,1)+bestcls.confmat(2,2)) - 1;
 [~,bestcls.chi2,bestcls.chi2pval] = crosstab(trainlabels,predlabels);
 bestcls.accu = round(sum(trainlabels==predlabels)*100/length(trainlabels));
+
+bestcls.model = fitcsvm(thisfeat,trainlabels,clsyfyrparams{:},'BoxConstraint',bestcls.C,'KernelScale',bestcls.K);
 
 % %% test best classifier on test data in locked cupboard
 % bestcls.model = fitcsvm(thisfeat,trainlabels,clsyfyrparams{:},'BoxConstraint',bestcls.C,'KernelScale',bestcls.K);

@@ -1,4 +1,4 @@
-function results = testmultisvm(clsyfyr,testfeatures,testlabels,varargin)
+function results = testsvm(clsyfyr,testfeatures,testlabels,varargin)
 
 param = finputcheck(varargin, {
     'runpca', 'string', {'true','false'}, 'false'; ...
@@ -14,7 +14,9 @@ if size(thisfeat,2) > 1 && strcmp(param.runpca,'true')
     thisfeat = pcaScores(:,1:clsyfyr.numPCAComponentsToKeep);
 end
 
-results.predlabels = predict(clsyfyr.model,thisfeat);
+[~,postProb] = predict(fitSVMPosterior(clsyfyr.model),thisfeat);
+results.accu = mean(postProb(testlabels == 2,2) >= clsyfyr.bestthresh) * 100;
+
 testlabels = double(testlabels > 0);
 predlabels = double(results.predlabels > 0);
 [~,results.chi2,results.chi2pval] = crosstab(testlabels,predlabels);

@@ -14,8 +14,8 @@ cvoption = {'KFold',4};
 % PCA - Keep enough components to explain the desired amount of variance.
 explainedVarianceToKeepAsFraction = 95/100;
 
-Cvals = unique(sort(cat(2, 10.^(-5:5), 5.^(-5:5), 2.^(-5:5))));
-Kvals = unique(sort(cat(2, 10.^(-5:5), 5.^(-5:5), 2.^(-5:5))));
+Cvals = unique(sort(cat(2, 10.^(-3:3), 5.^(-3:3), 2.^(-5:5))));
+Kvals = unique(sort(cat(2, 10.^(-3:3), 5.^(-3:3), 2.^(-5:5))));
 
 trainfeatures = features;
 trainlabels = groupvar;

@@ -50,7 +50,7 @@ features = [];
 for f = 1:size(featlist,1)
     disp(featlist(f,:));
     features = getfeatures(listname,featlist{f,1:3});
-    results(f) = testmultisvm(clsyfyr(f),features,groupvar,'runpca','false');
+    results(f) = testsvm(clsyfyr(f),features,groupvar,'runpca','false');
 end
 
 save(sprintf('testres_%s.mat',param.group),'results','clsyfyr','featlist');

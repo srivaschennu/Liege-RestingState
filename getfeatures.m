@@ -8,16 +8,18 @@ param = finputcheck(varargin, {
 loadpaths
 load sortedlocs
 
+changroups
+
 weiorbin = 3;
 
 if strcmpi(measure,'power')
     %     load(sprintf('%s/%s/alldata_%s_%s.mat',filepath,conntype,listname,conntype));
     load(sprintf('%s/%s/alldata_%s_%s.mat',filepath,conntype,listname,conntype),'bandpower');
-    features = squeeze(bandpower(:,bandidx,ismember({sortedlocs.labels},eval(param.changroup))) * 100);
+    features = bandpower(:,bandidx,ismember({sortedlocs.labels},eval(param.changroup))) * 100;
 elseif strcmpi(measure,'specent')
     %     load(sprintf('%s/%s/alldata_%s_%s.mat',filepath,conntype,listname,conntype));
     load(sprintf('%s/%s/alldata_%s_%s.mat',filepath,conntype,listname,conntype),'specent');
-    features = squeeze(specent(:,ismember({sortedlocs.labels},eval(param.changroup))));
+    features = specent(:,ismember({sortedlocs.labels},eval(param.changroup)));
 elseif strcmpi(measure,'median')
     load(sprintf('%s/%s/alldata_%s_%s.mat',filepath,conntype,listname,conntype),'allcoh');
     features = median(allcoh(:,bandidx,ismember({sortedlocs.labels},eval(param.changroup)),ismember({sortedlocs.labels},eval(param.changroup2))),4);
