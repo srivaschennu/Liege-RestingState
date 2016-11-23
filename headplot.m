@@ -495,7 +495,7 @@ else
   % Perform interpolation
   %%%%%%%%%%%%%%%%%%%%%%%%%%
 
-  meanval = mean(values); meanval = 0.1; values = values - meanval; % make mean zero
+  meanval = mean(values); values = values - meanval; % make mean zero
   onemat = ones(enum,1);
   lamd = 0.1;
   C = pinv([(G + lamd);ones(1,enum)]) * [values(:);0]; % fixing division error
@@ -537,6 +537,8 @@ else
 
   W(index1) = idx;
   colormap(g.colormap)
+  %SRIVAS hack to set colour of the face
+  W(POS(:,3) < 0) = round(size(g.colormap,1)/2);
   p1 = patch('Vertices',POS,'Faces',TRI1,'FaceVertexCdata',W(:),...
       'FaceColor','interp', 'cdatamapping', 'direct', 'tag', 'mesh');    %%%%%%%%% Plot scalp map %%%%%%%%%
   if exist('NORM') == 1 & ~isempty(NORM)

@@ -70,8 +70,8 @@ end
 
 erange = [min(nonzeros(threshcoh(:))) max(threshcoh(:))];
 vrange = [min(nonzeros(groupdeg(:))) max(groupdeg(:))];
-% erange = [0 1];
-% vrange = [0 0.3];
+erange = [0 1];
+vrange = [0 0.3];
 
 for g = 1:length(param.groupnames)
     while true
