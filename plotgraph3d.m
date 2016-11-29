@@ -88,16 +88,29 @@ num_mod = length(unique(minfo));
 figure('Color','black','Name',mfilename);
 figpos = get(gcf,'Position');
 set(gcf,'Position',[figpos(1) figpos(2) figpos(3)*1.25 figpos(4)*2],'Color','black');
-cmap = jet;
-colorlist = cmap(round(linspace(1,size(cmap,1),param.numcolors)),:);
-colorlist = circshift(colorlist,4,1);
+cmap = lines;
+% colorlist = cmap(round(linspace(1,size(cmap,1),param.numcolors)),:);
+% colorlist = circshift(colorlist,4,1);
+colorlist = cmap(1:param.numcolors,:);
 
 hold all
 
 if isempty(param.view)
     param.view = 'frontleft';
 end
-[~,chanlocs3d] = headplot(vsize,splinefile,'electrodes','off','maplimits',[0 1]-param.cshift,'view',param.view);
+
+
+allchanlocs = pop_readlocs('/Users/chennu/Work/EGI/GSN-HydroCel-257.sfp');
+allchanlocs = allchanlocs(4:end);
+data2plot = zeros(1,257);
+[~,chanidx] = ismember({sortedlocs.labels}',{allchanlocs.labels}');
+data2plot(chanidx) = vsize;
+
+[~,chanlocs3d] = headplot(data2plot,'256chan.spl','electrodes','off','maplimits',[-1 1]*(1-param.cshift),'view',param.view);
+chanlocs3d = chanlocs3d(chanidx,:);
+% figure;
+% [~,chanlocs3d] = headplot(vsize,splinefile,'electrodes','off','maplimits',[0 1]-param.cshift,'view',param.view);
+% close(gcf);
 
 xlim('auto'); ylim('auto'); zlim('auto');
 

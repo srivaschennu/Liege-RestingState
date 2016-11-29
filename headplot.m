@@ -538,7 +538,7 @@ else
   W(index1) = idx;
   colormap(g.colormap)
   %SRIVAS hack to set colour of the face
-  W(POS(:,3) < 0) = round(size(g.colormap,1)/2);
+%   W(POS(:,3) < 0) = round(size(g.colormap,1)/2);
   p1 = patch('Vertices',POS,'Faces',TRI1,'FaceVertexCdata',W(:),...
       'FaceColor','interp', 'cdatamapping', 'direct', 'tag', 'mesh');    %%%%%%%%% Plot scalp map %%%%%%%%%
   if exist('NORM') == 1 & ~isempty(NORM)
