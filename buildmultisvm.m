@@ -66,7 +66,7 @@ bestcls.C = Cvals(bestC);
 bestcls.K = Kvals(bestK);
 
 %% build best cross-validated classifier
-thisfeat = trainfeatures(:,:,bestD);
+thisfeat = trainfeatures(:,:,bestcls.D);
 if size(thisfeat,2) > 1 && strcmp(param.runpca,'true')
     [bestcls.pcaCoeff, pcaScores, ~, ~, explained] = pca(thisfeat,'Centered',true);
     bestcls.numPCAComponentsToKeep = find(cumsum(explained)/sum(explained) >= explainedVarianceToKeepAsFraction, 1);
@@ -78,6 +78,7 @@ model = fitcecoc(thisfeat,trainlabels,cvoption{:},...
 predlabels = kfoldPredict(model);
 [bestcls.confmat,bestcls.chi2,bestcls.chi2pval] = crosstab(trainlabels,predlabels);
 bestcls.accu = (1 - kfoldLoss(model)) * 100;
+bestcls.predlabels = predlabels;
 
 bestcls.model = fitcecoc(thisfeat,trainlabels,...
     'Learners',templateSVM(clsyfyrparams{:},'BoxConstraint',bestcls.C,'KernelScale',bestcls.K));

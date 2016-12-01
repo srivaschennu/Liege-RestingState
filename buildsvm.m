@@ -75,7 +75,7 @@ bestcls.C = Cvals(bestC);
 bestcls.K = Kvals(bestK);
 
 %% build best cross-validated classifier
-thisfeat = trainfeatures(:,:,bestD);
+thisfeat = trainfeatures(:,:,bestcls.D);
 if size(thisfeat,2) > 1 && strcmp(param.runpca,'true')
     [bestcls.pcaCoeff, pcaScores, ~, ~, explained] = pca(thisfeat,'Centered',true);
     bestcls.numPCAComponentsToKeep = find(cumsum(explained)/sum(explained) >= explainedVarianceToKeepAsFraction, 1);
