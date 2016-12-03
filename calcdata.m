@@ -20,7 +20,6 @@ for s = 1:size(subjlist,1)
     specinfo.spectra = specinfo.spectra(sortidx,:);
     specinfo.chanlocs = specinfo.chanlocs(sortidx);
     
-%     [~,keepidx] = intersect({specinfo.chanlocs.labels},{keeplocs.labels});
 %     specinfo.spectra = specinfo.spectra(keepidx,:);
 %     specinfo.chanlocs = specinfo.chanlocs(keepidx);
     
@@ -31,11 +30,10 @@ for s = 1:size(subjlist,1)
     end
     matrix = matrix(:,sortidx,sortidx);
     chanlocs = chanlocs(sortidx);
-%     bootmat = bootmat(:,sortidx,sortidx,:);
+    bootmat = bootmat(:,sortidx,sortidx,:);
 
-%     [~,keepidx] = intersect({chanlocs.labels},{keeplocs.labels});
 %     matrix = matrix(:,keepidx,keepidx);
-% %     bootmat = bootmat(:,keepidx,keepidx,:);
+%     bootmat = bootmat(:,keepidx,keepidx,:);
 %     chanlocs = chanlocs(keepidx);
     
     if s == 1

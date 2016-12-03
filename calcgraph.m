@@ -28,7 +28,7 @@ elseif strcmp(param.latticise,'on')
     numruns = param.numrand;
 else
 %     savename = sprintf('%s/%s/%s%sgraph.mat',filepath,conntype,basename,conntype);
-    savename = sprintf('%s/%s/%s%sgraph.mat','/Users/chennu/Work/Liege-RestingState/',conntype,basename,conntype);
+    savename = sprintf('%s/%s/%s%sgraph.mat','/Users/chennu/Data/BETADOC/',conntype,basename,conntype);
     numruns = 1;
 end
 
@@ -56,7 +56,6 @@ bootmat = bootmat(:,sortidx,sortidx,:);
 chanlocs = chanlocs(sortidx);
 
 load([chanlocpath '173to91.mat']);
-[~,keepidx] = intersect({chanlocs.labels},{keeplocs.labels});
 matrix = matrix(:,keepidx,keepidx);
 bootmat = bootmat(:,keepidx,keepidx,:);
 chanlocs = chanlocs(keepidx);

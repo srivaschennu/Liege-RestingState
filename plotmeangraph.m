@@ -75,7 +75,7 @@ vrange = [min(nonzeros(groupdeg(:))) max(groupdeg(:))];
 
 for g = 1:length(param.groupnames)
     while true
-        minfo(g,:) = plotgraph3d(squeeze(groupcoh(g,:,:)),sortedlocs,'sortedlocs.spl','plotqt',plotqt,'escale',erange,'vscale',vrange,'cshift',0.4,'numcolors',5);
+        minfo(g,:) = plotgraph3d(squeeze(groupcoh(g,:,:)),sortedlocs,'plotqt',plotqt,'escale',erange,'vscale',vrange,'cshift',0.4,'numcolors',5);
         if strcmp(questdlg('Save figure?',mfilename,'Yes','No','Yes'), 'Yes')
             break
         end
