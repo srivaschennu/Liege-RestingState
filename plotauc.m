@@ -3,14 +3,19 @@ function plotauc(varargin)
 param = finputcheck(varargin, {
     'group', 'string', [], 'crsdiag'; ...
     'groupnames', 'cell', {}, {'UWS','MCS-','MCS+','EMCS','LIS','CTRL'}; ...
-    'pairlist' 'real', [], [1 6 10 14]; ...
+    'pairlist' 'real', [], [1 6]; ...
     'xlim', 'real', [], []; ...
     'nonsig', 'string', {'on','off'}, 'on'; ...
     'plotcm', 'string', {'on','off'}, 'off'; ...
     'xlabel', 'string', [], ''; ...
     'ylabel', 'string', [], ''; ...
     'alpha', 'real', [], 0.05; ...
+    'prefix', 'string', {'anoxic_','tbi_',''}, ''; ...
     });
+
+if ~isstruct(param)
+    error('Incorrect parameters specified.');
+end
 
 bands = {
     'delta'
@@ -22,8 +27,6 @@ groups = 0:length(param.groupnames)-1;
 grouppairs = [
     0 1
     1 2
-    2 3
-    3 5
     ];
 
 colorlist = [
@@ -47,7 +50,7 @@ facecolorlist = [
 fontname = 'Helvetica';
 fontsize = 20;
 
-load(sprintf('stats_%s.mat',param.group),'stats','featlist');
+load(sprintf('stats_%s%s.mat',param.prefix,param.group),'stats','featlist');
 
 if size(stats,2) > 2
     stats = stats(:,param.pairlist);
@@ -127,7 +130,7 @@ for g = 1:size(stats,2)
     set(icons(g+size(stats,2)).Children,'MarkerSize',14,'MarkerFaceColor',facecolorlist(g,:),'MarkerEdgeColor',colorlist(g,:));
 end
 
-export_fig(sprintf('figures/auc_%s.tiff',param.group),'-r200','-p0.01');
+export_fig(sprintf('figures/auc_%s%s.tiff',param.prefix,param.group),'-r200','-p0.01');
 close(gcf);
 
 %% plot confusion matrix of best classifier
@@ -154,7 +157,7 @@ if strcmp(param.plotcm,'on')
             ylabel('CRS-R diagnosis','FontName',fontname,'FontSize',fontsize);
         end
         
-        export_fig(gcf,sprintf('figures/clsyfyr_%s_%s_vs_%s_cm.tiff',param.group,param.groupnames{grouppairs(g,1)+1},param.groupnames{grouppairs(g,2)+1}),'-p0.01');
+        export_fig(gcf,sprintf('figures/clsyfyr_%s%s_%s_vs_%s_cm.tiff',param.prefix,param.group,param.groupnames{grouppairs(g,1)+1},param.groupnames{grouppairs(g,2)+1}),'-p0.01');
         close(gcf);
     end
 end
