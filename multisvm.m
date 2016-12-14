@@ -34,12 +34,15 @@ for c = 1:length(Cvals)
     for k = 1:length(Kvals)
         model = fitcecoc(thisfeat,trainlabels,cvoption{:},...
             'Learners',templateSVM(clsyfyrparams{:},'BoxConstraint',Cvals(c),'KernelScale',Kvals(k)));
-        perf(c,k) = (1-kfoldLoss(model))*100;
+        predlabels = kfoldPredict(model);
+        cm = confusionmat(trainlabels,predlabels);
+        cm = cm ./ repmat(sum(cm,2),1,size(cm,2));
+        perf(c,k) = sum(diag(cm)) - (size(cm,1)/2);
     end
 end
 warning('on','stats:glmfit:IterationLimit');
 
-[bestcls.perf,maxidx] = max(abs(perf(:)));
+[bestcls.perf,maxidx] = max(perf(:));
 [bestC,bestK] = ind2sub(size(perf),maxidx);
 bestcls.C = Cvals(bestC);
 bestcls.K = Kvals(bestK);
@@ -47,7 +50,7 @@ bestcls.K = Kvals(bestK);
 model = fitcecoc(thisfeat,trainlabels,cvoption{:},...
     'Learners',templateSVM(clsyfyrparams{:},'BoxConstraint',bestcls.C,'KernelScale',bestcls.K));
 bestcls.predlabels = kfoldPredict(model);
-
+bestcls.cm = confusionmat(trainlabels,bestcls.predlabels);
 bestcls.clsyfyrparams = clsyfyrparams;
 bestcls.cvoption = cvoption;
 end
