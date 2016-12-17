@@ -40,12 +40,12 @@ age = cell2mat(subjlist(:,7));
 daysonset = cell2mat(subjlist(:,9));
 outcome = double(cell2mat(subjlist(:,10)) > 2);
 outcome(isnan(cell2mat(subjlist(:,10)))) = NaN;
-vsoutcome = double(cell2mat(subjlist(:,10)) > 2);
-vsoutcome(isnan(cell2mat(subjlist(:,10)))) = NaN;
-vsoutcome(crsaware > 0) = NaN;
-mcsoutcome = double(cell2mat(subjlist(:,10)) > 2);
-mcsoutcome(isnan(cell2mat(subjlist(:,10)))) = NaN;
-mcsoutcome(crsaware == 0) = NaN;
+anoxicoutcome = double(cell2mat(subjlist(:,10)) > 2);
+anoxicoutcome(isnan(cell2mat(subjlist(:,10)))) = NaN;
+anoxicoutcome(etiology == 1) = NaN;
+tbioutcome = double(cell2mat(subjlist(:,10)) > 2);
+tbioutcome(isnan(cell2mat(subjlist(:,10)))) = NaN;
+tbioutcome(etiology == 0) = NaN;
 mcstennis = tennis .* crsdiag;
 mcstennis(crsdiag == 0) = NaN;
 crs = cell2mat(subjlist(:,11));
@@ -55,6 +55,12 @@ admvscrs(refaware == 0) = 0;
 admvscrs(refaware == 0 & crsaware == 0) = 0;
 admvscrs(refaware > 0 & crsaware > 0) = 1;
 admvscrs(refaware == 0 & crsaware > 0) = 2;
+
+etiooutcome = NaN(size(crsdiag));
+etiooutcome(etiology == 0 & outcome == 0) = 0;
+etiooutcome(etiology == 0 & outcome == 1) = 1;
+etiooutcome(etiology == 1 & outcome == 0) = 2;
+etiooutcome(etiology == 1 & outcome == 1) = 3;
 
 groupvar = eval(param.group);
 

@@ -1,7 +1,5 @@
 function bestcls = buildsvm(features,groupvar,varargin)
 
-rng('default');
-
 param = finputcheck(varargin, {
     'runpca', 'string', {'true','false'}, 'false'; ...
     'train', 'string', {'true','false'}, 'false'; ...
@@ -53,6 +51,7 @@ parfor d = 1:size(features,3)
     
     for c = 1:length(Cvals)
         for k = 1:length(Kvals)
+            rng('default');
             model = fitcsvm(thisfeat,trainlabels,clsyfyrparams{:},cvoption{:},'BoxConstraint',Cvals(c),'KernelScale',Kvals(k));
             [~,postProb] = kfoldPredict(fitSVMPosterior(model));
             [~,msgid] = lastwarn;
@@ -82,6 +81,7 @@ if size(thisfeat,2) > 1 && strcmp(param.runpca,'true')
     thisfeat = pcaScores(:,1:bestcls.numPCAComponentsToKeep);
 end
 
+rng('default');
 model = fitcsvm(thisfeat,trainlabels,clsyfyrparams{:},cvoption{:},'BoxConstraint',bestcls.C,'KernelScale',bestcls.K);
 
 [~,postProb] = kfoldPredict(fitSVMPosterior(model));

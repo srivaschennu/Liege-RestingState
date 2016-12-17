@@ -4,6 +4,7 @@ param = finputcheck(varargin, {
     'group', 'string', [], 'crsdiag'; ...
     'groupnames', 'cell', {}, {'UWS','MCS-','MCS+','EMCS','LIS','CTRL'}; ...
     'pairlist' 'real', [], [1 6]; ...
+    'grouppairs' 'real', [], []; ...
     'xlim', 'real', [], []; ...
     'nonsig', 'string', {'on','off'}, 'on'; ...
     'plotcm', 'string', {'on','off'}, 'off'; ...
@@ -24,10 +25,14 @@ bands = {
     };
 
 groups = 0:length(param.groupnames)-1;
-grouppairs = [
-    0 1
-    1 2
-    ];
+if isempty(param.grouppairs)
+    grouppairs = [
+        0 1
+        1 2
+        ];
+else
+    grouppairs = param.grouppairs;
+end
 
 colorlist = [
     0 0.0 0.5
