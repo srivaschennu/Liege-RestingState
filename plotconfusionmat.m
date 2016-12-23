@@ -7,7 +7,7 @@ param = finputcheck(varargin, {
     });
 
 fontname = 'Helvetica';
-fontsize = 32;
+fontsize = 36;
 
 rowsum = sum(confmat,2);
 confmat = confmat*100 ./ repmat(rowsum,1,size(confmat,2));
@@ -18,14 +18,14 @@ imshow(confmat,'InitialMagnification',5000);
 figpos = get(gcf,'Position');
 figpos(3:4) = 1000;
 set(gcf,'Position',figpos);
-
-colormap(jet); colorbar
-caxis(param.clim);
-
 set(gca,'YDir','normal','Visible','on',...
     'XTick',1:size(confmat,2),'XTickLabel',groupnames,...
     'YTick',1:size(confmat,1),'YTickLabel',cell(size(groupnames)),...
-    'FontName',fontname,'FontSize',fontsize-6);
+    'FontName',fontname,'FontSize',fontsize-2);
+
+colormap(jet); colorbar('NorthOutside','FontSize',fontsize-2);
+caxis(param.clim);
+
 for c1 = 1:size(confmat,1)
     for c2 = 1:size(confmat,2)
         h_txt = text(c2-0.15,c1,sprintf('%d%%',round(confmat(c1,c2))),'FontName',fontname,'FontSize',fontsize);
@@ -40,7 +40,7 @@ end
 xlimits = xlim;
 maxext = 0;
 for r = 1:length(rowsum)
-    h_txt(r) = text(xlimits(1)-0.1,r,sprintf('%s\n(%d)',groupnames{r},rowsum(r)),'FontName',fontname,'FontSize',fontsize-6);
+    h_txt(r) = text(xlimits(1)-0.1,r,sprintf('%s\n(%d)',groupnames{r},rowsum(r)),'FontName',fontname,'FontSize',fontsize-2);
     textext = get(h_txt(r),'Extent');
     maxext = max(maxext,textext(3));
 end
@@ -55,14 +55,14 @@ for s = 1:size(confmat,1)-1
 end
 
 if ~isempty(param.xlabel)
-    xlabel(param.xlabel,'FontName',fontname,'FontSize',fontsize-6);
+    xlabel(param.xlabel,'FontName',fontname,'FontSize',fontsize-2);
 else
-    xlabel('EEG prediction','FontName',fontname,'FontSize',fontsize-6);
+    xlabel('EEG prediction','FontName',fontname,'FontSize',fontsize-2);
 end
 if ~isempty(param.ylabel)
-    h_lab = ylabel(param.ylabel,'FontName',fontname,'FontSize',fontsize-6);
+    h_lab = ylabel(param.ylabel,'FontName',fontname,'FontSize',fontsize-2);
 else
-    h_lab = ylabel('CRS-R diagnosis','FontName',fontname,'FontSize',fontsize-6);
+    h_lab = ylabel('CRS-R diagnosis','FontName',fontname,'FontSize',fontsize-2);
 end
 labpos = get(h_lab,'Position');
 set(h_lab,'Position',[labpos(1)-0.1-maxext,labpos(2)]);
