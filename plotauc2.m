@@ -110,7 +110,7 @@ for g = 1:size(stats,2)
         
     [~,sortidx] = sort(cell2mat({stats(:,g).auc}),'descend');
     yticklabels = {};
-    for f = 1:length(sortidx)
+    for f = 1:10
         if stats(sortidx(f),g).pval < p_thresh
             markersize = markersizes(2);
         elseif stats(sortidx(f),g).pval < param.alpha
@@ -137,11 +137,9 @@ for g = 1:size(stats,2)
     else
         xlim(param.xlim);
     end
-    ylimits = ylim;
-    ylim([ylimits(1)-0.5 ylimits(end)+0.5]);
     grouppairnames = sprintf('%s vs. %s',param.groupnames{grouppairs(g,1)+1},param.groupnames{grouppairs(g,2)+1});
     xlabel(grouppairnames,'FontName',fontname,'FontSize',fontsize);
-    set(gca,'YTick',1:size(stats,1),'YTickLabel',yticklabels);
+    set(gca,'YLim',[0.5 length(yticklabels)+0.5],'YTick',1:length(yticklabels),'YTickLabel',yticklabels);
         
     export_fig(sprintf('figures/auc_%s%s_%d.tiff',param.prefix,param.group,g),'-r200','-p0.01');
     close(gcf);

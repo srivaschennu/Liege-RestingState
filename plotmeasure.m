@@ -159,7 +159,7 @@ if strcmp(param.noplot,'off')
     for g = 1:length(groups)
         plotdata = mean(testdata(groupvar == groups(g),:,:),3);
         groupmean(g,:) = nanmean(plotdata);
-        groupste(g,:) = nanstd(plotdata)/sqrt(length(plotdata));
+        groupste(g,:) = nanstd(plotdata)./sqrt(sum(~isnan(plotdata),1));
     end
     
     if ~isempty(plottvals)
