@@ -131,7 +131,7 @@ else
         testdata = squeeze(std(graph{m,weiorbin}(:,bandidx,trange,:),[],4));
 %     elseif strcmpi(measure,'mutual information')
 %         testdata = squeeze(mean(graph{m,weiorbin}(:,crsdiag == 5,bandidx,trange),2));
-    elseif strcmpi(measure,'participation coefficient')
+    elseif strcmpi(measure,'participation coefficient') || strcmpi(measure,'degree')
         testdata = squeeze(std(graph{m,weiorbin}(:,bandidx,trange,:),[],4));
         %         testdata = squeeze(graph{m,weiorbin}(:,bandidx,trange,:));
         %         testdata = testdata - repmat(quantile(testdata,0.75,3),1,1,size(testdata,3));

@@ -23,7 +23,7 @@ set(gca,'YDir','normal','Visible','on',...
     'YTick',1:size(confmat,1),'YTickLabel',cell(size(groupnames)),...
     'FontName',fontname,'FontSize',fontsize-2);
 
-colormap(jet); colorbar('EastOutside','FontSize',fontsize-2);
+colormap(jet); colorbar('NorthOutside','FontSize',fontsize-2);
 caxis(param.clim);
 
 for c1 = 1:size(confmat,1)
