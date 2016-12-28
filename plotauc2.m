@@ -64,18 +64,18 @@ featlist = {
     'ftdwpli'    'median'                 [1]    'Med. dwPLI \delta'
     'ftdwpli'    'median'                 [2]    'Med. dwPLI \theta'
     'ftdwpli'    'median'                 [3]    'Med. dwPLI \alpha'
-    'ftdwpli'    'clustering'             [1]    'Local eff. \delta'
-    'ftdwpli'    'clustering'             [2]    'Local eff. \theta'
-    'ftdwpli'    'clustering'             [3]    'Local eff. \alpha'
-    'ftdwpli'    'characteristic path length'     [1]    'Global eff. \delta'
-    'ftdwpli'    'characteristic path length'     [2]    'Global eff. \theta'
-    'ftdwpli'    'characteristic path length'     [3]    'Global eff. \alpha'
+    'ftdwpli'    'clustering'             [1]    'Clust. coeff. \delta'
+    'ftdwpli'    'clustering'             [2]    'Clust. coeff. \theta'
+    'ftdwpli'    'clustering'             [3]    'Clust. coeff. \alpha'
+    'ftdwpli'    'characteristic path length'     [1]    'Char. path len. \delta'
+    'ftdwpli'    'characteristic path length'     [2]    'Char. path len. \theta'
+    'ftdwpli'    'characteristic path length'     [3]    'Char. path len. \alpha'
     'ftdwpli'    'modularity'             [1]    'Modularity \delta'
     'ftdwpli'    'modularity'             [2]    'Modularity \theta'
     'ftdwpli'    'modularity'             [3]    'Modularity \alpha'
-    'ftdwpli'    'participation coefficient'     [1]    'Hub idx. \delta'
-    'ftdwpli'    'participation coefficient'     [2]    'Hub idx. \theta'
-    'ftdwpli'    'participation coefficient'     [3]    'Hub idx. \alpha'
+    'ftdwpli'    'participation coefficient'     [1]    '\sigma(Part. coeff.) \delta'
+    'ftdwpli'    'participation coefficient'     [2]    '\sigma(Part. coeff.) \theta'
+    'ftdwpli'    'participation coefficient'     [3]    '\sigma(Part. coeff.)  \alpha'
     'ftdwpli'    'modular span'           [1]    'Mod. span \delta'
     'ftdwpli'    'modular span'           [2]    'Mod. span \theta'
     'ftdwpli'    'modular span'           [3]    'Mod. span \alpha'
@@ -101,11 +101,6 @@ markersizes = [150 300];
 for g = 1:size(stats,2)
     
     figure('Color','white');
-    figpos = get(gcf,'Position');
-    figpos(3) = figpos(3)*2;
-    figpos(4) = figpos(4)*2/3;
-    set(gcf,'Position',figpos);
-    
     hold all
         
     [~,sortidx] = sort(cell2mat({stats(:,g).auc}),'descend');
@@ -140,7 +135,12 @@ for g = 1:size(stats,2)
     grouppairnames = sprintf('%s vs. %s',param.groupnames{grouppairs(g,1)+1},param.groupnames{grouppairs(g,2)+1});
     xlabel(grouppairnames,'FontName',fontname,'FontSize',fontsize);
     set(gca,'YLim',[0.5 length(yticklabels)+0.5],'YTick',1:length(yticklabels),'YTickLabel',yticklabels);
-        
+    
+    figpos = get(gcf,'Position');
+    figpos(3) = figpos(3)*2;
+    figpos(4) = figpos(4)*(1/6)*length(yticklabels);
+    set(gcf,'Position',figpos);
+
     export_fig(sprintf('figures/auc_%s%s_%d.tiff',param.prefix,param.group,g),'-r200','-p0.01');
     close(gcf);
 end
