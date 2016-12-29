@@ -1,7 +1,5 @@
 function bestcls = multisvm(features,groupvar,varargin)
 
-rng('default');
-
 param = finputcheck(varargin, {
     'runpca', 'string', {'true','false'}, 'false'; ...
     });
@@ -32,6 +30,7 @@ end
 perf = zeros(length(Cvals),length(Kvals));
 for c = 1:length(Cvals)
     for k = 1:length(Kvals)
+        rng('default');
         model = fitcecoc(thisfeat,trainlabels,cvoption{:},...
             'Learners',templateSVM(clsyfyrparams{:},'BoxConstraint',Cvals(c),'KernelScale',Kvals(k)));
         predlabels = kfoldPredict(model);
@@ -47,10 +46,11 @@ warning('on','stats:glmfit:IterationLimit');
 bestcls.C = Cvals(bestC);
 bestcls.K = Kvals(bestK);
 
-model = fitcecoc(thisfeat,trainlabels,cvoption{:},...
+rng('default');
+bestcls.model = fitcecoc(thisfeat,trainlabels,cvoption{:},...
     'Learners',templateSVM(clsyfyrparams{:},'BoxConstraint',bestcls.C,'KernelScale',bestcls.K));
-bestcls.predlabels = kfoldPredict(model);
-bestcls.cm = confusionmat(trainlabels,bestcls.predlabels);
+bestcls.predlabels = kfoldPredict(bestcls.model);
+[bestcls.cm,bestcls.chi2,bestcls.chi2pval] = crosstab(trainlabels,bestcls.predlabels);
 bestcls.clsyfyrparams = clsyfyrparams;
 bestcls.cvoption = cvoption;
 end

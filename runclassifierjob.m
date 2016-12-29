@@ -62,27 +62,27 @@ bands = {
     };
 
 featlist = {
-    'ftdwpli','power',1
-    'ftdwpli','power',2
-    'ftdwpli','power',3
-    'ftdwpli','median',1
-    'ftdwpli','median',2
-    'ftdwpli','median',3
-    'ftdwpli','clustering',1
-    'ftdwpli','clustering',2
-    'ftdwpli','clustering',3
-    'ftdwpli','characteristic path length',1
-    'ftdwpli','characteristic path length',2
-    'ftdwpli','characteristic path length',3
-    'ftdwpli','modularity',1
-    'ftdwpli','modularity',2
-    'ftdwpli','modularity',3
-    'ftdwpli','participation coefficient',1
-    'ftdwpli','participation coefficient',2
+%     'ftdwpli','power',1
+%     'ftdwpli','power',2
+%     'ftdwpli','power',3
+%     'ftdwpli','median',1
+%     'ftdwpli','median',2
+%     'ftdwpli','median',3
+%     'ftdwpli','clustering',1
+%     'ftdwpli','clustering',2
+%     'ftdwpli','clustering',3
+%     'ftdwpli','characteristic path length',1
+%     'ftdwpli','characteristic path length',2
+%     'ftdwpli','characteristic path length',3
+%     'ftdwpli','modularity',1
+%     'ftdwpli','modularity',2
+%     'ftdwpli','modularity',3
+%     'ftdwpli','participation coefficient',1
+%     'ftdwpli','participation coefficient',2
     'ftdwpli','participation coefficient',3
-    'ftdwpli','modular span',1
-    'ftdwpli','modular span',2
-    'ftdwpli','modular span',3
+%     'ftdwpli','modular span',1
+%     'ftdwpli','modular span',2
+%     'ftdwpli','modular span',3
     };
 
 if isempty(param.groups)

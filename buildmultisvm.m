@@ -26,18 +26,18 @@ trainlabels = groupvar;
 % testfeatures = features(cvp.test(1),:,:);
 % testlabels = groupvar(cvp.test(1),1);
 
-%% start parallel pool
-curpool = gcp('nocreate');
-if isempty(curpool)
-    parpool(parallel.defaultClusterProfile,size(features,3));
-elseif curpool.NumWorkers ~= size(features,3)
-    delete(curpool);
-    parpool(parallel.defaultClusterProfile,size(features,3));
-end
+% % %% start parallel pool
+% curpool = gcp('nocreate');
+% parclust = parcluster(parallel.defaultClusterProfile);
+% if isempty(curpool)
+%     parpool(parallel.defaultClusterProfile,min(parclust.NumWorkers,size(features,3)));
+% elseif curpool.NumWorkers ~= min(parclust.NumWorkers,size(features,3))
+%     delete(curpool);
+%     parpool(parallel.defaultClusterProfile,size(features,3));
+% end
 
 %% search through parameters for best cross-validated classifier
-parfor d = 1:size(features,3)
-    rng('default');
+for d = 16%1:size(features,3)
     warning('off','stats:glmfit:IterationLimit');
     thisfeat = trainfeatures(:,:,d);
     
@@ -49,37 +49,31 @@ parfor d = 1:size(features,3)
     
     for c = 1:length(Cvals)
         for k = 1:length(Kvals)
-            model = fitcecoc(thisfeat,trainlabels,cvoption{:},...
+            allmod{d}{c,k} = fitcecoc(thisfeat,trainlabels,cvoption{:},...
                 'Learners',templateSVM(clsyfyrparams{:},'BoxConstraint',Cvals(c),'KernelScale',Kvals(k)));
-            auc{d}(c,k) = 1-kfoldLoss(model);
+            
+            predlabels = kfoldPredict(allmod{d}{c,k});
+            cm = confusionmat(trainlabels,predlabels);
+            cm = cm ./ repmat(sum(cm,2),1,size(cm,2));
+            perf{d}(c,k) = sum(diag(cm)) - (size(cm,1)/2);
         end
     end
     warning('on','stats:glmfit:IterationLimit');
 end
-auc = permute(cat(3,auc{:}),[3 1 2]);
+perf = permute(cat(3,perf{:}),[3 1 2]);
 
-[~,maxidx] = max(abs(auc(:)));
-[bestD,bestC,bestK] = ind2sub(size(auc),maxidx);
+[bestcls.perf,maxidx] = max(perf(:));
+[bestD,bestC,bestK] = ind2sub(size(perf),maxidx);
 
 bestcls.D = bestD;
 bestcls.C = Cvals(bestC);
 bestcls.K = Kvals(bestK);
+bestcls.model = allmod{bestD}{bestC,bestK};
 
-%% build best cross-validated classifier
-thisfeat = trainfeatures(:,:,bestcls.D);
-if size(thisfeat,2) > 1 && strcmp(param.runpca,'true')
-    [bestcls.pcaCoeff, pcaScores, ~, ~, explained] = pca(thisfeat,'Centered',true);
-    bestcls.numPCAComponentsToKeep = find(cumsum(explained)/sum(explained) >= explainedVarianceToKeepAsFraction, 1);
-    thisfeat = pcaScores(:,1:bestcls.numPCAComponentsToKeep);
-end
+bestcls.predlabels = kfoldPredict(bestcls.model);
+[bestcls.confmat,bestcls.chi2,bestcls.chi2pval] = crosstab(trainlabels,bestcls.predlabels);
 
-model = fitcecoc(thisfeat,trainlabels,cvoption{:},...
-    'Learners',templateSVM(clsyfyrparams{:},'BoxConstraint',bestcls.C,'KernelScale',bestcls.K));
-predlabels = kfoldPredict(model);
-[bestcls.confmat,bestcls.chi2,bestcls.chi2pval] = crosstab(trainlabels,predlabels);
-bestcls.accu = (1 - kfoldLoss(model)) * 100;
-bestcls.predlabels = predlabels;
-
+thisfeat = features(:,:,bestD);
 bestcls.model = fitcecoc(thisfeat,trainlabels,...
     'Learners',templateSVM(clsyfyrparams{:},'BoxConstraint',bestcls.C,'KernelScale',bestcls.K));
 
