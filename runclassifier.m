@@ -88,7 +88,7 @@ for f = 1:size(featlist,1)
     features = getfeatures(listname,conntype,measure,bandidx);
     features = features(selgroupidx,:,:);
     
-    clsyfyr(f) = buildmultisvm(features,groupvar,'runpca','false');
+    clsyfyr(f) = buildsvm(features,groupvar,'runpca','false');
     
     %         fprintf('%s vs %s: AUC = %.2f, p = %.5f, Chi2 = %.2f, Chi2 p = %.4f, accu = %d%%.\n',...
     %             param.groupnames{groups(1)+1},param.groupnames{groups(2)+1},...

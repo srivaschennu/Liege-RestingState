@@ -28,7 +28,7 @@ caxis(param.clim);
 
 for c1 = 1:size(confmat,1)
     for c2 = 1:size(confmat,2)
-        h_txt = text(c2-0.15,c1,sprintf('%d%%',round(confmat(c1,c2))),'FontName',fontname,'FontSize',fontsize);
+        h_txt = text(c2-0.25,c1,sprintf('%d%%',round(confmat(c1,c2))),'FontName',fontname,'FontSize',fontsize);
         if confmat(c1,c2) > 30 && confmat(c1,c2) < 70
             set(h_txt,'Color','black');
         else
