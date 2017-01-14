@@ -197,12 +197,11 @@ for g = 1:size(grouppairs,1)
     pet(g).confmat = confusionmat(thisgroupvar(~isnan(thispetdiag)),thispetdiag(~isnan(thispetdiag)));
     pet(g).confmat = pet(g).confmat*100 ./ repmat(sum(pet(g).confmat,2),1,2);
     [~,pet(g).chi2,pet(g).chi2pval] = crosstab(thisgroupvar(~isnan(thispetdiag)),thispetdiag(~isnan(thispetdiag)));
-    
+    pet(g).accu = round(sum(thisgroupvar(~isnan(thispetdiag))==thispetdiag(~isnan(thispetdiag)))*100/length(thisgroupvar(~isnan(thispetdiag))));
     if strcmp(param.noplot,'off')
         fprintf('\nPET: %s vs %s Chi2 = %.2f, Chi2 p = %.1e, accu = %d%%.\n',...
             param.groupnames{grouppairs(g,1)+1},param.groupnames{grouppairs(g,2)+1},...
-            pet(g).chi2,pet(g).chi2pval,...
-            round(sum(thisgroupvar(~isnan(thispetdiag))==thispetdiag(~isnan(thispetdiag)))*100/length(thisgroupvar(~isnan(thispetdiag)))));
+            pet(g).chi2,pet(g).chi2pval,pet(g).accu);
         
         if strcmp(param.plotcm,'on')
             % plot confusion matrix
