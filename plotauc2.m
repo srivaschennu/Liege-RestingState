@@ -53,7 +53,7 @@ end
 %     ];
 
 fontname = 'Helvetica';
-fontsize = 20;
+fontsize = 24;
 
 load(sprintf('stats_%s%s.mat',param.prefix,param.group),'stats','featlist');
 
@@ -96,7 +96,7 @@ facecolorlist = [
 p_thresh = fdr(cell2mat({stats.pval}),param.alpha);
 % p_thresh = 0.05;
 
-markersizes = [150 300];
+markersizes = [200 400];
 
 for g = 1:size(stats,2)
     
