@@ -1,7 +1,5 @@
 function bestcls = buildmultisvm(features,groupvar,varargin)
 
-rng('default');
-
 param = finputcheck(varargin, {
     'runpca', 'string', {'true','false'}, 'false'; ...
     });
@@ -26,18 +24,19 @@ trainlabels = groupvar;
 % testfeatures = features(cvp.test(1),:,:);
 % testlabels = groupvar(cvp.test(1),1);
 
-% % %% start parallel pool
-% curpool = gcp('nocreate');
-% parclust = parcluster(parallel.defaultClusterProfile);
-% if isempty(curpool)
-%     parpool(parallel.defaultClusterProfile,min(parclust.NumWorkers,size(features,3)));
-% elseif curpool.NumWorkers ~= min(parclust.NumWorkers,size(features,3))
-%     delete(curpool);
-%     parpool(parallel.defaultClusterProfile,size(features,3));
-% end
+% %% start parallel pool
+curpool = gcp('nocreate');
+parclust = parcluster(parallel.defaultClusterProfile);
+if isempty(curpool)
+    parpool(parallel.defaultClusterProfile,min(parclust.NumWorkers,size(features,3)));
+elseif curpool.NumWorkers ~= min(parclust.NumWorkers,size(features,3))
+    delete(curpool);
+    parpool(parallel.defaultClusterProfile,size(features,3));
+end
 
 %% search through parameters for best cross-validated classifier
-for d = 16%1:size(features,3)
+parfor d = 1:size(features,3)
+    rng('default');
     warning('off','stats:glmfit:IterationLimit');
     thisfeat = trainfeatures(:,:,d);
     
@@ -49,6 +48,7 @@ for d = 16%1:size(features,3)
     
     for c = 1:length(Cvals)
         for k = 1:length(Kvals)
+            rng('default');
             allmod{d}{c,k} = fitcecoc(thisfeat,trainlabels,cvoption{:},...
                 'Learners',templateSVM(clsyfyrparams{:},'BoxConstraint',Cvals(c),'KernelScale',Kvals(k)));
             
@@ -74,6 +74,7 @@ bestcls.predlabels = kfoldPredict(bestcls.model);
 [bestcls.confmat,bestcls.chi2,bestcls.chi2pval] = crosstab(trainlabels,bestcls.predlabels);
 
 thisfeat = features(:,:,bestD);
+rng('default');
 bestcls.model = fitcecoc(thisfeat,trainlabels,...
     'Learners',templateSVM(clsyfyrparams{:},'BoxConstraint',bestcls.C,'KernelScale',bestcls.K));
 
