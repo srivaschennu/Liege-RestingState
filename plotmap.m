@@ -5,12 +5,7 @@ param = finputcheck(varargin, {
     'groupnames', 'cell', {}, {'UWS','MCS-','MCS+','EMCS','LIS','CTR'}; ...
     'changroup', 'string', [], 'all'; ...
     'changroup2', 'string', [], 'all'; ...
-    'xlabel', 'string', [], ''; ...
-    'ylabel', 'string', [], measure; ...
-    'xlim', 'real', [], []; ...
-    'ylim', 'real', [], []; ...
-    'xtick', 'real', [], []; ...
-    'ytick', 'real', [], []; ...
+    'clim', 'real', [], []; ...
     'legend', 'string', {'on','off'}, 'off'; ...
     'legendlocation', 'string', [], 'Best'; ...
     'noplot', 'string', {'on','off'}, 'off'; ...
@@ -63,6 +58,10 @@ facecolorlist = [
 groupnames = param.groupnames;
 weiorbin = 3;
 
+if ~isempty(param.changroup)
+    changroupidx = ismember({sortedlocs.labels},cat(1,eval(param.changroup),eval(param.changroup2)));
+end
+
 if strcmpi(measure,'power')
     %     load(sprintf('%s/%s/alldata_%s_%s.mat',filepath,conntype,listname,conntype));
     load(sprintf('%s/%s/alldata_%s_%s.mat',filepath,conntype,listname,conntype),'bandpower');
@@ -72,11 +71,14 @@ else
     load(sprintf('%s%s//graphdata_%s_%s.mat',filepath,conntype,listname,conntype),'graph','tvals');
     plotqt = find(abs(tvals - plotqt) == min(abs(tvals - plotqt)),1,'first');
     
+    trange = [0.9 0.1];
+    trange = (tvals <= trange(1) & tvals >= trange(2));
+    
     m = find(strcmpi(measure,graph(:,1)));
     if strcmpi(measure,'centrality')
         testdata = squeeze(max(graph{m,weiorbin}(:,bandidx,plotqt,:),[],4));
     elseif strcmpi(measure,'participation coefficient')
-        testdata = squeeze(graph{m,weiorbin}(:,bandidx,plotqt,:));
+        testdata = squeeze(mean(graph{m,weiorbin}(:,bandidx,trange,:),3));
     end
 end
 
@@ -99,9 +101,13 @@ groups = unique(groupvar(~isnan(groupvar)));
 
 for g = 1:length(groups)
     groupmap = squeeze(mean(testdata(groupvar == groups(g),:),1));
-    figure; topoplot(groupmap,sortedlocs,'maplimits',[0.4 0.65]); colorbar
+    figure; topoplot(groupmap,sortedlocs,'maplimits',param.clim,'gridscale',150,...
+        'pmask',changroupidx);
+    colormap(jet);
+    colorbar
     figname = sprintf('figures/map_%s_%s',measure,groupnames{g});
     set(gcf,'Name',figname,'Color','white');
+    set(gca,'FontName',fontname,'FontSize',fontsize);
     print(gcf,[figname '.tif'],'-dtiff','-r200');
     close(gcf);
 end
