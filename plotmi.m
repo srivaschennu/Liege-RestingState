@@ -5,7 +5,7 @@ loadpaths
 param = finputcheck(varargin, {
     'group', 'string', [], 'crsdiag'; ...
     'groupnames', 'cell', {}, {'UWS','MCS-','MCS+','EMCS','LIS','CTRL'}; ...
-    'caxis', 'real', [], []; ...
+    'clim', 'real', [], []; ...
     'renderer', 'string', {'painters','opengl'}, 'painters'; ...
     'colorbar', 'string', {'on','off'}, 'on'; ...
     });
@@ -66,31 +66,35 @@ groups = unique(groupvar);
 figure('Color','white'); hold all
 plotdata = mean(mutinfo(:,:,bandidx,trange),4);
 imagesc(plotdata);
+colormap(jet);
+[groupvar, sortidx] = sort(groupvar);
+plotdata = plotdata(sortidx,sortidx);
 
-if ~isempty(param.caxis)
-    caxis(param.caxis);
+if ~isempty(param.clim)
+    caxis(param.clim);
 end
 
 for g = 1:length(groups)-1
     groupedge(g) = find(groupvar == groups(g),1,'last');
-    line([groupedge(g)+0.5 groupedge(g)+0.5],ylim,'Color','black','LineWidth',6);
-    line(xlim,[groupedge(g)+0.5 groupedge(g)+0.5],'Color','black','LineWidth',6);
+    line([groupedge(g)+0.5 groupedge(g)+0.5],ylim,'Color','black','LineWidth',3);
+    line(xlim,[groupedge(g)+0.5 groupedge(g)+0.5],'Color','black','LineWidth',3);
 end
 groupedge = [0 groupedge size(plotdata,1)];
-for g = 1:length(groupedge)-1
+% for g = 1:length(groupedge)-1
 %     line([groupedge(g)+0.5 groupedge(g)+0.5],[groupedge(g)+0.5 groupedge(g+1)+0.5],'Color','red','LineWidth',6);
 %     line([groupedge(g)+0.5 groupedge(g+1)+0.5],[groupedge(g+1)+0.5 groupedge(g+1)+0.5],'Color','red','LineWidth',6);
-    line([groupedge(g+1)+0.5 groupedge(g+1)+0.5],[groupedge(g)+0.5 groupedge(g+1)+0.5],'Color','red','LineWidth',6);
-    line([groupedge(g)+0.5 groupedge(g+1)+0.5],[groupedge(g)+0.5 groupedge(g)+0.5],'Color','red','LineWidth',6);
-    line([groupedge(g)+0.5 groupedge(g+1)+0.5],[groupedge(g)+0.5 groupedge(g+1)+0.5],'Color','red','LineWidth',6);
+%    line([groupedge(g+1)+0.5 groupedge(g+1)+0.5],[groupedge(g)+0.5 groupedge(g+1)+0.5],'Color','red','LineWidth',6);
+%    line([groupedge(g)+0.5 groupedge(g+1)+0.5],[groupedge(g)+0.5 groupedge(g)+0.5],'Color','red','LineWidth',6);
+
+%    line([groupedge(g)+0.5 groupedge(g+1)+0.5],[groupedge(g)+0.5 groupedge(g+1)+0.5],'Color','red','LineWidth',6);
     
-    if bandidx == 3 && g < 3
-        line([groupedge(g)+0.5 groupedge(g+1)+0.5],[groupedge(end)+0.5 groupedge(end)+0.5],'Color','magenta','LineWidth',6);
-        line([groupedge(g)+0.5 groupedge(g+1)+0.5],[groupedge(end-1)+0.5 groupedge(end-1)+0.5],'Color','magenta','LineWidth',6);
-        line([groupedge(g)+0.5 groupedge(g)+0.5],[groupedge(end-1)+0.5 groupedge(end)+0.5],'Color','magenta','LineWidth',6);
-        line([groupedge(g+1)+0.5 groupedge(g+1)+0.5],[groupedge(end-1)+0.5 groupedge(end)+0.5],'Color','magenta','LineWidth',6);
-    end
-end
+%     if bandidx == 3 && g < 3
+%         line([groupedge(g)+0.5 groupedge(g+1)+0.5],[groupedge(end)+0.5 groupedge(end)+0.5],'Color','magenta','LineWidth',6);
+%         line([groupedge(g)+0.5 groupedge(g+1)+0.5],[groupedge(end-1)+0.5 groupedge(end-1)+0.5],'Color','magenta','LineWidth',6);
+%         line([groupedge(g)+0.5 groupedge(g)+0.5],[groupedge(end-1)+0.5 groupedge(end)+0.5],'Color','magenta','LineWidth',6);
+%         line([groupedge(g+1)+0.5 groupedge(g+1)+0.5],[groupedge(end-1)+0.5 groupedge(end)+0.5],'Color','magenta','LineWidth',6);
+%     end
+% end
 
 if strcmp(param.colorbar,'on')
     colorbar

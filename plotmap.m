@@ -3,9 +3,8 @@ function plotmap(listname,conntype,measure,bandidx,varargin)
 param = finputcheck(varargin, {
     'group', 'string', [], 'crsdiag'; ...
     'groupnames', 'cell', {}, {'UWS','MCS-','MCS+','EMCS','LIS','CTR'}; ...
-    'changroup', 'string', [], 'all'; ...
-    'changroup2', 'string', [], 'all'; ...
-    'clim', 'real', [], []; ...
+    'pmask', 'string', [], ''; ...
+    'clim', 'real', [], [-0.5 0.5]; ...
     'legend', 'string', {'on','off'}, 'off'; ...
     'legendlocation', 'string', [], 'Best'; ...
     'noplot', 'string', {'on','off'}, 'off'; ...
@@ -13,7 +12,7 @@ param = finputcheck(varargin, {
     });
 
 fontname = 'Helvetica';
-fontsize = 22;
+fontsize = 32;
 
 loadpaths
 loadsubj
@@ -58,8 +57,8 @@ facecolorlist = [
 groupnames = param.groupnames;
 weiorbin = 3;
 
-if ~isempty(param.changroup)
-    changroupidx = ismember({sortedlocs.labels},cat(1,eval(param.changroup),eval(param.changroup2)));
+if ~isempty(param.pmask)
+    pmaskidx = ismember({sortedlocs.labels},cat(1,eval(param.changroup),eval(param.changroup2)));
 end
 
 if strcmpi(measure,'power')
@@ -78,7 +77,8 @@ else
     if strcmpi(measure,'centrality')
         testdata = squeeze(max(graph{m,weiorbin}(:,bandidx,plotqt,:),[],4));
     elseif strcmpi(measure,'participation coefficient')
-        testdata = squeeze(mean(graph{m,weiorbin}(:,bandidx,trange,:),3));
+        testdata = zscore(graph{m,weiorbin}(:,bandidx,trange,:),0,4);
+        testdata = squeeze(mean(testdata,3));
     end
 end
 
@@ -101,8 +101,17 @@ groups = unique(groupvar(~isnan(groupvar)));
 
 for g = 1:length(groups)
     groupmap = squeeze(mean(testdata(groupvar == groups(g),:),1));
-    figure; topoplot(groupmap,sortedlocs,'maplimits',param.clim,'gridscale',150,...
-        'pmask',changroupidx);
+%     figure;
+%     figpos = get(gcf,'Position');
+%     figpos(3) = figpos(3)/2;
+%     set(gcf,'Position',figpos);
+    if ~isempty(param.pmask)
+         topoplot(groupmap,sortedlocs,'maplimits',param.clim,'gridscale',150,...
+        'pmask',pmaskidx);
+    else
+        topoplot(groupmap,sortedlocs,'maplimits',param.clim,'gridscale',150,...
+            'style','map');
+    end
     colormap(jet);
     colorbar
     figname = sprintf('figures/map_%s_%s',measure,groupnames{g});
