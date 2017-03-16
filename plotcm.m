@@ -31,6 +31,6 @@ for g = 1:size(clsyfyr,2)
         ylabel('CRS-R diagnosis','FontName',fontname,'FontSize',fontsize);
     end
     
-    export_fig(gcf,sprintf('figures/clsyfyr_%s_cm.tiff',param.group));
+    export_fig(gcf,sprintf('figures/clsyfyr_%s_cm.tiff',param.group),'-r300');
     close(gcf);
 end

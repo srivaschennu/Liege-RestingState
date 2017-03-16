@@ -5,9 +5,9 @@ loadpaths
 param = finputcheck(varargin, {
     'group', 'string', [], 'crsdiag'; ...
     'groupnames', 'cell', {}, {'UWS','MCS-','MCS+','EMCS','LIS','CTRL'}; ...
-    'clim', 'real', [], []; ...
     'renderer', 'string', {'painters','opengl'}, 'painters'; ...
     'colorbar', 'string', {'on','off'}, 'on'; ...
+    'clim', 'real', [], []; ...
     });
 
 fontname = 'Helvetica';
@@ -61,23 +61,20 @@ bands = {
 
 mutinfo = graph{strcmpi('mutual information',graph(:,1)),weiorbin};
 
-groups = unique(groupvar);
-
-figure('Color','white'); hold all
 plotdata = mean(mutinfo(:,:,bandidx,trange),4);
-imagesc(plotdata);
-colormap(jet);
 [groupvar, sortidx] = sort(groupvar);
 plotdata = plotdata(sortidx,sortidx);
 
-if ~isempty(param.clim)
-    caxis(param.clim);
-end
+figure('Color','white'); hold all
+imagesc(plotdata); axis square
+colormap(jet);
+
+groups = unique(groupvar);
 
 for g = 1:length(groups)-1
     groupedge(g) = find(groupvar == groups(g),1,'last');
-    line([groupedge(g)+0.5 groupedge(g)+0.5],ylim,'Color','black','LineWidth',3);
-    line(xlim,[groupedge(g)+0.5 groupedge(g)+0.5],'Color','black','LineWidth',3);
+    line([groupedge(g)+0.5 groupedge(g)+0.5],ylim,'Color','magenta','LineWidth',1.5);
+    line(xlim,[groupedge(g)+0.5 groupedge(g)+0.5],'Color','magenta','LineWidth',1.5);
 end
 groupedge = [0 groupedge size(plotdata,1)];
 % for g = 1:length(groupedge)-1
@@ -97,7 +94,7 @@ groupedge = [0 groupedge size(plotdata,1)];
 % end
 
 if strcmp(param.colorbar,'on')
-    colorbar
+    colorbar('NorthOutside','FontName',fontname,'FontSize',fontsize);
 end
 
 set(gca,'FontName',fontname,'FontSize',fontsize,'XTick',[],'YTick',[],...

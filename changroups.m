@@ -356,3 +356,5 @@ mohawk = {
     'E138'
     'E137'
     };
+
+frontoparietal = cat(1,frontal,parietal);

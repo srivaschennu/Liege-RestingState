@@ -129,9 +129,11 @@ else
         testdata = squeeze(max(graph{m,weiorbin}(:,bandidx,trange,:),[],4));
     elseif strcmpi(measure,'centrality')
         testdata = squeeze(std(graph{m,weiorbin}(:,bandidx,trange,:),[],4));
-%     elseif strcmpi(measure,'mutual information')
-%         testdata = squeeze(mean(graph{m,weiorbin}(:,crsdiag == 5,bandidx,trange),2));
+    elseif strcmpi(measure,'mutual information')
+        testdata = squeeze(mean(graph{m,weiorbin}(:,crsdiag == 5,bandidx,trange),2));
     elseif strcmpi(measure,'participation coefficient') || strcmpi(measure,'degree')
+%         testdata = squeeze(zscore(graph{m,weiorbin}(:,bandidx,trange,:),0,4));
+%         testdata = mean(testdata(:,:,ismember({sortedlocs.labels},eval(param.changroup))),3);
         testdata = squeeze(std(graph{m,weiorbin}(:,bandidx,trange,:),[],4));
         %         testdata = squeeze(graph{m,weiorbin}(:,bandidx,trange,:));
         %         testdata = testdata - repmat(quantile(testdata,0.75,3),1,1,size(testdata,3));

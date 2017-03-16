@@ -12,7 +12,7 @@ param = finputcheck(varargin, {
     });
 
 fontname = 'Helvetica';
-fontsize = 32;
+fontsize = 22;
 
 loadpaths
 loadsubj
@@ -101,10 +101,10 @@ groups = unique(groupvar(~isnan(groupvar)));
 
 for g = 1:length(groups)
     groupmap = squeeze(mean(testdata(groupvar == groups(g),:),1));
-%     figure;
-%     figpos = get(gcf,'Position');
-%     figpos(3) = figpos(3)/2;
-%     set(gcf,'Position',figpos);
+    figure;
+    figpos = get(gcf,'Position');
+    figpos(3) = figpos(3)/2;
+    set(gcf,'Position',figpos);
     if ~isempty(param.pmask)
          topoplot(groupmap,sortedlocs,'maplimits',param.clim,'gridscale',150,...
         'pmask',pmaskidx);
@@ -113,10 +113,10 @@ for g = 1:length(groups)
             'style','map');
     end
     colormap(jet);
-    colorbar
+    %colorbar
     figname = sprintf('figures/map_%s_%s',measure,groupnames{g});
     set(gcf,'Name',figname,'Color','white');
     set(gca,'FontName',fontname,'FontSize',fontsize);
-    print(gcf,[figname '.tif'],'-dtiff','-r200');
+    export_fig(gcf,[figname '.tif'],'-r300');
     close(gcf);
 end
