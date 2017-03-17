@@ -130,11 +130,17 @@ else
     elseif strcmpi(measure,'centrality')
         testdata = squeeze(std(graph{m,weiorbin}(:,bandidx,trange,:),[],4));
     elseif strcmpi(measure,'mutual information')
-        testdata = squeeze(mean(graph{m,weiorbin}(:,crsdiag == 5,bandidx,trange),2));
+%         testdata = squeeze(mean(graph{m,weiorbin}(:,crsdiag == 5,bandidx,trange),2));
+        testdata = [];
+        for g = 0:5
+            testdata = cat(1,testdata,squeeze(mean(graph{m,weiorbin}(crsdiag == g,crsdiag == g,bandidx,trange),2)));
+        end
     elseif strcmpi(measure,'participation coefficient') || strcmpi(measure,'degree')
 %         testdata = squeeze(zscore(graph{m,weiorbin}(:,bandidx,trange,:),0,4));
 %         testdata = mean(testdata(:,:,ismember({sortedlocs.labels},eval(param.changroup))),3);
+        
         testdata = squeeze(std(graph{m,weiorbin}(:,bandidx,trange,:),[],4));
+
         %         testdata = squeeze(graph{m,weiorbin}(:,bandidx,trange,:));
         %         testdata = testdata - repmat(quantile(testdata,0.75,3),1,1,size(testdata,3));
         %         testdata(testdata < 0) = NaN;
@@ -290,6 +296,15 @@ if strcmp(param.noplot,'off')
     
     hold all
     boxh = notBoxPlot(mean(testdata,2),groupvar+1,0.5,'patch',ones(size(testdata,1),1));
+    
+    if length(groups) > 2
+        [~,JT,pval] = evalc('jttrend([mean(testdata,2),groupvar+1])');
+        if pval < 0.0001
+            fprintf('\nJonckheere-Terpstra JT = %.2f, p = %.1e.\n',JT,pval);
+        else
+            fprintf('\nJonckheere-Terpstra JT = %.2f, p = %.4f.\n',JT,pval);
+        end
+    end
     
     for h = 1:length(boxh)
         set(boxh(h).data,'Color',colorlist(h,:),'MarkerFaceColor',facecolorlist(h,:))

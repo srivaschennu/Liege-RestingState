@@ -11,7 +11,7 @@ param = finputcheck(varargin, {
     });
 
 fontname = 'Helvetica';
-fontsize = 28;
+fontsize = 20;
 
 load(sprintf('%s/%s/graphdata_%s_%s.mat',filepath,conntype,listname,conntype));
 
@@ -92,6 +92,10 @@ groupedge = [0 groupedge size(plotdata,1)];
 %         line([groupedge(g+1)+0.5 groupedge(g+1)+0.5],[groupedge(end-1)+0.5 groupedge(end)+0.5],'Color','magenta','LineWidth',6);
 %     end
 % end
+
+if ~isempty(param.clim)
+    caxis(param.clim);
+end
 
 if strcmp(param.colorbar,'on')
     colorbar('NorthOutside','FontName',fontname,'FontSize',fontsize);

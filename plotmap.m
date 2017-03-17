@@ -58,7 +58,7 @@ groupnames = param.groupnames;
 weiorbin = 3;
 
 if ~isempty(param.pmask)
-    pmaskidx = ismember({sortedlocs.labels},cat(1,eval(param.changroup),eval(param.changroup2)));
+    pmaskidx = ismember({sortedlocs.labels},cat(1,eval(param.pmask)));
 end
 
 if strcmpi(measure,'power')

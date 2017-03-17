@@ -6,7 +6,7 @@ param = finputcheck(varargin, {
     'randratio', 'string', {'on','off'}, 'off'; ...
     });
 
-load(sprintf('%s/%s/graphdata_%s_%s.mat',filepath,conntype,listname,conntype), 'graph');
+load(sprintf('%s/%s/graphdata_%s_%s.mat',filepath,conntype,listname,conntype),'graph','tvals');
 if strcmp(param.randratio,'on')
     if exist(sprintf('%s/%s/graphdata_%s_rand_%s.mat',filepath,conntype,listname,conntype),'file')
         randgraph = load(sprintf('%s/%s/graphdata_%s_rand_%s.mat',filepath,conntype,listname,conntype));
@@ -24,10 +24,12 @@ else
     midx = size(graph,1);
 end
 
-modinfo = graph{strcmp('modules',graph(:,1)),weiorbin};
+
+
+modinfo = graph{strcmp('participation coefficient',graph(:,1)),weiorbin};
 mutinfo = zeros(size(modinfo,1),size(modinfo,1),size(modinfo,2),size(modinfo,3));
 
-for bandidx = 3%1:size(modinfo,2)
+for bandidx = 1:size(modinfo,2)
     for t = 1:size(modinfo,3)
         for s1 = 1:size(modinfo,1)
             for s2 = 1:size(modinfo,1)
@@ -35,7 +37,7 @@ for bandidx = 3%1:size(modinfo,2)
                     mutinfo(s1,s2,bandidx,t) = ...
                         corr(squeeze(modinfo(s1,bandidx,t,:)),squeeze(modinfo(s2,bandidx,t,:)));
 %                     [~, mutinfo(s1,s2,bandidx,t)] = ...
-%                         partition_distance(squeeze(modinfo(s1,bandidx,t,:)),squeeze(modinfo(s2,bandidx,t,:)));
+%                         partition_distance(zscore(squeeze(modinfo(s1,bandidx,t,:))),zscore(squeeze(modinfo(s2,bandidx,t,:))));
                 elseif s1 > s2
                     mutinfo(s1,s2,bandidx,t) = mutinfo(s2,s1,bandidx,t);
                 elseif s1 == s2
