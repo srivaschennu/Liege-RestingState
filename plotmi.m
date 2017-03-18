@@ -2,16 +2,42 @@ function plotmi(listname,conntype,bandidx,varargin)
 
 loadpaths
 
+measure = 'mutual information';
+
 param = finputcheck(varargin, {
     'group', 'string', [], 'crsdiag'; ...
     'groupnames', 'cell', {}, {'UWS','MCS-','MCS+','EMCS','LIS','CTRL'}; ...
     'renderer', 'string', {'painters','opengl'}, 'painters'; ...
     'colorbar', 'string', {'on','off'}, 'on'; ...
     'clim', 'real', [], []; ...
+    'xlabel', 'string', [], ''; ...
+    'ylabel', 'string', [], measure; ...    
+    'ylim', 'real', [], []; ...
+    'ytick', 'real', [], []; ...    
+    'legend', 'string', {'on','off'}, 'off'; ...    
     });
 
 fontname = 'Helvetica';
 fontsize = 20;
+
+
+colorlist = [
+    0 0.0 0.5
+    0 0.5 0
+    0.5 0.0 0
+    0   0.5 0.5
+    0.5 0   0.5
+    0.5 0.5 0
+    ];
+
+facecolorlist = [
+    0.75  0.75 1
+    0.25 1 0.25
+    1 0.75 0.75
+    0.75 1 1
+    1 0.75 1
+    1 1 0.5
+    ];
 
 load(sprintf('%s/%s/graphdata_%s_%s.mat',filepath,conntype,listname,conntype));
 
@@ -46,10 +72,12 @@ admvscrs(refaware > 0 & crsaware > 0) = 1;
 admvscrs(refaware == 0 & crsaware > 0) = 2;
 
 groupvar = eval(param.group);
+groups = unique(groupvar(~isnan(groupvar)));
 
 weiorbin = 3;
 trange = [0.9 0.1];
 trange = (tvals <= trange(1) & tvals >= trange(2));
+groupnames = param.groupnames;
 
 bands = {
     'Delta'
@@ -59,11 +87,68 @@ bands = {
     'Gamma'
     };
 
+
 mutinfo = graph{strcmpi('mutual information',graph(:,1)),weiorbin};
 
-plotdata = mean(mutinfo(:,:,bandidx,trange),4);
+mutinfo(mutinfo <= 0) = NaN;
+plotdata = nanmean(mutinfo(:,:,bandidx,trange),4);
 [groupvar, sortidx] = sort(groupvar);
 plotdata = plotdata(sortidx,sortidx);
+
+testdata = [];
+for g = 1:length(groups)
+    testdata = cat(1,testdata,nanmean(plotdata(groupvar == groups(g),groupvar == groups(g)),2));
+end
+
+figure('Color','white');
+figpos = get(gcf,'Position');
+if length(groups) == 2
+    figpos(3) = figpos(3)*1/2;
+elseif length(groups) == 3
+    figpos(3) = figpos(3)*2/3;
+end
+set(gcf,'Position',figpos);
+
+hold all
+
+boxh = notBoxPlot(nanmean(testdata,2),groupvar+1,0.5,'patch',ones(size(testdata,1),1));
+
+for h = 1:length(boxh)
+    set(boxh(h).data,'Color',colorlist(h,:),'MarkerFaceColor',facecolorlist(h,:))
+end
+
+set(gca,'XLim',[0.5 length(groups)+0.5],'XTick',1:length(groups),...
+    'XTickLabel',groupnames','FontName',fontname,'FontSize',fontsize);
+ylabel(param.ylabel,'FontName',fontname,'FontSize',fontsize);
+if ~isempty(param.ylim)
+    set(gca,'YLim',param.ylim);
+end
+if ~isempty(param.ytick)
+    set(gca,'YTick',param.ytick);
+end
+set(gcf,'Color','white');
+if ~isempty(param.ylim)
+    ylim(param.ylim);
+end
+if strcmp(param.legend,'off')
+    legend('hide');
+end
+box off
+export_fig(gcf,sprintf('figures/%s_avg_%s_%s_%s.tiff',conntype,measure,bands{bandidx},param.group),'-r300');
+close(gcf);
+
+if length(groups) > 2
+    jttestdata = nanmean(testdata(groupvar < 5,:),2);
+    jtgroupvar = groupvar(groupvar < 5) + 1;
+    [jtgroupvar,sortidx] = sort(jtgroupvar);
+    jttestdata = jttestdata(sortidx);
+    [~,JT,pval] = evalc('jttrend([jttestdata jtgroupvar])');
+    if pval < 0.0001
+        fprintf('\nJonckheere-Terpstra JT = %.2f, p = %.1e.\n',JT,pval);
+    else
+        fprintf('\nJonckheere-Terpstra JT = %.2f, p = %.4f.\n',JT,pval);
+    end
+end
 
 figure('Color','white'); hold all
 imagesc(plotdata); axis square

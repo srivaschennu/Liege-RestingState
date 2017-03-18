@@ -63,6 +63,7 @@ etiooutcome(etiology == 1 & outcome == 0) = 2;
 etiooutcome(etiology == 1 & outcome == 1) = 3;
 
 groupvar = eval(param.group);
+groups = unique(groupvar(~isnan(groupvar)));
 
 colorlist = [
     0 0.0 0.5
@@ -130,11 +131,7 @@ else
     elseif strcmpi(measure,'centrality')
         testdata = squeeze(std(graph{m,weiorbin}(:,bandidx,trange,:),[],4));
     elseif strcmpi(measure,'mutual information')
-%         testdata = squeeze(mean(graph{m,weiorbin}(:,crsdiag == 5,bandidx,trange),2));
-        testdata = [];
-        for g = 0:5
-            testdata = cat(1,testdata,squeeze(mean(graph{m,weiorbin}(crsdiag == g,crsdiag == g,bandidx,trange),2)));
-        end
+        testdata = squeeze(mean(graph{m,weiorbin}(:,crsdiag == 5,bandidx,trange),2));
     elseif strcmpi(measure,'participation coefficient') || strcmpi(measure,'degree')
 %         testdata = squeeze(zscore(graph{m,weiorbin}(:,bandidx,trange,:),0,4));
 %         testdata = mean(testdata(:,:,ismember({sortedlocs.labels},eval(param.changroup))),3);
@@ -160,8 +157,6 @@ bands = {
     'beta'
     'gamma'
     };
-
-groups = unique(groupvar(~isnan(groupvar)));
 
 if strcmp(param.noplot,'off')
     for g = 1:length(groups)
@@ -295,10 +290,15 @@ if strcmp(param.noplot,'off')
     set(gcf,'Position',figpos);
     
     hold all
-    boxh = notBoxPlot(mean(testdata,2),groupvar+1,0.5,'patch',ones(size(testdata,1),1));
+    
+    boxh = notBoxPlot(nanmean(testdata,2),groupvar+1,0.5,'patch',ones(size(testdata,1),1));
     
     if length(groups) > 2
-        [~,JT,pval] = evalc('jttrend([mean(testdata,2),groupvar+1])');
+        jttestdata = nanmean(testdata(groupvar < 5,:),2);
+        jtgroupvar = groupvar(groupvar < 5) + 1;
+        [jtgroupvar,sortidx] = sort(jtgroupvar);
+        jttestdata = jttestdata(sortidx);
+        [~,JT,pval] = evalc('jttrend([jttestdata jtgroupvar])');
         if pval < 0.0001
             fprintf('\nJonckheere-Terpstra JT = %.2f, p = %.1e.\n',JT,pval);
         else

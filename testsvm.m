@@ -15,7 +15,8 @@ if size(thisfeat,2) > 1 && strcmp(param.runpca,'true')
 end
 
 [~,postProb] = predict(fitSVMPosterior(clsyfyr.model),thisfeat);
-results.accu = mean(postProb(testlabels == 2,2) >= clsyfyr.bestthresh) * 100;
+results.predlabels = (postProb(testlabels == 3,2) >= clsyfyr.bestthresh);
+results.accu = mean(postProb(testlabels == 3,2) >= clsyfyr.bestthresh) * 100;
 
 testlabels = double(testlabels > 0);
 predlabels = double(results.predlabels > 0);

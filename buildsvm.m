@@ -94,6 +94,7 @@ predlabels = double(postProb(:,2) > bestcls.bestthresh);
 bestcls.confmat = confusionmat(trainlabels,predlabels);
 [~,bestcls.chi2,bestcls.chi2pval] = crosstab(trainlabels,predlabels);
 bestcls.accu = round(sum(trainlabels==predlabels)*100/length(trainlabels));
+bestcls.predlabels = predlabels;
 
 bestcls.model = fitcsvm(thisfeat,trainlabels,clsyfyrparams{:},'BoxConstraint',bestcls.C,'KernelScale',bestcls.K);
 
