@@ -38,5 +38,5 @@ if strcmp(param.legend,'on')
 end
 set(gca,'Color','none');
 
-export_fig(gcf,'figures/outcomepie.tiff','-r300','-p0.01','-transparent');
+export_fig(gcf,'figures/outcomepie.tiff','-r300','-p0.01');
 close(gcf);
