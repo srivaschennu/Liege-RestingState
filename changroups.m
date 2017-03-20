@@ -369,3 +369,8 @@ mohawk = {
     };
 
 frontoparietal = cat(1,frontal,parietal);
+
+half = all(1:2:end);
+quarter = all(1:4:end);
+eighth = all(1:8:end);
+sixteenth = all(1:16:end);

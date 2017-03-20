@@ -136,7 +136,7 @@ else
 %         testdata = squeeze(zscore(graph{m,weiorbin}(:,bandidx,trange,:),0,4));
 %         testdata = mean(testdata(:,:,ismember({sortedlocs.labels},eval(param.changroup))),3);
         
-        testdata = squeeze(std(graph{m,weiorbin}(:,bandidx,trange,:),[],4));
+        testdata = squeeze(std(graph{m,weiorbin}(:,bandidx,trange,ismember({sortedlocs.labels},eval(param.changroup))),[],4));
 
         %         testdata = squeeze(graph{m,weiorbin}(:,bandidx,trange,:));
         %         testdata = testdata - repmat(quantile(testdata,0.75,3),1,1,size(testdata,3));
