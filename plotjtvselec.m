@@ -40,5 +40,5 @@ xlabel('Number of electrodes','FontName',fontname,'FontSize',fontsize);
 ylabel('JT statistic','FontName',fontname,'FontSize',fontsize);
 box on
 legend('Median dwPLI','Frontoparietal dwPLI','Location','SouthWest');
-export_fig('figures/plotjtvselec.tiff','-d300');
+export_fig('figures/plotjtvselec.tiff','-d300','-p0.01');
 close(gcf);

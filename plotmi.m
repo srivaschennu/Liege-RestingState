@@ -134,7 +134,7 @@ if strcmp(param.legend,'off')
     legend('hide');
 end
 box off
-export_fig(gcf,sprintf('figures/%s_avg_%s_%s_%s.tiff',conntype,measure,bands{bandidx},param.group),'-r300');
+export_fig(gcf,sprintf('figures/%s_avg_%s_%s_%s.tiff',conntype,measure,bands{bandidx},param.group),'-r300','-p0.01');
 close(gcf);
 
 if length(groups) > 2

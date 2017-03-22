@@ -181,7 +181,7 @@ if strcmp(param.noplot,'off')
             set(gca,'YLim',param.ylim);
         end
         legend(groupnames,'Location',param.legendlocation);
-        export_fig(gcf,sprintf('figures/%s_%s_%s_%s.eps',conntype,measure,bands{bandidx},param.group),'-r300');
+        export_fig(gcf,sprintf('figures/%s_%s_%s_%s.eps',conntype,measure,bands{bandidx},param.group),'-r300','-p0.01');
         close(gcf);
     end
 end
@@ -220,7 +220,7 @@ for g = 1:size(grouppairs,1)
             else
                 ylabel('CRS-R diagnosis','FontName',fontname,'FontSize',fontsize);
             end
-            export_fig(gcf,sprintf('figures/PET_%s_vs_%s_cm.tiff',param.groupnames{grouppairs(g,1)+1},param.groupnames{grouppairs(g,2)+1}));
+            export_fig(gcf,sprintf('figures/PET_%s_vs_%s_cm.tiff',param.groupnames{grouppairs(g,1)+1},param.groupnames{grouppairs(g,2)+1}),'-r300','-p0.01');
             close(gcf);
         end
     end
@@ -326,7 +326,7 @@ if strcmp(param.noplot,'off')
         legend('hide');
     end
     box off
-    export_fig(gcf,sprintf('figures/%s_avg_%s_%s_%s.tiff',conntype,measure,bands{bandidx},param.group),'-r300');
+    export_fig(gcf,sprintf('figures/%s_avg_%s_%s_%s.tiff',conntype,measure,bands{bandidx},param.group),'-r300','-p0.01');
     close(gcf);
     
     %% plot auc
@@ -361,7 +361,7 @@ if strcmp(param.noplot,'off')
     end
     set(gca,'FontName',fontname,'FontSize',fontsize);
     
-    export_fig(gcf,sprintf('figures/%s_auc_%s_%s_%s.tiff',conntype,measure,bands{bandidx},param.group),'-r300');
+    export_fig(gcf,sprintf('figures/%s_auc_%s_%s_%s.tiff',conntype,measure,bands{bandidx},param.group),'-r300','-p0.01');
     close(gcf);
     
 end
