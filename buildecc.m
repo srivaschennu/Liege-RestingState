@@ -76,8 +76,7 @@ for g = 1:size(groupvar,1)
             end
         end
     end
-    dist = dist/sum(ecccode(k,:));
-    [~,ecclabels(g)] = min(dist);
+    [~,ecclabels(g)] = min(dist/sum(ecccode(k,:)));
 end
 
 ecclabels = ecclabels - 1;
