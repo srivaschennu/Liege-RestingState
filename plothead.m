@@ -31,7 +31,7 @@ cohmat = squeeze(matrix(bandidx,:,:));
 erange = [0 1];
 vrange = [0 0.4];
 
-minfo = plotgraph3d(cohmat,sortedlocs,'sortedlocs.spl','plotqt',plotqt,'escale',erange,'vscale',vrange,'plotinter','off');
+minfo = plotgraph3d(cohmat,sortedlocs,'plotqt',plotqt,'escale',erange,'vscale',vrange,'plotinter','off');
 fprintf('%s: %s band - number of modules: %d\n',basename,bands{bandidx},length(unique(minfo)));
 set(gcf,'Name',sprintf('group %s: %s band',basename,bands{bandidx}));
 camva(8);
