@@ -35,6 +35,11 @@ admvscrs(refaware == 0 & crsaware == 0) = 0;
 admvscrs(refaware > 0 & crsaware > 0) = 1;
 admvscrs(refaware == 0 & crsaware > 0) = 2;
 
+vsoutcome = outcome;
+vsoutcome(crsdiag > 0) = NaN;
+mcsoutcome = outcome;
+mcsoutcome(crsdiag == 0 & crsdiag > 2) = NaN;
+
 groupvar = eval(param.group);
 
 bands = {

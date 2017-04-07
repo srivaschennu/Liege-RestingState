@@ -1,7 +1,7 @@
 function plotcolorbar(clim)
 
 figure('Color','white','Name','colorbar');
-set(gca,'Visible','off','FontSize',50);
+set(gca,'Visible','off','FontSize',75);
 caxis(clim);
 colormap(jet);
 cb_h = colorbar('Location','West');

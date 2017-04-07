@@ -40,6 +40,7 @@ age = cell2mat(subjlist(:,7));
 daysonset = cell2mat(subjlist(:,9));
 outcome = double(cell2mat(subjlist(:,10)) > 2);
 outcome(isnan(cell2mat(subjlist(:,10)))) = NaN;
+
 anoxicoutcome = double(cell2mat(subjlist(:,10)) > 2);
 anoxicoutcome(isnan(cell2mat(subjlist(:,10)))) = NaN;
 anoxicoutcome(etiology == 1) = NaN;
@@ -61,6 +62,11 @@ etiooutcome(etiology == 0 & outcome == 0) = 0;
 etiooutcome(etiology == 0 & outcome == 1) = 1;
 etiooutcome(etiology == 1 & outcome == 0) = 2;
 etiooutcome(etiology == 1 & outcome == 1) = 3;
+
+vsoutcome = outcome;
+vsoutcome(crsdiag > 0) = NaN;
+mcsoutcome = outcome;
+mcsoutcome(crsdiag == 0 & crsdiag > 2) = NaN;
 
 groupvar = eval(param.group);
 groups = unique(groupvar(~isnan(groupvar)));
