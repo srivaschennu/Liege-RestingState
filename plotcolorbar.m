@@ -1,10 +1,17 @@
 function plotcolorbar(clim)
 
 figure('Color','white','Name','colorbar');
-set(gca,'Visible','off','FontSize',75);
+set(gca,'Visible','off','FontSize',50);
 caxis(clim);
-colormap(jet);
+cmap = jet;
+cmap = cmap(size(cmap,1)/2:end,:);
+colormap(cmap);
 cb_h = colorbar('Location','West');
 figname = get(gcf,'Name');
+
+set(gcf,'Color','black');
+set(cb_h,'YColor',[1 1 1])
+set(cb_h,'YTick',[0 1],'YTickLabel',{'Low','High'})
+
 export_fig(gcf,['figures/' figname '.tif'],'-r300');
 close(gcf);

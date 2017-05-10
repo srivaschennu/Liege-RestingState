@@ -85,40 +85,67 @@ end
 minfo = newminfo;
 num_mod = length(unique(minfo));
 
-figure('Color','black','Name',mfilename);
-figpos = get(gcf,'Position');
-set(gcf,'Position',[figpos(1) figpos(2) figpos(3)*1.25 figpos(4)*2],'Color','black');
 cmap = lines;
-colorlist = cmap(1:param.numcolors,:);
+colorlist = cmap([1 3 4 5 6],:);
+colorlist = colorlist(1:num_mod,:);
 
-hold all
-
-if isempty(param.view)
-    param.view = 'frontleft';
-end
-
-data2plot = zeros(1,length(allchanlocs));
-[~,chanidx] = ismember({sortedlocs.labels}',{allchanlocs.labels}');
-data2plot(chanidx) = vsize;
-
-[~,chanlocs3d] = headplot(data2plot,'allchanlocs.spl','electrodes','off','maplimits',[-1 1]*(1-param.cshift),'view',param.view);
-chanlocs3d = chanlocs3d(chanidx,:);
-
-xlim('auto'); ylim('auto'); zlim('auto');
-
-for r = 1:size(matrix,1)
-    for c = 1:size(matrix,2)
-        if r < c && matrix(r,c) > 0
-            eheight = (matrix(r,c)*lhfactor)+1;
-            if minfo(r) == minfo(c)
-                ecol = colorlist(minfo(r),:);
-                hLine = plotarc3d(chanlocs3d([r,c],:),eheight,ecol,0.5);
-                %                 set(hLine,'Color',ecol,'LineWidth',0.1);
-            elseif strcmp(param.plotinter,'on')
-                hLine = plotarc3d(chanlocs3d([r,c],:),eheight);
-                ecol = [0 0 0];
-                set(hLine,'Color',ecol,'LineWidth',0.1);
+while true
+    
+    clfig_h = figure;
+    figpos = get(clfig_h,'Position');
+    set(clfig_h,'Position',[0 0 figpos(3)/2,figpos(4)]);
+    hold all
+    
+    for cl = 1:size(colorlist,1)
+        plot([0 1],[cl cl],'LineWidth',5,'Color',colorlist(cl,:));
+    end
+    set(gca,'YTick',1:size(colorlist,1),'XTick',[]);
+    
+    figure('Color','black','Name',mfilename);
+    figpos = get(gcf,'Position');
+    set(gcf,'Position',[figpos(1) figpos(2) figpos(3)*1.25 figpos(4)*2],'Color','black');
+    
+    hold all
+    
+    if isempty(param.view)
+        param.view = 'frontleft';
+    end
+    
+    data2plot = zeros(1,length(allchanlocs));
+    [~,chanidx] = ismember({sortedlocs.labels}',{allchanlocs.labels}');
+    data2plot(chanidx) = vsize;
+    
+    [~,chanlocs3d] = headplot(data2plot,'allchanlocs.spl','electrodes','off','maplimits',[-1 1]*(1-param.cshift),'view',param.view);
+    chanlocs3d = chanlocs3d(chanidx,:);
+    
+    xlim('auto'); ylim('auto'); zlim('auto');
+    
+    for r = 1:size(matrix,1)
+        for c = 1:size(matrix,2)
+            if r < c && matrix(r,c) > 0
+                eheight = (matrix(r,c)*lhfactor)+1;
+                if minfo(r) == minfo(c)
+                    ecol = colorlist(minfo(r),:);
+                    hLine = plotarc3d(chanlocs3d([r,c],:),eheight,ecol,0.25);
+                    %                 set(hLine,'Color',ecol,'LineWidth',0.1);
+                elseif strcmp(param.plotinter,'on')
+                    hLine = plotarc3d(chanlocs3d([r,c],:),eheight);
+                    ecol = [0 0 0];
+                    set(hLine,'Color',ecol,'LineWidth',0.1);
+                end
             end
         end
     end
+    
+    resp = input('Enter color order, ENTER if OK: ','s');
+    if isempty(resp)
+        close(clfig_h);
+        break;
+    else
+        close(clfig_h);
+        close(gcf);
+        colorlist = colorlist(eval([ '[' resp ']' ]),:);
+        continue;
+    end
+
 end
