@@ -8,7 +8,7 @@ cmap = jet;
 cmap = cmap(size(cmap,1)/2:end,:);
 
 cmap = lines;
-cmap = cmap([5 3 1 4],:);
+cmap = cmap([3 1 4],:);
 
 colormap(cmap);
 cb_h = colorbar('Location','West');
