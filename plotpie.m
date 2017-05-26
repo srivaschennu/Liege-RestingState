@@ -9,14 +9,20 @@ fontsize = 24;
 colorlist = [
     0 0.0 0.5
     0 0.5 0
-    0.5 0.0 0
+    0.5 0.5 0
     ];
 
 facecolorlist = [
     0.25  0.25 1
-    0.25 1 0.25
-    1 0.25 0.25
+    0.25 0.9 0.25
+    .9    .9 0
     ];
+
+textcolor = {
+    'White'
+    'Black'
+    'Black'
+    };
 
 refdiag = cell2mat(subjlist(:,2));
 refaware = double(cell2mat(subjlist(:,2)) > 0);
@@ -44,7 +50,7 @@ textpos = [
     
 for g = 1:length(patches)
     set(p_h(patches(g)),'LineWidth',1,'FaceColor',facecolorlist(g,:),'EdgeColor',colorlist(g,:));
-    set(p_h(text(g)),'FontName',fontname,'FontSize',fontsize,'Color','white','Position',textpos(g,:));
+    set(p_h(text(g)),'FontName',fontname,'FontSize',fontsize,'Color',textcolor{g},'Position',textpos(g,:));
 end
 
 set(gca,'FontName',fontname,'FontSize',fontsize);

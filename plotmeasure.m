@@ -74,7 +74,7 @@ groups = unique(groupvar(~isnan(groupvar)));
 colorlist = [
     0 0.0 0.5
     0 0.5 0
-    0.5 0.0 0
+    0.5 0.5 0
     0   0.5 0.5
     0.5 0   0.5
     0.5 0.5 0
@@ -83,7 +83,7 @@ colorlist = [
 facecolorlist = [
     0.75  0.75 1
     0.25 1 0.25
-    1 0.75 0.75
+    .9    .9 0
     0.75 1 1
     1 0.75 1
     1 1 0.5
