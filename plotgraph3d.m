@@ -86,7 +86,7 @@ minfo = newminfo;
 num_mod = length(unique(minfo));
 
 cmap = lines;
-colorlist = cmap([1 3 4 5 6],:);
+colorlist = cmap([1 2 3 4 5 6],:);
 colorlist = colorlist(1:num_mod,:);
 
 while true
