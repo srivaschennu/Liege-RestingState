@@ -67,16 +67,27 @@ predlabels(predlabels == 0) = -1;
 predlabels(isnan(predlabels)) = 0;
 ecclabels = NaN(size(groupvar));
 
+% for g = 1:size(groupvar,1)
+%     for k = 1:size(ecccode,1)
+%         dist(k) = 0;
+%         for j = 1:size(ecccode,2)
+%             if ecccode(k,j) ~= 0
+%                 dist(k) = dist(k) + lossfunc(ecccode(k,j),predlabels(g,j));
+%             end
+%         end
+%     end
+%     [~,ecclabels(g)] = min(dist/sum(ecccode(k,:)));
+% end
+
 for g = 1:size(groupvar,1)
+    dist = zeros(size(ecccode,1),1);
     for k = 1:size(ecccode,1)
-        dist(k) = 0;
-        for j = 1:size(ecccode,2)
-            if ecccode(k,j) ~= 0
-                dist(k) = dist(k) + lossfunc(ecccode(k,j),predlabels(g,j));
-            end
+        for l = 1:size(ecccode,2)
+            dist(k) = dist(k) + abs(ecccode(k,l)) * lossfunc(ecccode(k,l),predlabels(g,l));
         end
+        %dist(k) = dist(k) / sum(abs(ecccode(k,:)));
     end
-    [~,ecclabels(g)] = min(dist/sum(ecccode(k,:)));
+    [~,ecclabels(g)] = min(dist);
 end
 
 ecclabels = ecclabels - 1;
