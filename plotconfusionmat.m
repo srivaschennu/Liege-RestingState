@@ -13,7 +13,8 @@ rowsum = sum(confmat,2);
 confmat = confmat*100 ./ repmat(rowsum,1,size(confmat,2));
 
 figure('Color','white');
-imshow(confmat,'InitialMagnification',3000);
+himage = imshow(confmat,jet,'InitialMagnification',3000);
+himage.CDataMapping = 'scaled';
 
 figpos = get(gcf,'Position');
 figpos(3:4) = 1000;

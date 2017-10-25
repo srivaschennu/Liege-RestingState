@@ -41,8 +41,8 @@ selgroupidx = ismember(groupvar,groups);
 groupvar = groupvar(selgroupidx);
 
 clsyfyrlist = {
-    'UWS_MCS-'  [1 -1  0]
-    'MCS-_MCS+' [0  1 -1]
+    'UWS_MCS-'  [1  -1  0]
+    'MCS-_MCS+' [0  1  -1]
 %     'UWS_MCS+'  [1  0 -1]
     };
 
@@ -67,6 +67,7 @@ predlabels(predlabels == 0) = -1;
 predlabels(isnan(predlabels)) = 0;
 ecclabels = NaN(size(groupvar));
 
+%OLD CODE...
 % for g = 1:size(groupvar,1)
 %     for k = 1:size(ecccode,1)
 %         dist(k) = 0;
@@ -83,8 +84,9 @@ for g = 1:size(groupvar,1)
     dist = zeros(size(ecccode,1),1);
     for k = 1:size(ecccode,1)
         for l = 1:size(ecccode,2)
-            dist(k) = dist(k) + abs(ecccode(k,l)) * lossfunc(ecccode(k,l),predlabels(g,l));
+            dist(k) = dist(k) + (abs(ecccode(k,l)) * lossfunc(ecccode(k,l),predlabels(g,l)));
         end
+        %COMMENTED OUT TO IMPROVE ACCURACY OF MCS- CLASSIFICATION
         %dist(k) = dist(k) / sum(abs(ecccode(k,:)));
     end
     [~,ecclabels(g)] = min(dist);
@@ -105,4 +107,4 @@ end
 
 function loss = lossfunc(y,s)
 % loss = (1 - sign(y*s))/2;
-loss = exp(-y*s)/2;
+loss = -exp(-y*s)/2;
