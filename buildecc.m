@@ -67,27 +67,14 @@ predlabels(predlabels == 0) = -1;
 predlabels(isnan(predlabels)) = 0;
 ecclabels = NaN(size(groupvar));
 
-%OLD CODE...
-% for g = 1:size(groupvar,1)
-%     for k = 1:size(ecccode,1)
-%         dist(k) = 0;
-%         for j = 1:size(ecccode,2)
-%             if ecccode(k,j) ~= 0
-%                 dist(k) = dist(k) + lossfunc(ecccode(k,j),predlabels(g,j));
-%             end
-%         end
-%     end
-%     [~,ecclabels(g)] = min(dist/sum(ecccode(k,:)));
-% end
-
+%ECC algorithm for loss-based decoding (Allwein et al., 2000) with a
+%negative exponential loss function
 for g = 1:size(groupvar,1)
     dist = zeros(size(ecccode,1),1);
     for k = 1:size(ecccode,1)
         for l = 1:size(ecccode,2)
             dist(k) = dist(k) + (abs(ecccode(k,l)) * lossfunc(ecccode(k,l),predlabels(g,l)));
         end
-        %COMMENTED OUT TO IMPROVE ACCURACY OF MCS- CLASSIFICATION
-        %dist(k) = dist(k) / sum(abs(ecccode(k,:)));
     end
     [~,ecclabels(g)] = min(dist);
 end
