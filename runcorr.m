@@ -12,7 +12,7 @@ bands = {
     };
 
 nperm = 2000;
-randstr = RandStream('mt19937ar','Seed',0);
+rng('
 subjlist = eval(listname);
 
 crs = cell2mat(subjlist(:,11));

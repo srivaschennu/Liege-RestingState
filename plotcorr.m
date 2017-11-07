@@ -68,7 +68,7 @@ corrp(ind_upper) = posp(1,:);
 corrp = triu(corrp,1)+triu(corrp,1)';
 
 %% plot 3d graph
-plotgraph3d(corrmat,sortedlocs,'sortedlocs.spl','plotqt',0,'vscale',[0 0.12]);
+plotgraph3d(corrmat,sortedlocs,'plotqt',0,'vscale',[0 0.12],'arcs','strength');
 
 set(gcf,'Name',sprintf('group %s: %s band',listname,bands{bandidx}));
 camva(8);
