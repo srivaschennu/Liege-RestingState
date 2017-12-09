@@ -68,14 +68,15 @@ for g = 1:length(groups)
     end
 end
 
-erange = [min(nonzeros(threshcoh(:))) max(threshcoh(:))];
-vrange = [min(nonzeros(groupdeg(:))) max(groupdeg(:))];
-% erange = [0 1];
-% vrange = [0 0.3];
+% erange = [min(nonzeros(threshcoh(:))) max(threshcoh(:))];
+% vrange = [min(nonzeros(groupdeg(:))) max(groupdeg(:))];
+erange = [0 1];
+vrange = [0 0.4];
 
 for g = size(groupcoh,1):-1:1
     while true
-        minfo(g,:) = plotgraph3d(squeeze(groupcoh(g,:,:)),sortedlocs,'plotqt',plotqt,'escale',erange,'vscale',vrange,'cshift',0.4,'numcolors',5);
+        minfo(g,:) = plotgraph3d(squeeze(groupcoh(g,:,:)),sortedlocs,'plotqt',plotqt,...
+            'escale',erange,'vscale',vrange,'cshift',0.4,'numcolors',5,'arcs','module');
         if strcmp(questdlg('Save figure?',mfilename,'Yes','No','Yes'), 'Yes')
             break
         end
