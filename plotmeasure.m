@@ -68,6 +68,27 @@ vsoutcome(crsdiag > 0) = NaN;
 mcsoutcome = outcome;
 mcsoutcome(crsdiag == 0 & crsdiag > 2) = NaN;
 
+tdcs = NaN(size(crsdiag));
+tdcssubj = {
+'3'  0
+'7'  0
+'22' 0
+'39' 0
+'44' 0
+'78' 0
+'86' 0
+'16' 1
+'17' 1
+'51' 1
+'72' 1
+};
+for s = 1:size(tdcssubj,1)
+    patidx = find(strcmp(tdcssubj{s,1},subjlist(:,1)),1);
+    if ~isempty(patidx)
+        tdcs(patidx) = tdcssubj{s,2};
+    end
+end
+
 groupvar = eval(param.group);
 groups = unique(groupvar(~isnan(groupvar)));
 

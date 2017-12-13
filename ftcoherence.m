@@ -53,6 +53,7 @@ for r = 0:numrand
         
         coh(:) = 0;
         coh(logical(tril(ones(size(coh)),-1))) = wpli(:,bstart+freqidx-1);
+         wpli(:,bstart+freqidx-1);
         coh = tril(coh,1)+tril(coh,1)';
         
         if r > 0

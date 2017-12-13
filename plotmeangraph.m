@@ -40,6 +40,27 @@ admvscrs(refaware == 0 & crsaware == 0) = 0;
 admvscrs(refaware > 0 & crsaware > 0) = 1;
 admvscrs(refaware == 0 & crsaware > 0) = 2;
 
+tdcs = NaN(size(crsdiag));
+tdcssubj = {
+'3'  0
+'7'  0
+'22' 0
+'39' 0
+'44' 0
+'78' 0
+'86' 0
+'16' 1
+'17' 1
+'51' 1
+'72' 1
+};
+for s = 1:size(tdcssubj,1)
+    patidx = find(strcmp(tdcssubj{s,1},subjlist(:,1)),1);
+    if ~isempty(patidx)
+        tdcs(patidx) = tdcssubj{s,2};
+    end
+end
+
 groupvar = eval(param.group);
 groups = unique(groupvar(~isnan(groupvar)));
 
@@ -68,10 +89,10 @@ for g = 1:length(groups)
     end
 end
 
-% erange = [min(nonzeros(threshcoh(:))) max(threshcoh(:))];
-% vrange = [min(nonzeros(groupdeg(:))) max(groupdeg(:))];
-erange = [0 1];
-vrange = [0 0.4];
+erange = [min(nonzeros(threshcoh(:))) max(threshcoh(:))];
+vrange = [min(nonzeros(groupdeg(:))) max(groupdeg(:))];
+% erange = [0 1];
+% vrange = [0 0.4];
 
 for g = size(groupcoh,1):-1:1
     while true
@@ -90,7 +111,7 @@ for g = size(groupcoh,1):-1:1
     fprintf('%s %s - number of modules: %d\n',param.groupnames{g},bands{bandidx},length(unique(minfo(g,:))));
     set(gcf,'Name',sprintf('%s %s',param.groupnames{g},bands{bandidx}));
     set(gcf,'InvertHardCopy','off');
-    print(gcf,sprintf('figures/meangraph_%s_%s.tif',param.groupnames{g},bands{bandidx}),'-dtiff','-r300');
+    print(gcf,sprintf('figures/meangraph_%s_%s.tif',param.groupnames{g},bands{bandidx}),'-dtiff','-r150');
     %     saveas(gcf,sprintf('figures/meangraph_%s_%s.fig',grouplist{g},bands{bandidx}));
     close(gcf);
 end
