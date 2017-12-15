@@ -81,6 +81,8 @@ tdcssubj = {
 '17' 1
 '51' 1
 '72' 1
+'69' 1 %after 2 days of stim
+'74' 1 %after 3 days of stim
 };
 for s = 1:size(tdcssubj,1)
     patidx = find(strcmp(tdcssubj{s,1},subjlist(:,1)),1);
