@@ -6,6 +6,8 @@ loadpaths
 chanlocfile = 'GSN-HydroCel-257.sfp';
 
 EEG = pop_readegi([rawpath basename '.raw'], [],[],'auto');
+% EEG = pop_readegimff([rawpath basename '.mff']);
+
 EEG = fixegilocs(EEG,[chanlocpath chanlocfile]);
 
 EEG = eeg_checkset(EEG);

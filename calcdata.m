@@ -59,7 +59,9 @@ for s = 1:size(subjlist,1)
         %collate spectral info
         [~, bstart] = min(abs(specinfo.freqs-specinfo.freqlist(f,1)));
         [~, bstop] = min(abs(specinfo.freqs-specinfo.freqlist(f,2)));
-        bandpower(s,f,:) = mean(specinfo.spectra(:,bstart:bstop),2);
+%         bandpower(s,f,:) = mean(specinfo.spectra(:,bstart:bstop),2);
+        [~,peakindex] = max(mean(specinfo.spectra(:,bstart:bstop),1),[],2);
+        bandpower(s,f,:) = specinfo.spectra(:,bstart+peakindex-1);
         
         maxpeakheight = 0;
         for c = 1:size(specinfo.spectra,1)

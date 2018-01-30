@@ -77,12 +77,21 @@ tdcssubj = {
 '44' 0
 '78' 0
 '86' 0
+'4', 0
+'11',0
+'21',0
+'32',0
+'41',0
+'48',0
+'81',0
 '16' 1
 '17' 1
 '51' 1
 '72' 1
 '69' 1 %after 2 days of stim
 '74' 1 %after 3 days of stim
+'NB_20170518' 1
+'VP_20160922' 1
 };
 for s = 1:size(tdcssubj,1)
     patidx = find(strcmp(tdcssubj{s,1},subjlist(:,1)),1);
@@ -158,7 +167,8 @@ else
     if strcmpi(measure,'modules')
         testdata = squeeze(max(graph{m,weiorbin}(:,bandidx,trange,:),[],4));
     elseif strcmpi(measure,'centrality')
-        testdata = squeeze(std(graph{m,weiorbin}(:,bandidx,trange,:),[],4));
+        normaliser = (size(graph{m,weiorbin},4)-1)*(size(graph{m,weiorbin},4)-2);
+        testdata = squeeze(std(graph{m,weiorbin}(:,bandidx,trange,:)/normaliser,[],4));
     elseif strcmpi(measure,'mutual information')
         testdata = squeeze(mean(graph{m,weiorbin}(:,crsdiag == 5,bandidx,trange),2));
     elseif strcmpi(measure,'participation coefficient') || strcmpi(measure,'degree')
@@ -348,14 +358,11 @@ if strcmp(param.noplot,'off')
         set(gca,'YTick',param.ytick);
     end
     set(gcf,'Color','white');
-    if ~isempty(param.ylim)
-        ylim(param.ylim);
-    end
     if strcmp(param.legend,'off')
         legend('hide');
     end
     box off
-    export_fig(gcf,sprintf('figures/%s_avg_%s_%s_%s.tiff',conntype,measure,bands{bandidx},param.group),'-r300','-p0.01');
+    print(gcf,sprintf('figures/%s_avg_%s_%s_%s.tiff',conntype,measure,bands{bandidx},param.group),'-dtiff','-r300');
     close(gcf);
     
     %% plot auc
