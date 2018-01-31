@@ -69,6 +69,7 @@ mcsoutcome = outcome;
 mcsoutcome(crsdiag == 0 & crsdiag > 2) = NaN;
 
 tdcs = NaN(size(crsdiag));
+
 tdcssubj = {
 '3'  0
 '7'  0
@@ -88,11 +89,12 @@ tdcssubj = {
 '17' 1
 '51' 1
 '72' 1
-'69' 1 %after 2 days of stim
+'68' 1 %after 2 days of stim
 '74' 1 %after 3 days of stim
-'NB_20170518' 1
-'VP_20160922' 1
+'NB_20170518',1
+'VP_20160922',1
 };
+
 for s = 1:size(tdcssubj,1)
     patidx = find(strcmp(tdcssubj{s,1},subjlist(:,1)),1);
     if ~isempty(patidx)
