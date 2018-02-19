@@ -105,9 +105,6 @@ patlist = {
     '113'		1		2		1		NaN		1		32		0		4681	3		16
     '114'		NaN		0		NaN		NaN		0		49		0		359		1		7
     '115'		3		3		1		NaN		0		33		0		308		NaN		22
-    'NB_20170518'		NaN		0		NaN		NaN		0		49		0		359		1		7
-    'VP_20160922'		3		3		1		NaN		0		33		0		308		NaN		22
-    
     % '22' %skipped - data error
     % '28' %noisy
     % '32'
@@ -121,6 +118,12 @@ patlist = {
     % '116' %corrupt data
     % '117' no covariates
     };
+
+newtdcs = {
+    'NB_20170518'		NaN		0		NaN		NaN		0		49		0		359		1		7
+    'VP_20160922'		3		3		1		NaN		0		33		0		308		NaN		22
+};
+    
 
 ctrllist = {
     'BenFatma_20100216'		NaN		5		NaN		NaN		NaN		36		0		NaN		NaN		NaN

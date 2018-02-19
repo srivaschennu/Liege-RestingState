@@ -68,39 +68,39 @@ vsoutcome(crsdiag > 0) = NaN;
 mcsoutcome = outcome;
 mcsoutcome(crsdiag == 0 & crsdiag > 2) = NaN;
 
-tdcs = NaN(size(crsdiag));
-
-tdcssubj = {
-'3'  0
-'7'  0
-'22' 0
-'39' 0
-'44' 0
-'78' 0
-'86' 0
-'4', 0
-'11',0
-'21',0
-'32',0
-'41',0
-'48',0
-'81',0
-'16' 1
-'17' 1
-'51' 1
-'72' 1
-'68' 1 %after 2 days of stim
-'74' 1 %after 3 days of stim
-'NB_20170518',1
-'VP_20160922',1
-};
-
-for s = 1:size(tdcssubj,1)
-    patidx = find(strcmp(tdcssubj{s,1},subjlist(:,1)),1);
-    if ~isempty(patidx)
-        tdcs(patidx) = tdcssubj{s,2};
-    end
-end
+% tdcs = NaN(size(crsdiag));
+% 
+% tdcssubj = {
+% '3'  0
+% '7'  0
+% '22' 0
+% '39' 0
+% '44' 0
+% '78' 0
+% '86' 0
+% '4', 0
+% '11',0
+% '21',0
+% '32',0
+% '41',0
+% '48',0
+% '81',0
+% '16' 1
+% '17' 1
+% '51' 1
+% '72' 1
+% '68' 1 %after 2 days of stim
+% '74' 1 %after 3 days of stim
+% 'NB_20170518',1
+% 'VP_20160922',1
+% };
+% 
+% for s = 1:size(tdcssubj,1)
+%     patidx = find(strcmp(tdcssubj{s,1},subjlist(:,1)),1);
+%     if ~isempty(patidx)
+%         tdcs(patidx) = tdcssubj{s,2};
+%     end
+% end
 
 groupvar = eval(param.group);
 groups = unique(groupvar(~isnan(groupvar)));
@@ -276,6 +276,7 @@ for g = 1:size(grouppairs,1)
         
         [~,bestthresh] = max(abs(y + (1-x) - 1));
         %         [~,bestthresh] = min(sqrt((0-x).^2 + (1-y).^2));
+        youden(d) = t(bestthresh);
         thisconfmat = confusionmat(thisgroupvar,double(thistestdata(:,d) > t(bestthresh)));
         [~,chi2(g,d),chi2pval(g,d)] = crosstab(thisgroupvar,double(thistestdata(:,d) > t(bestthresh)));
         accu(g,d) = sum(thisgroupvar == double(thistestdata(:,d) > t(bestthresh)))*100/length(thisgroupvar);
@@ -291,10 +292,11 @@ for g = 1:size(grouppairs,1)
     stats(g).auc = auc(g,maxaucidx);
     stats(g).pval = pval(g,maxaucidx);
     stats(g).confmat = squeeze(confmat(g,maxaucidx,:,:));
-    stats(g).maxaucidx = maxaucidx;
+    stats(g).thresh = plottvals(maxaucidx);
     stats(g).chi2 = chi2(g,maxaucidx);
     stats(g).chi2pval = chi2pval(g,maxaucidx);
     stats(g).accu = accu(g,maxaucidx);
+    stats(g).youden = youden(maxaucidx);
     
     if strcmp(param.noplot,'off')
         fprintf('%s %s: %s vs %s AUC = %.2f, J = %.2f, p = %.4f.\n',measure,bands{bandidx},...
