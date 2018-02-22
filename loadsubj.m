@@ -161,6 +161,7 @@ ctrllist = {
     };
 
 allsubj = cat(1,patlist,ctrllist);
+tdcssubj = cat(1,patlist,newtdcs);
 
 campatlist = {
     %
