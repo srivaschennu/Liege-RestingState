@@ -13,7 +13,7 @@ param = finputcheck(varargin, {
     'ytick', 'real', [], []; ...
     'legend', 'string', {'on','off'}, 'off'; ...
     'legendlocation', 'string', [], 'Best'; ...
-    'noplot', 'string', {'on','off'}, 'off'; ...
+    'plot', 'string', {'on','off'}, 'on'; ...
     'plotcm', 'string', {'on','off'}, 'off'; ...
     });
 
@@ -199,7 +199,7 @@ bands = {
     'gamma'
     };
 
-if strcmp(param.noplot,'off')
+if strcmp(param.plot,'on')
     for g = 1:length(groups)
         plotdata = mean(testdata(groupvar == groups(g),:,:),3);
         groupmean(g,:) = nanmean(plotdata);
@@ -242,7 +242,7 @@ for g = 1:size(grouppairs,1)
     pet(g).confmat = pet(g).confmat*100 ./ repmat(sum(pet(g).confmat,2),1,2);
     [~,pet(g).chi2,pet(g).chi2pval] = crosstab(thisgroupvar(~isnan(thispetdiag)),thispetdiag(~isnan(thispetdiag)));
     pet(g).accu = round(sum(thisgroupvar(~isnan(thispetdiag))==thispetdiag(~isnan(thispetdiag)))*100/length(thisgroupvar(~isnan(thispetdiag))));
-    if strcmp(param.noplot,'off')
+    if strcmp(param.plot,'on')
         fprintf('\nPET: %s vs %s Chi2 = %.2f, Chi2 p = %.1e, accu = %d%%.\n',...
             param.groupnames{grouppairs(g,1)+1},param.groupnames{grouppairs(g,2)+1},...
             pet(g).chi2,pet(g).chi2pval,pet(g).accu);
@@ -300,7 +300,7 @@ for g = 1:size(grouppairs,1)
     stats(g).accu = accu(g,maxaucidx);
     stats(g).youden = youden(maxaucidx);
     
-    if strcmp(param.noplot,'off')
+    if strcmp(param.plot,'on')
         fprintf('%s %s: %s vs %s AUC = %.2f, J = %.2f, p = %.4f.\n',measure,bands{bandidx},...
             param.groupnames{grouppairs(g,1)+1},param.groupnames{grouppairs(g,2)+1},...
             auc(g,maxaucidx),(thisconfmat(2,2) + thisconfmat(1,1))/100 - 1, pval(g,maxaucidx));
@@ -323,7 +323,7 @@ for g = 1:size(grouppairs,1)
     end
 end
 
-if strcmp(param.noplot,'off')
+if strcmp(param.plot,'on')
     %% plot mean graph
     figure('Color','white');
         figpos = get(gcf,'Position');
