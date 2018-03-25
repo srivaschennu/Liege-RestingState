@@ -73,23 +73,23 @@ tdcs = NaN(size(crsdiag));
 tdcssubj = {
 '3'  0
 '7'  0
-'22' 0
-'39' 0
-'44' 0
-'78' 0
-'86' 0
-'88', 0
 '11',0
 '21',0
-'50',0
+'22' 0
+'39' 0
 '41',0
+'44' 0
 '48',0
+'78' 0
 '81',0
+'86' 0
+'50',0
+'88',0
 '16' 1
 '17' 1
 '51' 1
-'72' 1
 '68' 1 %after 2 days of stim
+'72' 1
 '74' 1 %after 3 days of stim
 'NB_20170518',1
 'VP_20160922',1
@@ -97,6 +97,7 @@ tdcssubj = {
 
 for s = 1:size(tdcssubj,1)
     patidx = find(strcmp(tdcssubj{s,1},subjlist(:,1)),1);
+    fprintf('%d ', patidx);
     if ~isempty(patidx)
         tdcs(patidx) = tdcssubj{s,2};
     end
@@ -288,6 +289,7 @@ for g = 1:size(grouppairs,1)
     end
     
     [~,maxaucidx] = max(auc(g,:));
+    stats(g).maxaucidx = maxaucidx;
     stats(g).U = U(g,maxaucidx);
     stats(g).auc = auc(g,maxaucidx);
     stats(g).pval = pval(g,maxaucidx);
