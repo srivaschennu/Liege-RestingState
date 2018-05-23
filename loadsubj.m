@@ -105,18 +105,21 @@ patlist = {
     '113'		1		2		1		NaN		1		32		0		4681	3		16
     '114'		NaN		0		NaN		NaN		0		49		0		359		1		7
     '115'		3		3		1		NaN		0		33		0		308		NaN		22
-    % '22' %skipped - data error
-    % '28' %noisy
-    % '32'
-    % '34' %noisy
-    % '45' %not enough data
-    % '49'
-    % '55' %no data
-    % '66' %corrupt header
-    % '70' %only 255 channels
-    % '100' %no data
-    % '116' %corrupt data
-    % '117' no covariates
+    
+%   excluded    
+%     '22' %skipped - data error
+%     '28' %too noisy
+%     '32' %too noisy
+%     '34' %too noisy
+%     '45' %not enough data
+%     '49' %too noisy
+%     '66' %corrupt header
+%     '70' %only 255 channels
+%     '116' %corrupt data
+%     
+%     '55' %no data received
+%     '100' %no data received
+%     '117' %no covariates received
     };
 
 newtdcs = {
