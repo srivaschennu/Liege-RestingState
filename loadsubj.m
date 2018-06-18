@@ -126,7 +126,6 @@ newtdcs = {
     'NB_20170518'		NaN		0		NaN		NaN		0		49		0		359		1		7
     'VP_20160922'		3		3		1		NaN		0		33		0		308		NaN		22
 };
-    
 
 ctrllist = {
     'BenFatma_20100216'		NaN		5		NaN		NaN		NaN		36		0		NaN		NaN		NaN

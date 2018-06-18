@@ -61,31 +61,34 @@ tdcs = NaN(size(crsdiag));
 tdcssubj = {
 '3'  0
 '7'  0
-'22' 0
-'39' 0
-'44' 0
-'78' 0
-'86' 0
-'4', 0
 '11',0
 '21',0
-'32',0
+% '22' 0
+'39' 0
 '41',0
+'44' 0
 '48',0
+'78' 0
 '81',0
+'86' 0
+'50',0
+'88',0
 '16' 1
 '17' 1
 '51' 1
+'68' 1 %after 2 days of stim
 '72' 1
-'68' 1
-'74' 1
-'NB_20170518' 1
-'VP_20160922' 1
+'74' 1 %after 3 days of stim
+'NB_20170518',1
+'VP_20160922',1
 };
+
 for s = 1:size(tdcssubj,1)
     patidx = find(strcmp(tdcssubj{s,1},subjlist(:,1)),1);
     if ~isempty(patidx)
         tdcs(patidx) = tdcssubj{s,2};
+    else
+        error('Patient %s not found.',tdcssubj{s,1});
     end
 end
 
@@ -133,6 +136,6 @@ for g = 1:length(groups)
         line([freqlist(f,1) freqlist(f,1)],ylim,'LineWidth',1,'LineStyle','--','Color','black');
     end
     
-    export_fig(gcf,sprintf('figures/%s_spec.tiff',param.groupnames{g}),'-d300','-p0.01');
+    export_fig(gcf,sprintf('figures/%s_spec.tiff',param.groupnames{g}),'-r300','-p0.01');
     close(gcf);
 end

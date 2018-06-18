@@ -69,37 +69,39 @@ mcsoutcome = outcome;
 mcsoutcome(crsdiag == 0 & crsdiag > 2) = NaN;
 
 tdcs = NaN(size(crsdiag));
-
+tdcsimp = NaN(size(crsdiag));
 tdcssubj = {
-'3'  0
-'7'  0
-'11',0
-'21',0
-'22' 0
-'39' 0
-'41',0
-'44' 0
-'48',0
-'78' 0
-'81',0
-'86' 0
-'50',0
-'88',0
-'16' 1
-'17' 1
-'51' 1
-'68' 1 %after 2 days of stim
-'72' 1
-'74' 1 %after 3 days of stim
-'NB_20170518',1
-'VP_20160922',1
+%N  grp improvement
+'3'  0  1
+'7'  0  1
+'11',0  1
+'21',0  1
+'39' 0  0
+'41',0  0
+'44' 0  1
+'48',0  0
+'78' 0  0
+'81',0  -1
+'86' 0  0
+'50',0  0
+'88',0  0
+'16' 1  2
+'17' 1  2
+'51' 1  3
+'68' 1  5%after 2 days of stim
+'72' 1  2
+'74' 1  2%after 3 days of stim
+'NB_20170518'   1   3
+'VP_20160922'   1   7
 };
 
 for s = 1:size(tdcssubj,1)
     patidx = find(strcmp(tdcssubj{s,1},subjlist(:,1)),1);
-    fprintf('%d ', patidx);
     if ~isempty(patidx)
         tdcs(patidx) = tdcssubj{s,2};
+        tdcsimp(patidx) = tdcssubj{s,3};
+    else
+        error('Patient %s not found.',tdcssubj{s,1});
     end
 end
 
@@ -214,16 +216,16 @@ if strcmp(param.plot,'on')
         hold all
         set(gca,'XDir','reverse');
         for g = 1:length(groups)
-            errorbar(plottvals,groupmean(g,:),groupste(g,:),'LineWidth',1,'Color',colorlist(g,:));
+            errorbar(plottvals*100,groupmean(g,:),groupste(g,:),'LineWidth',1,'Color',colorlist(g,:));
         end
-        set(gca,'XLim',[plottvals(end)-0.01 plottvals(1)+0.01],'FontName',fontname,'FontSize',fontsize);
-        xlabel('Graph connection density','FontName',fontname,'FontSize',fontsize);
+        set(gca,'XLim',[plottvals(end)-0.01 plottvals(1)+0.01]*100,'FontName',fontname,'FontSize',fontsize);
+        xlabel('Graph connection density (%)','FontName',fontname,'FontSize',fontsize);
         ylabel(param.ylabel,'FontName',fontname,'FontSize',fontsize);
         if ~isempty(param.ylim)
             set(gca,'YLim',param.ylim);
         end
         legend(groupnames,'Location',param.legendlocation);
-        export_fig(gcf,sprintf('figures/%s_%s_%s_%s.eps',conntype,measure,bands{bandidx},param.group),'-r300','-p0.01');
+        export_fig(gcf,sprintf('figures/%s_%s_%s_%s.tiff',conntype,measure,bands{bandidx},param.group),'-r300','-p0.01');
         close(gcf);
     end
 end
@@ -338,7 +340,8 @@ if strcmp(param.plot,'on')
     
     hold all
     
-    boxh = notBoxPlot(nanmean(testdata,2),groupvar+1,0.5,'patch',ones(size(testdata,1),1));
+%     boxh = notBoxPlot(nanmean(testdata,2),groupvar+1,0.5,'patch',ones(size(testdata,1),1));
+    boxh = notBoxPlot(testdata(:,stats.maxaucidx),groupvar+1,0.5,'patch',ones(size(testdata,1),1));
     
     if length(groups) > 2
         jttestdata = nanmean(testdata(groupvar < 5,:),2);

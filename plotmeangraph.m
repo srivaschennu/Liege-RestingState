@@ -41,34 +41,38 @@ admvscrs(refaware > 0 & crsaware > 0) = 1;
 admvscrs(refaware == 0 & crsaware > 0) = 2;
 
 tdcs = NaN(size(crsdiag));
+
 tdcssubj = {
 '3'  0
 '7'  0
-% '22' 0
-'39' 0
-'44' 0
-'78' 0
-'86' 0
-'4', 0
 '11',0
 '21',0
-% '32',0
+% '22' 0
+'39' 0
 '41',0
+'44' 0
 '48',0
+'78' 0
 '81',0
+'86' 0
+'50',0
+'88',0
 '16' 1
 '17' 1
 '51' 1
+'68' 1 %after 2 days of stim
 '72' 1
-'68' 1
-'74' 1
-'NB_20170518' 1
-'VP_20160922' 1
+'74' 1 %after 3 days of stim
+'NB_20170518',1
+'VP_20160922',1
 };
+
 for s = 1:size(tdcssubj,1)
     patidx = find(strcmp(tdcssubj{s,1},subjlist(:,1)),1);
     if ~isempty(patidx)
         tdcs(patidx) = tdcssubj{s,2};
+    else
+        error('Patient %s not found.',tdcssubj{s,1});
     end
 end
 
@@ -122,7 +126,7 @@ for g = size(groupcoh,1):-1:1
     fprintf('%s %s - number of modules: %d\n',param.groupnames{g},bands{bandidx},length(unique(minfo(g,:))));
     set(gcf,'Name',sprintf('%s %s',param.groupnames{g},bands{bandidx}));
     set(gcf,'InvertHardCopy','off');
-    print(gcf,sprintf('figures/meangraph_%s_%s.tif',param.groupnames{g},bands{bandidx}),'-dtiff','-r150');
+    print(gcf,sprintf('figures/meangraph_%s_%s.tif',param.groupnames{g},bands{bandidx}),'-dtiff','-r300');
     %     saveas(gcf,sprintf('figures/meangraph_%s_%s.fig',grouplist{g},bands{bandidx}));
     close(gcf);
 end
