@@ -163,7 +163,32 @@ ctrllist = {
     };
 
 allsubj = cat(1,patlist,ctrllist);
-tdcssubj = cat(1,patlist,newtdcs);
+tdcslist = cat(1,patlist,newtdcs);
+
+tdcssubj = {
+%N  grp improvement
+'3'  0  1
+'7'  0  1
+'11',0  1
+'21',0  1
+'39' 0  0
+'41',0  0
+'44' 0  1
+'48',0  0
+'78' 0  0
+'81',0  -1
+'86' 0  0
+'50',0  0
+'88',0  0
+'16' 1  2
+'17' 1  2
+'51' 1  3
+'68' 1  5%after 2 days of stim
+'72' 1  2
+'74' 1  2%after 3 days of stim
+'NB_20170518'   1   3
+'VP_20160922'   1   7
+};
 
 campatlist = {
     %

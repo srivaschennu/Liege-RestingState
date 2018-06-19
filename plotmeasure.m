@@ -70,30 +70,6 @@ mcsoutcome(crsdiag == 0 & crsdiag > 2) = NaN;
 
 tdcs = NaN(size(crsdiag));
 tdcsimp = NaN(size(crsdiag));
-tdcssubj = {
-%N  grp improvement
-'3'  0  1
-'7'  0  1
-'11',0  1
-'21',0  1
-'39' 0  0
-'41',0  0
-'44' 0  1
-'48',0  0
-'78' 0  0
-'81',0  -1
-'86' 0  0
-'50',0  0
-'88',0  0
-'16' 1  2
-'17' 1  2
-'51' 1  3
-'68' 1  5%after 2 days of stim
-'72' 1  2
-'74' 1  2%after 3 days of stim
-'NB_20170518'   1   3
-'VP_20160922'   1   7
-};
 
 for s = 1:size(tdcssubj,1)
     patidx = find(strcmp(tdcssubj{s,1},subjlist(:,1)),1);
@@ -132,11 +108,9 @@ weiorbin = 3;
 plottvals = [];
 
 if strcmpi(measure,'power')
-    %     load(sprintf('%s/%s/alldata_%s_%s.mat',filepath,conntype,listname,conntype));
     load(sprintf('%s/%s/alldata_%s_%s.mat',filepath,conntype,listname,conntype),'bandpower');
     testdata = mean(bandpower(:,bandidx,ismember({sortedlocs.labels},eval(param.changroup))),3) * 100;
 elseif strcmpi(measure,'specent')
-    %     load(sprintf('%s/%s/alldata_%s_%s.mat',filepath,conntype,listname,conntype));
     load(sprintf('%s/%s/alldata_%s_%s.mat',filepath,conntype,listname,conntype),'specent');
     testdata = mean(specent(:,ismember({sortedlocs.labels},eval(param.changroup))),2);
 elseif strcmpi(measure,'median')
@@ -161,13 +135,6 @@ else
         graph{end,2} = ( mean(graph{1,2},4) ./ mean(randgraph.graph{1,2},4) ) ./ ( graph{2,2} ./ randgraph.graph{2,2} ) ;
         graph{end,3} = ( mean(graph{1,3},4) ./ mean(randgraph.graph{1,3},4) ) ./ ( graph{2,3} ./ randgraph.graph{2,3} ) ;
     end
-    
-    %     if ~strcmpi(measure,'small-worldness')
-    %         m = find(strcmpi(measure,graph(:,1)));
-    %         graph{m,2} = graph{m,2} ./ randgraph.graph{m,2};
-    %         graph{m,3} = graph{m,3} ./ randgraph.graph{m,3};
-    %     end
-    
     m = find(strcmpi(measure,graph(:,1)));
     if strcmpi(measure,'modules')
         testdata = squeeze(max(graph{m,weiorbin}(:,bandidx,trange,:),[],4));
@@ -177,16 +144,7 @@ else
     elseif strcmpi(measure,'mutual information')
         testdata = squeeze(mean(graph{m,weiorbin}(:,crsdiag == 5,bandidx,trange),2));
     elseif strcmpi(measure,'participation coefficient') || strcmpi(measure,'degree')
-%         testdata = squeeze(zscore(graph{m,weiorbin}(:,bandidx,trange,:),0,4));
-%         testdata = mean(testdata(:,:,ismember({sortedlocs.labels},eval(param.changroup))),3);
-        
         testdata = squeeze(std(graph{m,weiorbin}(:,bandidx,trange,ismember({sortedlocs.labels},eval(param.changroup))),[],4));
-
-        %         testdata = squeeze(graph{m,weiorbin}(:,bandidx,trange,:));
-        %         testdata = testdata - repmat(quantile(testdata,0.75,3),1,1,size(testdata,3));
-        %         testdata(testdata < 0) = NaN;
-        %         testdata = nanmean(testdata,3);
-%         testdata = squeeze(graph{m,weiorbin}(:,bandidx,trange,:));
     elseif strcmpi(measure,'characteristic path length')
         testdata = round(squeeze(mean(graph{m,weiorbin}(:,bandidx,trange,:),4)));
     else
@@ -340,8 +298,12 @@ if strcmp(param.plot,'on')
     
     hold all
     
-%     boxh = notBoxPlot(nanmean(testdata,2),groupvar+1,0.5,'patch',ones(size(testdata,1),1));
-    boxh = notBoxPlot(testdata(:,stats.maxaucidx),groupvar+1,0.5,'patch',ones(size(testdata,1),1));
+    if strcmp(listname,'tdcslist')
+        boxh = notBoxPlot(testdata(:,stats.maxaucidx),groupvar+1,0.5,'patch',ones(size(testdata,1),1));
+        plottdcscorr
+    else
+        boxh = notBoxPlot(nanmean(testdata,2),groupvar+1,0.5,'patch',ones(size(testdata,1),1));
+    end
     
     if length(groups) > 2
         jttestdata = nanmean(testdata(groupvar < 5,:),2);
