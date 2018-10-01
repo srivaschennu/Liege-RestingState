@@ -68,18 +68,18 @@ vsoutcome(crsdiag > 0) = NaN;
 mcsoutcome = outcome;
 mcsoutcome(crsdiag == 0 & crsdiag > 2) = NaN;
 
-tdcs = NaN(size(crsdiag));
-tdcsimp = NaN(size(crsdiag));
-
-for s = 1:size(tdcssubj,1)
-    patidx = find(strcmp(tdcssubj{s,1},subjlist(:,1)),1);
-    if ~isempty(patidx)
-        tdcs(patidx) = tdcssubj{s,2};
-        tdcsimp(patidx) = tdcssubj{s,3};
-    else
-        error('Patient %s not found.',tdcssubj{s,1});
-    end
-end
+% tdcs = NaN(size(crsdiag));
+% tdcsimp = NaN(size(crsdiag));
+% 
+% for s = 1:size(tdcssubj,1)
+%     patidx = find(strcmp(tdcssubj{s,1},subjlist(:,1)),1);
+%     if ~isempty(patidx)
+%         tdcs(patidx) = tdcssubj{s,2};
+%         tdcsimp(patidx) = tdcssubj{s,3};
+%     else
+%         error('Patient %s not found.',tdcssubj{s,1});
+%     end
+% end
 
 groupvar = eval(param.group);
 groups = unique(groupvar(~isnan(groupvar)));
