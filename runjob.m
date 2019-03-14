@@ -38,7 +38,7 @@ end
 
 % -- Add current MATLAB path to worker path
 curpath = path;
-matlabpath = strrep(curpath,';',''';''');
+matlabpath = strrep(curpath,pathsep,''';''');
 matlabpath = eval(['{''' matlabpath '''}']);
 % matlabpath = matlabpath(~cellfun(@isempty,strfind(matlabpath,'M:\MATLAB\')));
 workerpath = cat(1,{pwd},matlabpath);
